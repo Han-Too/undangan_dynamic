@@ -180,6 +180,12 @@ Semua endpoint di bawah `/api`. Endpoint dashboard memakai header `Authorization
 - `services/api.js` — klien HTTP (token, error, upload). `services/rsvpService.js` — RSVP mode admin/publik.
 - `composables/useAuth.js` — sesi login. `composables/useInvitation.js` — state undangan (dimuat dari / disimpan ke API).
 - `views/` — `LoginView`, `admin/*` (dashboard, tamu, pengguna, profil), `BuilderView` (editor), `PublicInvitationView` (halaman tamu).
+- **Dashboard admin & login** memakai [shadcn-vue](https://www.shadcn-vue.com) + Tailwind CSS v4 (tema *neutral*, font Geist):
+  - `components/ui/*` — komponen shadcn-vue (dibuat lewat CLI, konfigurasi di `components.json`). Tambah komponen lain:
+    `npx shadcn-vue@latest add <nama>` (lalu pastikan import-nya `@/lib/utils` dan ikon dari `@lucide/vue`).
+  - `components/admin/*` — sidebar, header halaman, kartu statistik, dialog konfirmasi.
+  - `styles/shadcn.css` — token warna shadcn. Tailwind sengaja **hanya** aktif di area admin (`.ui-admin`) supaya
+    editor (`styles/builder.css`) dan halaman undangan (`styles/invitation.css`) tidak ikut berubah.
 - `components/builder/*` — panel editor. `components/invitation/*` — tampilan undangan (dipakai editor & halaman tamu).
 - `data/themes.js`, `fonts.js`, `patterns.js`, `sections.js`, `defaults.js` — tema & bentuk data `config`.
 

@@ -53,6 +53,10 @@ class AuthController extends Controller
             'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
             'current_password' => ['required_with:password', 'nullable', 'current_password:sanctum'],
             'password' => ['nullable', 'string', 'min:6', 'confirmed'],
+        ], [
+            'current_password.current_password' => 'Password sekarang salah.',
+            'email.unique' => 'Email sudah dipakai akun lain.',
+            'password.confirmed' => 'Ulangi password baru tidak sama.',
         ]);
 
         $user->fill([

@@ -1,0 +1,148 @@
+/* ───────────────────────────────────────────────────────────────
+   Tailwind v4 + tema shadcn-vue (neutral), KHUSUS dashboard admin & login.
+
+   Preflight Tailwind sengaja tidak di-import global supaya editor (builder.css) dan halaman undangan
+   (invitation.css) tidak ikut berubah. Reset dasarnya dipasang hanya di dalam `.ui-admin`
+   dan di elemen shadcn yang di-portal ke <body> (dialog, dropdown, select → punya atribut data-slot).
+   Utility hanya dibuat dari file admin + components/ui (source(none) + @source di bawah).
+   ─────────────────────────────────────────────────────────────── */
+@layer theme, base, components, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities) source(none);
+@import 'tw-animate-css';
+
+@source '../components/ui';
+@source '../views/admin';
+@source '../components/admin';
+@source '../views/LoginView.vue';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+@theme inline {
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* Preflight Tailwind versi ringkas, dibatasi ke area admin. :where() = specificity 0, jadi utility selalu menang. */
+@layer base {
+  :where(.ui-admin, .ui-admin *, [data-slot], [data-slot] *),
+  :where(.ui-admin, .ui-admin *, [data-slot], [data-slot] *)::before,
+  :where(.ui-admin, .ui-admin *, [data-slot], [data-slot] *)::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid var(--color-border);
+  }
+  :where(.ui-admin, [data-slot]) :where(*) {
+    outline-color: color-mix(in oklab, var(--color-ring) 50%, transparent);
+  }
+  :where(.ui-admin, [data-slot]) :where(h1, h2, h3, h4, h5, h6) { font-size: inherit; font-weight: inherit; }
+  :where(.ui-admin, [data-slot]) :where(ol, ul, menu) { list-style: none; }
+  :where(.ui-admin, [data-slot]) :where(img, svg, video, canvas) { display: block; vertical-align: middle; }
+  :where(.ui-admin, [data-slot]) :where(img, video) { max-width: 100%; height: auto; }
+  :where(.ui-admin, [data-slot]) :where(a) { color: inherit; text-decoration: inherit; }
+  :where(.ui-admin, [data-slot]) :where(b, strong) { font-weight: 600; }
+  :where(.ui-admin, [data-slot]) :where(code) { font-family: var(--font-mono); font-size: 0.9em; }
+  :where(.ui-admin, [data-slot]) :where(table) { text-indent: 0; border-color: inherit; border-collapse: collapse; }
+  :where(.ui-admin, [data-slot]) :where(button, input, select, optgroup, textarea) {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    background-color: transparent;
+    border-radius: 0;
+    opacity: 1;
+  }
+  :where(.ui-admin, [data-slot]) :where(button, [role='button'], select, a[href]) { cursor: pointer; }
+  :where(.ui-admin, [data-slot]) :where(:disabled) { cursor: default; }
+  :where(.ui-admin, [data-slot]) :where(textarea) { resize: vertical; }
+  :where(.ui-admin, [data-slot]) ::placeholder { color: var(--color-muted-foreground); opacity: 1; }
+
+  .ui-admin,
+  [data-slot='dialog-content'],
+  [data-slot='alert-dialog-content'],
+  [data-slot='dropdown-menu-content'],
+  [data-slot='select-content'],
+  [data-slot='tooltip-content'],
+  [data-slot='sheet-content'] {
+    /*
+     * Skala ukuran dashboard. Ukuran bawaan shadcn cukup rapat (teks 14px, input 36px) dan terasa kecil
+     * di layar 1920×1080 dengan scaling Windows 100%. Semua utility Tailwind (spasi, tinggi, ikon, teks)
+     * dihitung dari variabel di bawah, jadi cukup ubah --admin-scale (1 = ukuran asli shadcn).
+     */
+    --admin-scale: 1.125;
+    --spacing: calc(0.25rem * var(--admin-scale));
+    --text-xs: calc(0.75rem * var(--admin-scale));
+    --text-sm: calc(0.875rem * var(--admin-scale));
+    --text-base: calc(1rem * var(--admin-scale));
+    --text-lg: calc(1.125rem * var(--admin-scale));
+    --text-xl: calc(1.25rem * var(--admin-scale));
+    --text-2xl: calc(1.5rem * var(--admin-scale));
+    --radius: calc(0.625rem * var(--admin-scale));
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    color: var(--color-foreground);
+    -webkit-font-smoothing: antialiased;
+  }
+  .ui-admin { min-height: 100dvh; background: var(--color-background); }
+}

@@ -1,8 +1,12 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import Icon from '../components/Icon.vue';
-import { useAuth } from '../composables/useAuth';
+import { HeartIcon, Loader2Icon } from '@lucide/vue';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { useAuth } from '@/composables/useAuth';
 
 const { login } = useAuth();
 const router = useRouter();
@@ -28,55 +32,37 @@ async function onSubmit() {
 </script>
 
 <template>
-  <div class="login">
-    <form class="login__card" @submit.prevent="onSubmit">
-      <div class="login__brand">
-        <span class="adm__mark"><Icon name="heart" :size="16" /></span>
-        <span class="adm__name">Undangan<em>.</em>studio</span>
-      </div>
-      <div>
-        <h1>Masuk ke dashboard</h1>
-        <p>Kelola desain undangan, daftar tamu, dan link undangan pribadi.</p>
+  <div class="ui-admin bg-muted flex flex-col items-center justify-center gap-6 p-6 md:p-10">
+    <div class="flex w-full max-w-sm flex-col gap-6">
+      <div class="flex items-center gap-2 self-center font-medium">
+        <span class="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md"><HeartIcon class="size-3.5" /></span>
+        Undangan Studio
       </div>
 
-      <label class="field">
-        <span class="field__label">Email</span>
-        <input v-model.trim="form.email" class="input" type="email" required autocomplete="username" placeholder="admin@undangan.test" />
-      </label>
-      <label class="field">
-        <span class="field__label">Password</span>
-        <input v-model="form.password" class="input" type="password" required autocomplete="current-password" />
-      </label>
+      <Card>
+        <CardHeader class="text-center">
+          <CardTitle class="text-xl">Masuk ke dashboard</CardTitle>
+          <CardDescription>Kelola desain undangan, daftar tamu, dan link pribadi.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form class="grid gap-5" @submit.prevent="onSubmit">
+            <div class="grid gap-2">
+              <Label for="email">Email</Label>
+              <Input id="email" v-model.trim="form.email" type="email" required autocomplete="username" placeholder="nama@email.com" />
+            </div>
+            <div class="grid gap-2">
+              <Label for="password">Password</Label>
+              <Input id="password" v-model="form.password" type="password" required autocomplete="current-password" />
+            </div>
+            <p v-if="error" class="border-destructive/30 bg-destructive/5 text-destructive rounded-md border px-3 py-2 text-sm" role="alert">{{ error }}</p>
+            <Button type="submit" class="w-full" :disabled="busy">
+              <Loader2Icon v-if="busy" class="animate-spin" /> {{ busy ? 'Memproses…' : 'Masuk' }}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
 
-      <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-      <button class="btn btn--primary btn--block" type="submit" :disabled="busy">{{ busy ? 'Memproses…' : 'Masuk' }}</button>
-    </form>
+      <p class="text-muted-foreground text-center text-xs">Akun dibuat oleh admin. Lupa password? Hubungi admin Anda.</p>
+    </div>
   </div>
 </template>
-
-<style scoped>
-.login {
-  display: grid;
-  place-items: center;
-  min-height: 100dvh;
-  padding: 24px 16px;
-  background:
-    radial-gradient(circle, #d6d1c4 1px, transparent 1.2px) 0 0 / 22px 22px,
-    var(--ui-bg);
-}
-.login__card {
-  display: grid;
-  gap: 16px;
-  width: 100%;
-  max-width: 380px;
-  padding: 28px;
-  background: var(--ui-surface);
-  border: 1px solid var(--ui-border);
-  border-radius: 16px;
-  box-shadow: var(--ui-shadow);
-}
-.login__brand { display: flex; align-items: center; gap: 10px; }
-h1 { margin: 6px 0 4px; font-size: 20px; letter-spacing: -0.01em; }
-p { margin: 0; color: var(--ui-muted); font-size: 13px; }
-.btn--block { min-height: 42px; }
-</style>

@@ -1,15 +1,33 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
-import Icon from '../../components/Icon.vue';
-import BaseModal from '../../components/builder/ui/BaseModal.vue';
-import ConfirmModal from '../../components/builder/ui/ConfirmModal.vue';
-import { useAuth } from '../../composables/useAuth';
-import { useToast } from '../../composables/useToast';
-import { api } from '../../services/api';
+import { toast } from 'vue-sonner';
+import { EllipsisVerticalIcon, PencilIcon, PlusIcon, Trash2Icon } from '@lucide/vue';
+import ConfirmDialog from '@/components/admin/ConfirmDialog.vue';
+import PageHeader from '@/components/admin/PageHeader.vue';
+import { fmtDate, initialsOf } from '@/components/admin/format';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { useAuth } from '@/composables/useAuth';
+import { api } from '@/services/api';
 
 /** Manajemen akun (khusus admin): tambah user, ubah role, nonaktifkan, hapus. */
 const { user: me } = useAuth();
-const { push } = useToast();
 
 const users = ref([]);
 const loading = ref(true);
@@ -24,7 +42,7 @@ async function load() {
   try {
     users.value = await api.get('/users');
   } catch (e) {
-    push(e.message, 'error');
+    toast.error(e.message);
   } finally {
     loading.value = false;
   }
@@ -48,7 +66,7 @@ async function onSubmit() {
     } else {
       users.value = [...users.value, await api.post('/users', body)];
     }
-    push('Pengguna disimpan', 'success');
+    toast.success('Pengguna disimpan');
     editing.value = null;
   } catch (e) {
     error.value = e.message;
@@ -63,95 +81,138 @@ async function onDelete() {
   try {
     await api.delete(`/users/${u.id}`);
     users.value = users.value.filter((x) => x.id !== u.id);
-    push('Pengguna dihapus', 'success');
+    toast.success('Pengguna dihapus');
   } catch (e) {
-    push(e.message, 'error');
+    toast.error(e.message);
   }
 }
 </script>
 
 <template>
   <div>
-    <div class="page-head">
-      <div>
-        <h1>Pengguna</h1>
-        <p>Admin mengelola semua undangan. User biasa hanya melihat & mengatur undangan miliknya.</p>
-      </div>
-      <div class="page-head__actions">
-        <button type="button" class="btn btn--primary" @click="open()"><Icon name="plus" :size="16" /> Pengguna baru</button>
-      </div>
-    </div>
+    <PageHeader title="Pengguna" description="Admin mengelola semua undangan. User biasa hanya melihat dan mengatur undangan miliknya.">
+      <template #actions>
+        <Button @click="open()"><PlusIcon /> Pengguna baru</Button>
+      </template>
+    </PageHeader>
 
-    <div class="card table-wrap">
-      <div v-if="loading" class="loading"><span class="spinner" /></div>
-      <table v-else class="table">
-        <thead>
-          <tr>
-            <th>Nama</th>
-            <th>Role</th>
-            <th>Undangan</th>
-            <th>Status</th>
-            <th><span class="sr-only">Aksi</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="u in users" :key="u.id">
-            <td>
-              <strong>{{ u.name }}</strong> <span v-if="u.id === me?.id" class="chip">Anda</span>
-              <div class="muted">{{ u.email }}</div>
-            </td>
-            <td data-label="Role"><span class="chip" :class="{ 'chip--accent': u.role === 'admin' }">{{ u.role === 'admin' ? 'Admin' : 'User' }}</span></td>
-            <td data-label="Undangan">{{ u.invitations_count }}</td>
-            <td data-label="Status"><span class="chip" :class="u.is_active ? 'chip--ok' : 'chip--danger'">{{ u.is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
-            <td>
-              <div class="actions">
-                <button type="button" class="btn btn--sm" @click="open(u)"><Icon name="pencil" :size="14" /> Edit</button>
-                <button v-if="u.id !== me?.id" type="button" class="btn btn--sm btn--danger" aria-label="Hapus pengguna" @click="deleting = u"><Icon name="trash" :size="14" /></button>
+    <Card class="gap-0 overflow-hidden py-0">
+      <div v-if="loading" class="space-y-3 p-4">
+        <Skeleton v-for="n in 3" :key="n" class="h-10 w-full" />
+      </div>
+      <Table v-else>
+        <TableHeader class="bg-muted/50">
+          <TableRow>
+            <TableHead class="pl-4">Nama</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead class="hidden sm:table-cell">Status</TableHead>
+            <TableHead class="hidden text-right sm:table-cell">Undangan</TableHead>
+            <TableHead class="hidden lg:table-cell">Dibuat</TableHead>
+            <TableHead class="pr-4"><span class="sr-only">Aksi</span></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow v-for="u in users" :key="u.id">
+            <TableCell class="pl-4">
+              <div class="flex items-center gap-3">
+                <Avatar class="size-8"><AvatarFallback class="text-xs">{{ initialsOf(u.name) }}</AvatarFallback></Avatar>
+                <div class="min-w-0">
+                  <div class="flex items-center gap-2 font-medium">
+                    {{ u.name }}<Badge v-if="u.id === me?.id" variant="secondary" class="px-1.5 py-0 text-[10px]">Anda</Badge>
+                  </div>
+                  <div class="text-muted-foreground text-xs">{{ u.email }}</div>
+                </div>
               </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+            </TableCell>
+            <TableCell>
+              <Badge :variant="u.role === 'admin' ? 'default' : 'outline'">{{ u.role === 'admin' ? 'Admin' : 'User' }}</Badge>
+            </TableCell>
+            <TableCell class="hidden sm:table-cell">
+              <Badge variant="outline" class="text-muted-foreground gap-1.5 px-1.5">
+                <span class="size-1.5 rounded-full" :class="u.is_active ? 'bg-emerald-500' : 'bg-zinc-400'" />
+                {{ u.is_active ? 'Aktif' : 'Nonaktif' }}
+              </Badge>
+            </TableCell>
+            <TableCell class="hidden text-right tabular-nums sm:table-cell">{{ u.invitations_count }}</TableCell>
+            <TableCell class="text-muted-foreground hidden lg:table-cell">{{ fmtDate(u.created_at) }}</TableCell>
+            <TableCell class="pr-4 text-right">
+              <DropdownMenu>
+                <DropdownMenuTrigger as-child>
+                  <Button variant="ghost" size="icon-sm" class="text-muted-foreground" aria-label="Aksi"><EllipsisVerticalIcon /></Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" class="w-40">
+                  <DropdownMenuItem @select="open(u)"><PencilIcon /> Edit</DropdownMenuItem>
+                  <template v-if="u.id !== me?.id">
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem variant="destructive" @select="deleting = u"><Trash2Icon /> Hapus</DropdownMenuItem>
+                  </template>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </Card>
 
-    <BaseModal :open="!!editing" :title="editing?.id ? 'Edit pengguna' : 'Pengguna baru'" width="440px" @close="editing = null">
-      <form class="form-grid" @submit.prevent="onSubmit">
-        <label class="field">
-          <span class="field__label">Nama</span>
-          <input v-model="form.name" class="input" required maxlength="255" />
-        </label>
-        <label class="field">
-          <span class="field__label">Email</span>
-          <input v-model.trim="form.email" class="input" type="email" required autocomplete="off" />
-        </label>
-        <label class="field">
-          <span class="field__label">Password</span>
-          <input v-model="form.password" class="input" type="password" :required="!editing?.id" minlength="6" autocomplete="new-password" :placeholder="editing?.id ? 'Kosongkan bila tidak diganti' : 'Minimal 6 karakter'" />
-        </label>
-        <template v-if="editing?.id !== me?.id">
-          <label class="field">
-            <span class="field__label">Role</span>
-            <select v-model="form.role" class="input">
-              <option value="user">User — kelola undangan sendiri</option>
-              <option value="admin">Admin — kelola semua undangan & pengguna</option>
-            </select>
-          </label>
-          <label class="check"><input v-model="form.is_active" type="checkbox" /> Akun aktif (boleh login)</label>
-        </template>
-        <p v-if="error" class="form-error" role="alert">{{ error }}</p>
-        <div class="form-actions">
-          <button type="button" class="btn" @click="editing = null">Batal</button>
-          <button type="submit" class="btn btn--primary" :disabled="busy">{{ busy ? 'Menyimpan…' : 'Simpan' }}</button>
-        </div>
-      </form>
-    </BaseModal>
+    <Dialog :open="!!editing" @update:open="(v) => !v && (editing = null)">
+      <DialogContent class="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>{{ editing?.id ? 'Edit pengguna' : 'Pengguna baru' }}</DialogTitle>
+          <DialogDescription>{{ editing?.id ? 'Kosongkan password bila tidak ingin menggantinya.' : 'Akun baru bisa langsung login dengan email dan password ini.' }}</DialogDescription>
+        </DialogHeader>
+        <form id="user-form" class="grid gap-4" @submit.prevent="onSubmit">
+          <div class="grid gap-2">
+            <Label for="u-name">Nama</Label>
+            <Input id="u-name" v-model="form.name" required maxlength="255" />
+          </div>
+          <div class="grid gap-2">
+            <Label for="u-email">Email</Label>
+            <Input id="u-email" v-model.trim="form.email" type="email" required autocomplete="off" />
+          </div>
+          <div class="grid gap-2">
+            <Label for="u-password">Password</Label>
+            <Input
+              id="u-password"
+              v-model="form.password"
+              type="password"
+              :required="!editing?.id"
+              minlength="6"
+              autocomplete="new-password"
+              :placeholder="editing?.id ? 'Tidak diganti' : 'Minimal 6 karakter'"
+            />
+          </div>
+          <template v-if="editing?.id !== me?.id">
+            <div class="grid gap-2">
+              <Label>Role</Label>
+              <Select v-model="form.role">
+                <SelectTrigger class="w-full"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User · kelola undangan sendiri</SelectItem>
+                  <SelectItem value="admin">Admin · kelola semua undangan & pengguna</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div class="flex items-start justify-between gap-4 rounded-lg border p-3">
+              <div class="space-y-0.5">
+                <Label for="u-active">Akun aktif</Label>
+                <p class="text-muted-foreground text-xs">Akun nonaktif tidak bisa login dan sesinya langsung diputus.</p>
+              </div>
+              <Switch id="u-active" v-model="form.is_active" />
+            </div>
+          </template>
+          <p v-if="error" class="text-destructive text-sm" role="alert">{{ error }}</p>
+        </form>
+        <DialogFooter>
+          <Button variant="outline" @click="editing = null">Batal</Button>
+          <Button type="submit" form="user-form" :disabled="busy">{{ busy ? 'Menyimpan…' : 'Simpan' }}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
 
-    <ConfirmModal
+    <ConfirmDialog
       :open="!!deleting"
       title="Hapus pengguna?"
-      :message="`${deleting?.name} beserta ${deleting?.invitations_count ?? 0} undangan miliknya akan dihapus permanen.`"
-      confirm-text="Hapus"
-      danger
+      :description="`${deleting?.name} beserta ${deleting?.invitations_count ?? 0} undangan miliknya akan dihapus permanen.`"
       @confirm="onDelete"
       @cancel="deleting = null"
     />

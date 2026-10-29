@@ -1,45 +1,56 @@
 <script setup>
-import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
-import Icon from '../../components/Icon.vue';
-import { useAuth } from '../../composables/useAuth';
+import { computed } from 'vue';
+import { RouterLink, RouterView, useRoute } from 'vue-router';
+import AppSidebar from '@/components/admin/AppSidebar.vue';
+import { pageCrumb } from '@/components/admin/format';
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/components/ui/breadcrumb';
+import { Separator } from '@/components/ui/separator';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
 
-const { user, isAdmin, logout } = useAuth();
-const router = useRouter();
 const route = useRoute();
 
-async function onLogout() {
-  await logout();
-  router.replace('/login');
-}
+/** [{ label, to? }] — item terakhir = halaman aktif. */
+const crumbs = computed(() => {
+  switch (route.name) {
+    case 'guests':
+      return [{ label: 'Undangan', to: '/admin' }, { label: pageCrumb.value || 'Tamu' }];
+    default:
+      return [{ label: route.meta.title ?? 'Dashboard' }];
+  }
+});
 </script>
 
 <template>
-  <div class="adm">
-    <header class="adm__bar">
-      <RouterLink to="/admin" class="adm__brand">
-        <span class="adm__mark"><Icon name="heart" :size="16" /></span>
-        <span class="adm__name">Undangan<em>.</em>studio</span>
-      </RouterLink>
-
-      <nav class="adm__nav" aria-label="Menu dashboard">
-        <RouterLink to="/admin" :class="{ 'is-active': route.name === 'guests' }"><Icon name="mail" :size="16" /><span class="lbl">Undangan</span></RouterLink>
-        <RouterLink v-if="isAdmin" to="/admin/users"><Icon name="users" :size="16" /><span class="lbl">Pengguna</span></RouterLink>
-        <RouterLink to="/admin/profile"><Icon name="user" :size="16" /><span class="lbl">Profil</span></RouterLink>
-      </nav>
-
-      <div class="adm__user">
-        <div class="adm__who">
-          <strong>{{ user?.name }}</strong>
-          <small>{{ user?.role === 'admin' ? 'Admin' : 'User' }}</small>
+  <SidebarProvider class="ui-admin">
+    <AppSidebar />
+    <SidebarInset>
+      <header class="bg-background sticky top-0 z-10 flex h-14 shrink-0 items-center gap-2 border-b px-4 md:rounded-t-xl lg:px-6">
+        <SidebarTrigger class="-ml-1" />
+        <Separator orientation="vertical" class="mx-2 data-[orientation=vertical]:h-4" />
+        <Breadcrumb>
+          <BreadcrumbList>
+            <template v-for="(c, i) in crumbs" :key="i">
+              <BreadcrumbSeparator v-if="i > 0" />
+              <BreadcrumbItem>
+                <BreadcrumbLink v-if="c.to" as-child><RouterLink :to="c.to">{{ c.label }}</RouterLink></BreadcrumbLink>
+                <BreadcrumbPage v-else class="max-w-[50vw] truncate">{{ c.label }}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </template>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </header>
+      <main class="flex flex-1 flex-col">
+        <div class="mx-auto w-full max-w-7xl flex-1 p-4 md:p-6 lg:p-8">
+          <RouterView />
         </div>
-        <button type="button" class="btn btn--ghost btn--sm" title="Keluar" @click="onLogout">
-          <Icon name="logout" :size="16" /><span class="lbl">Keluar</span>
-        </button>
-      </div>
-    </header>
-
-    <main class="adm__main">
-      <RouterView />
-    </main>
-  </div>
+      </main>
+    </SidebarInset>
+  </SidebarProvider>
 </template>
