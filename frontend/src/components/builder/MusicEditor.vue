@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref } from 'vue';
-import { useInvitation } from '../../composables/useInvitation';
+import { MAX_AUDIO_MB, useInvitation } from '../../composables/useInvitation';
 import { useMusic } from '../../composables/useMusic';
 import { useToast } from '../../composables/useToast';
 import Icon from '../Icon.vue';
@@ -56,7 +56,7 @@ function onFile(e) {
       </div>
 
       <FieldRange v-model="volume" label="Volume" suffix="%" />
-      <p class="note">Browser memblokir autoplay sebelum ada interaksi, sehingga musik baru mulai setelah tamu menekan tombol buka. Format: MP3, WAV, OGG, M4A (maks. 15 MB).</p>
+      <p class="note">Browser memblokir autoplay sebelum ada interaksi, sehingga musik baru mulai setelah tamu menekan tombol buka. Format: MP3, OGG, M4A (maks. {{ MAX_AUDIO_MB }} MB). Lagu 4 menit dalam MP3 128 kbps sekitar 4 MB.</p>
     </template>
   </div>
 </template>

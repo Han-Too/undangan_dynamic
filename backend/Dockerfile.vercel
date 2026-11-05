@@ -1,6 +1,9 @@
 FROM dunglas/frankenphp:1-php8.4-bookworm AS base
 
+# php.ini-production membatasi upload 2 MB, sehingga file musik ditolak (422). Naikkan batasnya;
+# batas efektif tetap ditentukan Vercel (body request ~4,5 MB), lihat MAX_AUDIO_MB di frontend.
 RUN cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini" \
+    && printf "upload_max_filesize=20M\npost_max_size=25M\n" > "$PHP_INI_DIR/conf.d/uploads.ini" \
     && install-php-extensions intl zip pdo_pgsql
 
 WORKDIR /app

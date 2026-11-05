@@ -104,7 +104,10 @@ class InvitationController extends Controller
     public function uploadAudio(Request $request, Invitation $invitation)
     {
         Gate::authorize('manage', $invitation);
-        $request->validate(['file' => ['required', 'file', 'max:15360', 'mimetypes:audio/*,video/mp4,video/ogg,video/webm']]);
+        $request->validate(
+            ['file' => ['required', 'file', 'max:15360', 'mimetypes:audio/*,video/mp4,video/ogg,video/webm']],
+            ['file.uploaded' => 'File musik terlalu besar untuk diterima server. Gunakan file yang lebih kecil (maks. 4 MB).'],
+        );
 
         $old = $invitation->audio_path;
         $invitation->audio_path = MediaStorage::store($request->file('file'), $invitation->mediaDir().'/audio');

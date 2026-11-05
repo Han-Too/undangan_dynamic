@@ -15,6 +15,9 @@ import { loadFont } from './useFonts';
  */
 const state = reactive(createDefaultInvitation());
 
+/** Vercel menolak body request di atas ~4,5 MB, jadi musik dibatasi 4 MB di sisi browser. */
+export const MAX_AUDIO_MB = 4;
+
 /** Data undangan dari server di luar `config` (id, title, slug, is_published, ...). */
 const meta = ref(null);
 /** Tamu dari link pribadi (/slug/tamu) -> { name, slug, rsvp } | null. */
@@ -134,7 +137,9 @@ function setTheme(id) {
 
 function setAudio(file) {
   if (!file || !file.type.startsWith('audio/')) throw new Error('Pilih file audio (MP3, WAV, OGG, M4A).');
-  if (file.size > 15 * 1024 * 1024) throw new Error('Ukuran audio maksimal 15 MB.');
+  if (file.size > MAX_AUDIO_MB * 1024 * 1024) {
+    throw new Error(`Ukuran musik maksimal ${MAX_AUDIO_MB} MB. Kompres dulu (mis. MP3 128 kbps) atau potong lagunya.`);
+  }
   setAudioBlob(file);
   state.music.custom = true;
   state.music.name = file.name;
@@ -149,12 +154,21 @@ function removeAudio() {
   audioChanged.value = true;
 }
 
-/** Simpan setelan ke database; file musik diunggah / dihapus terpisah bila berubah. */
+/**
+ * Simpan setelan ke database, lalu unggah / hapus file musik bila berubah.
+ * Setelan disimpan lebih dulu agar kegagalan musik tidak ikut menggagalkan foto & teks yang sudah diatur.
+ */
 async function save() {
   const id = meta.value?.id;
   if (!id) throw new Error('Undangan belum dimuat.');
 
-  if (audioChanged.value) {
+  // eslint-disable-next-line no-unused-vars
+  const { config, ...updated } = await api.put(`/invitations/${id}`, { config: clone(state) });
+  meta.value = { ...meta.value, ...updated };
+  savedSnapshot.value = JSON.stringify(state);
+
+  if (!audioChanged.value) return;
+  try {
     if (audioBlob.value) {
       const res = await api.upload(`/invitations/${id}/audio`, audioBlob.value, state.music.name || 'audio');
       serverAudioUrl.value = res.audio_url;
@@ -162,12 +176,11 @@ async function save() {
       await api.delete(`/invitations/${id}/audio`);
       serverAudioUrl.value = '';
     }
+    audioChanged.value = false;
+  } catch (e) {
+    // audioChanged tetap true → tombol Save tetap aktif untuk mencoba lagi.
+    throw new Error(`Undangan tersimpan, tetapi musik gagal diunggah: ${e.message}`);
   }
-
-  // eslint-disable-next-line no-unused-vars
-  const { config, ...updated } = await api.put(`/invitations/${id}`, { config: clone(state) });
-  meta.value = { ...meta.value, ...updated };
-  markSaved();
 }
 
 /** Kembalikan ke default (lokal saja; tersimpan ke server setelah Save). */
