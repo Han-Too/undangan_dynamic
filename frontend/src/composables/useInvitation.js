@@ -1,5 +1,5 @@
 import { computed, reactive, ref, shallowRef, watchEffect } from 'vue';
-import { createDefaultInvitation } from '../data/defaults';
+import { baseContent, createDefaultInvitation } from '../data/defaults';
 import { fontStack, getFont } from '../data/fonts';
 import { patterns } from '../data/patterns';
 import { getTheme, themes } from '../data/themes';
@@ -28,6 +28,8 @@ const audioChanged = ref(false);
 
 const dirty = computed(() => audioChanged.value || JSON.stringify(state) !== savedSnapshot.value);
 const theme = computed(() => getTheme(state.theme));
+/** Tema kategori "Ucapan": kartu ucapan tanpa detail acara (lihat `hiddenSections` di themes.js). */
+const isGreeting = computed(() => theme.value.kind === 'greeting');
 
 /** `blob` = file lokal yang belum diunggah; null = pakai audio dari server (bila ada). */
 const setAudioBlob = (blob) => {
@@ -108,8 +110,11 @@ const cssVars = computed(() => {
  */
 function setTheme(id) {
   if (!themes[id] || id === state.theme) return;
-  const prev = getTheme(state.theme).copy;
-  for (const [path, value] of flatten(themes[id].copy)) {
+  // Copy dilengkapi isi dasar, agar teks yang hanya ditimpa sebagian tema (mis. tombol "Buka Ucapan")
+  // ikut kembali ke bawaan saat pindah ke tema yang tidak menimpanya.
+  const withBase = (t) => deepMerge(baseContent(), clone(t.copy));
+  const prev = withBase(getTheme(state.theme));
+  for (const [path, value] of flatten(withBase(themes[id]))) {
     const current = getPath(state.content, path);
     if (!isEqual(current, getPath(prev, path))) continue;
     if (Array.isArray(current)) current.splice(0, current.length, ...clone(value));
@@ -170,6 +175,7 @@ export function useInvitation() {
     meta,
     guest,
     theme,
+    isGreeting,
     cssVars,
     headingFont,
     bodyFont,

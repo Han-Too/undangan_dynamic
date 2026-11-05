@@ -4,7 +4,7 @@ import { clone, deepMerge } from '../utils/object';
 export const createPhoto = () => ({ src: '', fit: 'cover', x: 50, y: 50, zoom: 1 });
 
 /** Isi yang tidak bergantung pada tema. Teks khas tema ada di `themes[id].copy`. */
-const baseContent = () => ({
+export const baseContent = () => ({
   cover: { label: '', names: '', date: '2026-12-12T10:00', guestText: 'Kepada Yth. Bapak/Ibu/Saudara/i', buttonText: 'Buka Undangan' },
   opening: { title: '', text: '' },
   profile: { title: '', people: [] },

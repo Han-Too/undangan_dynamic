@@ -29,3 +29,6 @@ export const invitationSections = [
   { id: 'gift', label: 'Hadiah', component: InvitationGift, panel: 'gift' },
   { id: 'closing', label: 'Penutup', component: InvitationClosing, panel: 'general', focus: 'closing' },
 ];
+
+/** Section yang berlaku untuk tema (tema Ucapan tidak punya Acara, RSVP, dll.). */
+export const sectionsForTheme = (theme) => invitationSections.filter((s) => !theme.hiddenSections?.includes(s.id));

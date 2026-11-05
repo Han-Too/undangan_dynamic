@@ -1,11 +1,23 @@
 <script setup>
 import { computed } from 'vue';
 import { useBuilderUi } from '../../composables/useBuilderUi';
+import { useInvitation } from '../../composables/useInvitation';
 import { editorGroups, getPanel } from '../../data/editorPanels';
 import Icon from '../Icon.vue';
 
 const { ui } = useBuilderUi();
-const active = computed(() => getPanel(ui.panel));
+const { theme } = useInvitation();
+
+// Panel milik section yang tidak berlaku untuk tema (mis. RSVP pada tema Ucapan) disembunyikan.
+const groups = computed(() =>
+  editorGroups
+    .map((g) => ({ ...g, items: g.items.filter((i) => !i.section || !theme.value.hiddenSections.includes(i.section)) }))
+    .filter((g) => g.items.length),
+);
+const active = computed(() => {
+  const panel = getPanel(ui.panel);
+  return panel.section && theme.value.hiddenSections.includes(panel.section) ? getPanel('theme') : panel;
+});
 
 const select = (id) => {
   ui.panel = id;
@@ -16,15 +28,15 @@ const select = (id) => {
 <template>
   <div class="editor">
     <nav class="editor__nav" aria-label="Menu editor">
-      <div v-for="g in editorGroups" :key="g.id" class="group">
+      <div v-for="g in groups" :key="g.id" class="group">
         <span class="group__label">{{ g.label }}</span>
         <button
           v-for="item in g.items"
           :key="item.id"
           type="button"
           class="navitem"
-          :class="{ 'is-active': ui.panel === item.id }"
-          :aria-current="ui.panel === item.id ? 'page' : undefined"
+          :class="{ 'is-active': active.id === item.id }"
+          :aria-current="active.id === item.id ? 'page' : undefined"
           @click="select(item.id)"
         >
           <Icon :name="item.icon" :size="19" />

@@ -269,10 +269,82 @@ textarea.inv-input { min-height: 88px; resize: vertical; }
   overflow: hidden;
   text-align: center;
   background: var(--c-bg);
-  transition: transform 1.1s cubic-bezier(0.7, 0, 0.2, 1);
+  transition: visibility 0s;
 }
-.inv-cover.is-open { transform: translateY(-102%); pointer-events: none; }
+
+/*
+ * Animasi "Buka Undangan":
+ *  1. isi cover memudar + membesar, ornamen sudut melayang keluar (0 – 0.6s)
+ *  2. cover terbuka melingkar (iris) dari titik tombol (--open-x/--open-y, diisi InvitationCover)
+ *  3. isi undangan di baliknya masuk dengan zoom halus (.inv-scroll)
+ * --hole didaftarkan lewat @property agar bisa dianimasikan; browser lama langsung membuka tanpa iris.
+ */
+@property --hole {
+  syntax: '<length-percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+.inv-cover.is-open {
+  --hole: 150%;
+  pointer-events: none;
+  visibility: hidden;
+  -webkit-mask: radial-gradient(circle at var(--open-x, 50%) var(--open-y, 70%), transparent var(--hole), #000 calc(var(--hole) + 1px));
+  mask: radial-gradient(circle at var(--open-x, 50%) var(--open-y, 70%), transparent var(--hole), #000 calc(var(--hole) + 1px));
+  transition: --hole 1.15s cubic-bezier(0.65, 0, 0.25, 1) 0.4s, visibility 0s linear 1.6s;
+}
 .inv-cover.is-open .fx * { animation-play-state: paused !important; }
+
+.inv-cover__body { transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.5s ease; }
+.inv-cover.is-open .inv-cover__body { opacity: 0; transform: translateY(-12px) scale(1.08); filter: blur(6px); }
+.inv-cover.is-open .inv-cover__btn { transform: scale(0.94); }
+
+.inv-cover .corner { transition: translate 0.9s cubic-bezier(0.5, 0, 0.2, 1), opacity 0.7s ease; }
+.inv-cover.is-open .corner { opacity: 0; }
+.inv-cover.is-open .corner--tl { translate: -40% -40%; }
+.inv-cover.is-open .corner--tr { translate: 40% -40%; }
+.inv-cover.is-open .corner--bl { translate: -40% 40%; }
+.inv-cover.is-open .corner--br { translate: 40% 40%; }
+
+/* Isi undangan: menunggu di balik cover sedikit membesar & redup, lalu masuk saat iris terbuka */
+.inv-scroll { transition: transform 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) 0.45s, opacity 1s ease 0.45s; }
+.inv-scroll.is-locked { transform: scale(1.06); opacity: 0.4; transition: none; }
+
+/* Ledakan partikel dari tombol (InvitationPreview → .inv-burst) */
+.inv-burst {
+  position: absolute;
+  z-index: 6;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.inv-burst__ring {
+  position: absolute;
+  left: -40px;
+  top: -40px;
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--c-primary);
+  border-radius: 50%;
+  animation: inv-burst-ring 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+}
+.inv-burst__p {
+  position: absolute;
+  left: calc(var(--s) / -2);
+  top: calc(var(--s) / -2);
+  width: var(--s);
+  height: var(--s);
+  animation: inv-burst-p 1.1s cubic-bezier(0.15, 0.7, 0.3, 1) var(--d) forwards;
+  opacity: 0;
+}
+@keyframes inv-burst-ring {
+  from { transform: scale(0.3); opacity: 0.9; }
+  to { transform: scale(4); opacity: 0; }
+}
+@keyframes inv-burst-p {
+  0% { transform: translate(0, 0) rotate(0) scale(0.4); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1); opacity: 0; }
+}
 .inv-cover__photo { position: absolute; inset: 0; }
 .inv-cover__veil {
   position: absolute;
@@ -441,7 +513,9 @@ textarea.inv-input { min-height: 88px; resize: vertical; }
 
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  .inv-cover { transition: none; }
+  .inv-cover, .inv-cover.is-open, .inv-scroll, .inv-cover__body, .inv-cover .corner { transition: none; }
+  .inv-cover.is-open { -webkit-mask: none; mask: none; }
+  .inv-burst { display: none; }
   .inv-music.is-playing .icon,
   .inv-music.is-playing::after { animation: none; }
 }

@@ -13,6 +13,14 @@ const art = computed(() => {
       return `<path transform="translate(108 0)" d="${star}"/><circle cx="96" cy="12" r="1.6" fill="currentColor"/><circle cx="144" cy="12" r="1.6" fill="currentColor"/>`;
     case 'wayang':
       return `<path d="M120 1c8 6 10 15 0 22-10-7-8-16 0-22z"/><path d="M120 6v13M120 14c-4-1-6-3-7-6M120 14c4-1 6-3 7-6"/><path d="M104 12l3-3 3 3-3 3zM130 12l3-3 3 3-3 3z" fill="currentColor"/>`;
+    case 'siger': // mahkota pengantin Sunda
+      return `<path d="M102 20h36l6-11-8 4-6-10-4 8-6-10-6 10-4-8-6 10-8-4z"/><path d="M104 16h32" stroke-opacity=".6"/><circle cx="120" cy="13" r="1.8" fill="currentColor"/>`;
+    case 'gonjong': // atap rumah gadang Minang
+      return `<path d="M97 3q9 12 17 9 3-7 6-10 3 3 6 10 8 3 17-9"/><path d="M104 13v8h32v-8M117 21v-5h6v5"/><circle cx="97" cy="3" r="1.4" fill="currentColor"/><circle cx="143" cy="3" r="1.4" fill="currentColor"/>`;
+    case 'spiral': { // ukiran gorga Batak
+      const curl = 'M113 12h-5a5 5 0 1 1 5-5 2.5 2.5 0 1 1-2.5 2.5';
+      return `<path d="${curl}"/><path transform="matrix(-1 0 0 1 240 0)" d="${curl}"/><path d="M120 7l5 5-5 5-5-5z" fill="currentColor"/>`;
+    }
     case 'heart':
       return `<path transform="translate(108 0)" d="${heart}"/><path transform="translate(92 6) scale(.5)" d="${heart}" fill="currentColor"/><path transform="translate(144 6) scale(.5)" d="${heart}" fill="currentColor"/>`;
     default: // floral

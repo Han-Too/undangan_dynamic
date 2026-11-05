@@ -14,6 +14,7 @@ export const fonts = [
   { name: 'Cinzel', kind: 'serif', axes: 'wght@400;500;600', scale: 0.84 },
   { name: 'Great Vibes', kind: 'script', axes: '', scale: 1.3 },
   { name: 'Dancing Script', kind: 'script', axes: 'wght@400;500;600', scale: 1.12 },
+  { name: 'Bebas Neue', kind: 'sans', axes: '', scale: 1.1 },
 ];
 
 const FALLBACK = {

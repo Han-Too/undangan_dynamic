@@ -3,7 +3,9 @@
  *  KONFIGURASI TEMA
  *  Menambah tema baru = menambah satu objek di `themes` (tanpa menyentuh komponen).
  *
- *  colors      primary = aksen/ornamen · secondary = isi tegas (tombol, countdown)
+ *  category    id kategori (lihat `themeCategories`) · group: subjudul opsional di dalam kategori
+ *  audience    'female' | 'male' (opsional) → lencana "Cewek" / "Cowok" di pemilih tema
+ *  colors     primary = aksen/ornamen · secondary = isi tegas (tombol, countdown)
  *              background · surface (kartu) · text
  *  fonts       font bawaan; user bisa menimpanya di menu Typography
  *  headingColor  warna judul: 'text' | 'primary' | 'secondary'
@@ -13,7 +15,7 @@
  *                particles { shapes[], count, motion: 'fall'|'rise'|'twinkle', size:[min,max] }
  *                patternMotion 'drift' | 'spin' | 'none'
  *                glow        daftar warna cahaya lembut ('primary' | 'secondary' | hex)
- *  ornaments   divider: floral|star|wayang|heart · corner: floral|geometric|tumpal|vine
+ *  ornaments   divider: floral|star|wayang|heart|siger|gonjong|spiral · corner: floral|geometric|tumpal|vine
  *              frame: arch|oval|octagon|rect · band: true → pita tumpal di batas section
  *  sectionStyle  airy | framed | bordered | glass (lihat styles/invitation.css)
  *  copy        teks bawaan tema. Dipakai saat ganti tema bila user belum mengubah teksnya.
@@ -22,11 +24,29 @@
 
 const people2 = (a, b) => [a, b];
 
+/**
+ * Kategori pada pemilih tema (urutan = urutan tab).
+ * kind 'greeting' = kartu ucapan: section di GREETING_HIDDEN_SECTIONS tidak dipakai.
+ */
+export const themeCategories = [
+  { id: 'pernikahan', name: 'Pernikahan', desc: 'Undangan nikah modern, lamaran, dan adat Nusantara.' },
+  { id: 'ulangTahun', name: 'Ulang Tahun', desc: 'Pesta ulang tahun anak, remaja, hingga dewasa.' },
+  { id: 'syukuran', name: 'Syukuran', desc: 'Khitanan, aqiqah, dan tasyakuran keluarga.' },
+  { id: 'lainnya', name: 'Acara Lain', desc: 'Wisuda, reuni, gathering, dan acara umum.' },
+  { id: 'ucapan', name: 'Ucapan', kind: 'greeting', desc: 'Kartu ucapan digital, tanpa detail acara, RSVP, atau lokasi.' },
+];
+
+export const GREETING_HIDDEN_SECTIONS = ['event', 'countdown', 'location', 'rsvp', 'gift'];
+
+/** Teks cover bawaan untuk semua tema ucapan. */
+const greetingCover = { guestText: 'Ada pesan spesial untukmu', buttonText: 'Buka Ucapan' };
+
 export const themes = {
   wedding: {
     id: 'wedding',
     name: 'Pernikahan',
     tagline: 'Elegan, floral, hangat',
+    category: 'pernikahan', group: 'Modern',
     colors: { primary: '#b08d57', secondary: '#6f8560', background: '#faf6ee', surface: '#fffdf8', text: '#4b3d31' },
     fonts: { heading: 'Cormorant Garamond', body: 'Montserrat' },
     headingColor: 'text',
@@ -68,6 +88,7 @@ export const themes = {
     id: 'khitanan',
     name: 'Khitanan',
     tagline: 'Islami, ceria, hangat',
+    category: 'syukuran',
     colors: { primary: '#c3a04d', secondary: '#0f6b4f', background: '#f7f3e6', surface: '#fffdf5', text: '#12392e' },
     fonts: { heading: 'Playfair Display', body: 'Poppins' },
     headingColor: 'secondary',
@@ -104,8 +125,9 @@ export const themes = {
 
   jawa: {
     id: 'jawa',
-    name: 'Jawa',
+    name: 'Adat Jawa',
     tagline: 'Tradisi, anggun, berkelas',
+    category: 'pernikahan', group: 'Adat Nusantara',
     colors: { primary: '#c9a14a', secondary: '#8b2332', background: '#2a1a12', surface: '#37251b', text: '#f3e7cf' },
     fonts: { heading: 'Cinzel', body: 'Lora' },
     headingColor: 'primary',
@@ -147,6 +169,7 @@ export const themes = {
     id: 'romantic',
     name: 'Romantis',
     tagline: 'Lembut, modern, penuh cinta',
+    category: 'pernikahan', group: 'Modern',
     colors: { primary: '#c9507a', secondary: '#7b1e3a', background: '#fdf0f3', surface: '#fff8f9', text: '#4a1f2e' },
     fonts: { heading: 'Great Vibes', body: 'Montserrat' },
     headingColor: 'secondary',
@@ -188,6 +211,7 @@ export const themes = {
     id: 'lamaran',
     name: 'Lamaran',
     tagline: 'Hangat, kalem, intim',
+    category: 'pernikahan', group: 'Lamaran & Tunangan',
     colors: { primary: '#c48b7a', secondary: '#6e8470', background: '#f8f3ef', surface: '#fffaf6', text: '#463a35' },
     fonts: { heading: 'Cormorant Garamond', body: 'Inter' },
     headingColor: 'text',
@@ -228,6 +252,7 @@ export const themes = {
     id: 'ulangTahunAnak',
     name: 'Ulang Tahun Anak',
     tagline: 'Ceria, warna-warni, seru',
+    category: 'ulangTahun',
     colors: { primary: '#f0913e', secondary: '#3d7dd8', background: '#fff8ec', surface: '#ffffff', text: '#3a3352' },
     fonts: { heading: 'Dancing Script', body: 'Poppins' },
     headingColor: 'secondary',
@@ -265,6 +290,7 @@ export const themes = {
     id: 'ulangTahun',
     name: 'Ulang Tahun',
     tagline: 'Elegan, malam, berkilau',
+    category: 'ulangTahun',
     colors: { primary: '#d4af6a', secondary: '#e07a9b', background: '#1b1f33', surface: '#252a42', text: '#f1ecdf' },
     fonts: { heading: 'Playfair Display', body: 'Montserrat' },
     headingColor: 'primary',
@@ -302,6 +328,7 @@ export const themes = {
     id: 'sweet17',
     name: 'Sweet Seventeen',
     tagline: 'Manis, girly, berkilau',
+    category: 'ulangTahun',
     colors: { primary: '#a66cc9', secondary: '#d9568f', background: '#fbf4fd', surface: '#ffffff', text: '#45284f' },
     fonts: { heading: 'Great Vibes', body: 'Poppins' },
     headingColor: 'secondary',
@@ -339,6 +366,7 @@ export const themes = {
     id: 'aqiqah',
     name: 'Aqiqah',
     tagline: 'Lembut, islami, penuh syukur',
+    category: 'syukuran',
     colors: { primary: '#c9a85c', secondary: '#3f8a7f', background: '#f2f8f6', surface: '#ffffff', text: '#24433e' },
     fonts: { heading: 'Playfair Display', body: 'Poppins' },
     headingColor: 'secondary',
@@ -376,6 +404,7 @@ export const themes = {
     id: 'syukuran',
     name: 'Syukuran',
     tagline: 'Natural, sederhana, hangat',
+    category: 'syukuran',
     colors: { primary: '#b5853f', secondary: '#4f6b3a', background: '#f6f1e4', surface: '#fffcf3', text: '#3b3226' },
     fonts: { heading: 'Lora', body: 'Poppins' },
     headingColor: 'secondary',
@@ -414,6 +443,7 @@ export const themes = {
     id: 'wisuda',
     name: 'Wisuda',
     tagline: 'Formal, bangga, berprestasi',
+    category: 'lainnya',
     colors: { primary: '#c9a227', secondary: '#1f3a68', background: '#f5f6fa', surface: '#ffffff', text: '#1d2742' },
     fonts: { heading: 'Cinzel', body: 'Inter' },
     headingColor: 'secondary',
@@ -451,6 +481,7 @@ export const themes = {
     id: 'umum',
     name: 'Acara Umum',
     tagline: 'Modern, minimalis, serbaguna',
+    category: 'lainnya',
     colors: { primary: '#e0663f', secondary: '#1f2a37', background: '#f7f5f2', surface: '#ffffff', text: '#1f2a37' },
     fonts: { heading: 'Montserrat', body: 'Inter' },
     headingColor: 'secondary',
@@ -484,7 +515,426 @@ export const themes = {
       },
     },
   },
+
+  /* ───────────────────────────── Pernikahan adat ───────────────────────────── */
+
+  sunda: {
+    id: 'sunda',
+    name: 'Adat Sunda',
+    tagline: 'Siger, mega mendung, hijau emas',
+    category: 'pernikahan', group: 'Adat Nusantara',
+    colors: { primary: '#b8913f', secondary: '#2f5d50', background: '#f4efe3', surface: '#fffbf2', text: '#2b3a33' },
+    fonts: { heading: 'Cormorant Garamond', body: 'Lora' },
+    headingColor: 'secondary',
+    vars: { '--radius': '14px', '--btn-radius': '999px', '--btn-shadow': '0 10px 22px -12px rgba(47,93,80,.7)', '--heading-spacing': '.02em', '--heading-transform': 'none' },
+    pattern: { id: 'megamendung', size: 140, opacity: 0.1 },
+    fx: { particles: { shapes: ['flower', 'petal', 'sparkle'], count: 14, motion: 'fall', size: [8, 18] }, patternMotion: 'drift', glow: ['primary', '#cfe0d5'] },
+    ornaments: { divider: 'siger', corner: 'floral', frame: 'arch', band: false },
+    sectionStyle: 'framed',
+    copy: {
+      cover: { label: 'NIKAH ADAT SUNDA', names: 'Raka & Ayu' },
+      opening: {
+        title: 'Sampurasun',
+        text: 'Kalayan nyuhunkeun rahmat sareng ridho Allah SWT, kami ngondang Bapak/Ibu/Saudara/i kana acara pernikahan putra-putri kami. Kasumpingan sareng pangdu’a anjeun mangrupikeun kabagjaan pikeun kami.',
+      },
+      profile: {
+        title: 'Pangantén',
+        people: people2(
+          { name: 'Raka', fullName: 'Raka Pratama', parents: 'Putra pertama dari Bapak Hendra & Ibu Sari' },
+          { name: 'Ayu', fullName: 'Ayu Lestari', parents: 'Putri kedua dari Bapak Wibowo & Ibu Dewi' },
+        ),
+      },
+      events: [
+        { id: 'ev-akad', title: 'Akad Nikah', date: '2026-12-12', time: '08.00 – 09.30 WIB', place: 'Gedung Graha Anggun' },
+        { id: 'ev-sawer', title: 'Sawer, Nincak Endog & Resepsi', date: '2026-12-12', time: '10.30 – 14.00 WIB', place: 'Gedung Graha Anggun' },
+      ],
+      gallery: { title: 'Galeri Pangantén', caption: 'Rekaman kabagjaan sateuacan dinten anu dipiharep.' },
+      rsvp: { title: 'Konfirmasi Kasumpingan', text: 'Mohon konfirmasi kehadiran Bapak/Ibu/Saudara/i untuk membantu persiapan kami.' },
+      gift: { title: 'Tanda Kasih', text: 'Pangdu’a anjeun mangrupikeun kado anu pangéndahna. Upami bade masihan tanda kasih:' },
+      closing: {
+        quote: '“Silih asah, silih asih, silih asuh.”',
+        source: 'Falsafah Sunda',
+        message: 'Hatur nuhun kana sagala pangdu’a sareng kasumpinganana. Mugia kasaéan Bapak/Ibu/Saudara/i dibales ku Gusti Allah.',
+        signature: 'Raka & Ayu',
+      },
+    },
+  },
+
+  bali: {
+    id: 'bali',
+    name: 'Adat Bali',
+    tagline: 'Patra, jepun, merah prada',
+    category: 'pernikahan', group: 'Adat Nusantara',
+    colors: { primary: '#c99a3b', secondary: '#9c2b23', background: '#fbf4e4', surface: '#fffaf0', text: '#3d2418' },
+    fonts: { heading: 'Cinzel', body: 'Lora' },
+    headingColor: 'secondary',
+    vars: { '--radius': '8px', '--btn-radius': '6px', '--btn-shadow': '0 10px 22px -10px rgba(156,43,35,.6)', '--heading-spacing': '.05em', '--heading-transform': 'none' },
+    pattern: { id: 'patra', size: 90, opacity: 0.11 },
+    fx: { particles: { shapes: ['flower', 'petal', 'sparkle'], count: 14, motion: 'fall', size: [10, 20] }, patternMotion: 'none', glow: ['primary', '#f1d6c4'] },
+    ornaments: { divider: 'wayang', corner: 'tumpal', frame: 'arch', band: true },
+    sectionStyle: 'bordered',
+    copy: {
+      cover: { label: 'UPACARA PAWIWAHAN', names: 'Gede & Ayu' },
+      opening: {
+        title: 'Om Swastyastu',
+        text: 'Atas Asung Kertha Wara Nugraha Ida Sang Hyang Widhi Wasa, kami bermaksud mengundang Bapak/Ibu/Saudara/i pada upacara Manusa Yadnya Pawiwahan (pernikahan) putra-putri kami.',
+      },
+      profile: {
+        title: 'Mempelai',
+        people: people2(
+          { name: 'Gede', fullName: 'I Gede Raka Pratama', parents: 'Putra pertama dari I Made Hendra & Ni Ketut Sari' },
+          { name: 'Ayu', fullName: 'Ni Luh Ayu Lestari', parents: 'Putri kedua dari I Wayan Wibowo & Ni Nyoman Dewi' },
+        ),
+      },
+      events: [
+        { id: 'ev-pawiwahan', title: 'Upacara Pawiwahan', date: '2026-12-12', time: '09.00 – 12.00 WITA', place: 'Kediaman Mempelai Pria, Gianyar' },
+        { id: 'ev-resepsi', title: 'Resepsi', date: '2026-12-12', time: '18.00 – 21.00 WITA', place: 'Kediaman Mempelai Pria, Gianyar' },
+      ],
+      gallery: { title: 'Galeri Kenangan', caption: 'Sekilas kisah sebelum janji suci di hadapan Ida Sang Hyang Widhi Wasa.' },
+      rsvp: { title: 'Konfirmasi Kehadiran', text: 'Merupakan suatu kehormatan bila Bapak/Ibu/Saudara/i berkenan hadir.' },
+      gift: { title: 'Tanda Kasih', text: 'Doa restu Anda adalah anugerah terindah. Jika ingin memberi tanda kasih:' },
+      closing: {
+        quote: '“Semoga Ida Sang Hyang Widhi Wasa senantiasa melimpahkan rahmat bagi kedua mempelai dan keluarga.”',
+        source: '',
+        message: 'Atas kehadiran dan doa restu Bapak/Ibu/Saudara/i, kami ucapkan terima kasih. Om Shanti Shanti Shanti Om.',
+        signature: 'Gede & Ayu',
+      },
+    },
+  },
+
+  minang: {
+    id: 'minang',
+    name: 'Adat Minang',
+    tagline: 'Gonjong, songket, merah emas',
+    category: 'pernikahan', group: 'Adat Nusantara',
+    colors: { primary: '#d6a640', secondary: '#b3242c', background: '#2a0f10', surface: '#3a1718', text: '#f6e6c8' },
+    fonts: { heading: 'Playfair Display', body: 'Lora' },
+    headingColor: 'primary',
+    vars: { '--radius': '6px', '--btn-radius': '4px', '--btn-shadow': '0 10px 24px -10px rgba(0,0,0,.85)', '--heading-spacing': '.03em', '--heading-transform': 'none' },
+    pattern: { id: 'songket', size: 44, opacity: 0.1 },
+    fx: { particles: { shapes: ['diamond', 'sparkle', 'dot'], count: 16, motion: 'rise', size: [6, 14] }, patternMotion: 'drift', glow: ['secondary', 'primary'] },
+    ornaments: { divider: 'gonjong', corner: 'tumpal', frame: 'arch', band: true },
+    sectionStyle: 'bordered',
+    copy: {
+      cover: { label: 'BARALEK GADANG', names: 'Raka & Ayu' },
+      opening: {
+        title: 'Assalamu’alaikum Warahmatullahi Wabarakatuh',
+        text: 'Dengan memohon rahmat Allah SWT, kami sekeluarga mengundang Bapak/Ibu/Saudara/i, dunsanak sakalian, untuk hadir pada baralek pernikahan anak kemenakan kami.',
+      },
+      profile: {
+        title: 'Marapulai & Anak Daro',
+        people: people2(
+          { name: 'Raka', fullName: 'Raka Pratama gelar Sutan Mudo', parents: 'Putra dari Bapak Hendra & Ibu Sari' },
+          { name: 'Ayu', fullName: 'Ayu Lestari', parents: 'Putri dari Bapak Wibowo & Ibu Dewi' },
+        ),
+      },
+      events: [
+        { id: 'ev-akad', title: 'Akad Nikah', date: '2026-12-12', time: '08.00 – 10.00 WIB', place: 'Masjid Raya Sumatera Barat' },
+        { id: 'ev-baralek', title: 'Baralek (Resepsi)', date: '2026-12-13', time: '11.00 – 16.00 WIB', place: 'Rumah Gadang Keluarga, Bukittinggi' },
+      ],
+      gallery: { title: 'Galeri', caption: 'Sepotong cerita sebelum duduk bersanding di pelaminan.' },
+      rsvp: { title: 'Konfirmasi Kehadiran', text: 'Mohon kabarkan kehadiran dunsanak, agar kami dapat menyambut dengan layak.' },
+      gift: { title: 'Tanda Kasih', text: 'Doa restu dunsanak adalah hadiah terindah. Jika ingin memberi tanda kasih:' },
+      closing: {
+        quote: '“Adat basandi syarak, syarak basandi Kitabullah.”',
+        source: 'Falsafah Minangkabau',
+        message: 'Terima kasih atas doa dan kehadiran Bapak/Ibu/Saudara/i serta dunsanak sakalian.',
+        signature: 'Keluarga Besar Raka & Ayu',
+      },
+    },
+  },
+
+  batak: {
+    id: 'batak',
+    name: 'Adat Batak',
+    tagline: 'Gorga, ulos, merah hitam putih',
+    category: 'pernikahan', group: 'Adat Nusantara',
+    colors: { primary: '#e2d3b5', secondary: '#b3261e', background: '#141111', surface: '#201b1a', text: '#f2ece4' },
+    fonts: { heading: 'Cinzel', body: 'Montserrat' },
+    headingColor: 'primary',
+    vars: { '--radius': '4px', '--btn-radius': '4px', '--btn-shadow': '0 10px 24px -10px rgba(179,38,30,.6)', '--heading-spacing': '.06em', '--heading-transform': 'none' },
+    pattern: { id: 'gorga', size: 60, opacity: 0.09 },
+    fx: { particles: { shapes: ['diamond', 'dot'], count: 12, motion: 'rise', size: [5, 12] }, patternMotion: 'none', glow: ['secondary', '#3a2a24'] },
+    ornaments: { divider: 'spiral', corner: 'geometric', frame: 'rect', band: true },
+    sectionStyle: 'bordered',
+    copy: {
+      cover: { label: 'PESTA UNJUK', names: 'Raka & Ayu' },
+      opening: {
+        title: 'Horas!',
+        text: 'Dengan sukacita dan memohon berkat Tuhan Yang Maha Esa, kami mengundang Bapak/Ibu/Saudara/i untuk hadir pada pemberkatan nikah dan pesta adat putra-putri kami.',
+      },
+      profile: {
+        title: 'Mempelai',
+        people: people2(
+          { name: 'Raka', fullName: 'Raka Pratama Simanjuntak', parents: 'Putra dari Bapak H. Simanjuntak & Ibu S. br. Nainggolan' },
+          { name: 'Ayu', fullName: 'Ayu Lestari br. Siregar', parents: 'Putri dari Bapak W. Siregar & Ibu D. br. Hutapea' },
+        ),
+      },
+      events: [
+        { id: 'ev-pemberkatan', title: 'Pemberkatan Nikah', date: '2026-12-12', time: '09.00 – 11.00 WIB', place: 'HKBP Graha Anggun' },
+        { id: 'ev-unjuk', title: 'Pesta Unjuk (Adat)', date: '2026-12-12', time: '12.00 – 18.00 WIB', place: 'Gedung Graha Anggun' },
+      ],
+      gallery: { title: 'Galeri', caption: 'Cerita kami menuju hari yang diberkati.' },
+      rsvp: { title: 'Konfirmasi Kehadiran', text: 'Mohon konfirmasi kehadiran untuk membantu hasuhuton mempersiapkan acara.' },
+      gift: { title: 'Tanda Kasih', text: 'Doa dan kehadiran Anda adalah berkat bagi kami. Jika ingin memberi tanda kasih:' },
+      closing: {
+        quote: '“Somba marhula-hula, elek marboru, manat mardongan tubu.”',
+        source: 'Dalihan Na Tolu',
+        message: 'Mauliate godang atas doa dan kehadiran Bapak/Ibu/Saudara/i. Horas, horas, horas!',
+        signature: 'Raka & Ayu',
+      },
+    },
+  },
+
+  bugis: {
+    id: 'bugis',
+    name: 'Adat Bugis',
+    tagline: 'Baju bodo, sabbe, emas magenta',
+    category: 'pernikahan', group: 'Adat Nusantara',
+    colors: { primary: '#c99d3e', secondary: '#8e2a5a', background: '#faf3e6', surface: '#fffaf0', text: '#3a2a1c' },
+    fonts: { heading: 'Playfair Display', body: 'Poppins' },
+    headingColor: 'secondary',
+    vars: { '--radius': '12px', '--btn-radius': '999px', '--btn-shadow': '0 10px 22px -10px rgba(142,42,90,.6)', '--heading-spacing': '.02em', '--heading-transform': 'none' },
+    pattern: { id: 'sabbe', size: 48, opacity: 0.09 },
+    fx: { particles: { shapes: ['sparkle', 'diamond', 'petal'], count: 14, motion: 'twinkle', size: [7, 16] }, patternMotion: 'none', glow: ['secondary', 'primary'] },
+    ornaments: { divider: 'star', corner: 'geometric', frame: 'arch', band: false },
+    sectionStyle: 'framed',
+    copy: {
+      cover: { label: 'MAPPABOTTING', names: 'Andi & Ayu' },
+      opening: {
+        title: 'Assalamu’alaikum Warahmatullahi Wabarakatuh',
+        text: 'Dengan memohon rahmat dan ridho Allah SWT, kami mengundang Bapak/Ibu/Saudara/i untuk hadir pada akad nikah dan tudang botting putra-putri kami.',
+      },
+      profile: {
+        title: 'Mempelai',
+        people: people2(
+          { name: 'Andi', fullName: 'Andi Raka Pratama', parents: 'Putra dari Bapak Andi Hendra & Ibu Sari' },
+          { name: 'Ayu', fullName: 'Ayu Lestari', parents: 'Putri dari Bapak Wibowo & Ibu Dewi' },
+        ),
+      },
+      events: [
+        { id: 'ev-akad', title: 'Akad Nikah', date: '2026-12-12', time: '09.00 – 10.30 WITA', place: 'Kediaman Mempelai Wanita, Makassar' },
+        { id: 'ev-botting', title: 'Tudang Botting (Resepsi)', date: '2026-12-12', time: '12.00 – 16.00 WITA', place: 'Gedung Graha Anggun, Makassar' },
+      ],
+      gallery: { title: 'Galeri', caption: 'Langkah kami menuju pelaminan.' },
+      rsvp: { title: 'Konfirmasi Kehadiran', text: 'Mohon konfirmasi kehadiran Bapak/Ibu/Saudara/i untuk membantu persiapan kami.' },
+      gift: { title: 'Tanda Kasih', text: 'Doa restu Anda adalah hadiah terindah. Jika ingin memberi tanda kasih:' },
+      closing: {
+        quote: '“Sipakatau, sipakainge, sipakalebbi.”',
+        source: 'Falsafah Bugis',
+        message: 'Atas kehadiran dan doa restu Bapak/Ibu/Saudara/i, kami ucapkan terima kasih.',
+        signature: 'Andi & Ayu',
+      },
+    },
+  },
+
+  /* ──────────────────────────────── Ucapan ──────────────────────────────── */
+
+  ucapanUltahCewek: {
+    id: 'ucapanUltahCewek',
+    name: 'Untuk Cewek',
+    tagline: 'Peach, balon, manis',
+    category: 'ucapan', group: 'Ucapan Ulang Tahun', audience: 'female',
+    colors: { primary: '#e88a7d', secondary: '#c85a7c', background: '#fff4ef', surface: '#ffffff', text: '#4d2c35' },
+    fonts: { heading: 'Dancing Script', body: 'Poppins' },
+    headingColor: 'secondary',
+    vars: { '--radius': '26px', '--btn-radius': '999px', '--btn-shadow': '0 12px 26px -10px rgba(200,90,124,.55)', '--heading-spacing': '0', '--heading-transform': 'none' },
+    pattern: { id: 'dots', size: 40, opacity: 0.12 },
+    fx: { particles: { shapes: ['balloon', 'heart', 'sparkle'], count: 16, motion: 'rise', size: [10, 24] }, patternMotion: 'none', glow: ['primary', '#ffd6e4'] },
+    ornaments: { divider: 'heart', corner: 'vine', frame: 'oval', band: false },
+    sectionStyle: 'glass',
+    copy: {
+      cover: { label: 'HAPPY BIRTHDAY', names: 'Ayu', ...greetingCover },
+      opening: {
+        title: 'Selamat Ulang Tahun, Ayu!',
+        text: 'Semoga di usia yang baru ini kamu makin bahagia, makin sehat, dan semua mimpi kecil maupun besarmu satu per satu jadi nyata. Terima kasih sudah jadi orang yang begitu berarti.',
+      },
+      profile: {
+        title: 'Birthday Girl',
+        people: [{ name: 'Ayu', fullName: 'Ayu Lestari', parents: 'Makin bersinar di usia ke-22' }],
+      },
+      gallery: { title: 'Sweet Memories', caption: 'Potongan kecil cerita kita tahun ini.' },
+      closing: {
+        quote: '“Semoga tahun ini penuh tawa, cinta, dan kejutan-kejutan manis.”',
+        source: '',
+        message: 'Tetap jadi dirimu yang hangat dan menyenangkan, ya. Happy birthday!',
+        signature: 'Dari Raka, dengan sayang',
+      },
+    },
+  },
+
+  ucapanUltahCowok: {
+    id: 'ucapanUltahCowok',
+    name: 'Untuk Cowok',
+    tagline: 'Navy, amber, bold',
+    category: 'ucapan', group: 'Ucapan Ulang Tahun', audience: 'male',
+    colors: { primary: '#f2b632', secondary: '#f2b632', background: '#0f1b2d', surface: '#17263d', text: '#e9eef5' },
+    fonts: { heading: 'Bebas Neue', body: 'Inter' },
+    headingColor: 'primary',
+    vars: { '--radius': '8px', '--btn-radius': '6px', '--btn-shadow': '0 10px 24px -10px rgba(0,0,0,.8)', '--heading-spacing': '.06em', '--heading-transform': 'uppercase' },
+    pattern: { id: 'confetti', size: 110, opacity: 0.1 },
+    fx: { particles: { shapes: ['confetti', 'star8', 'dot'], count: 16, motion: 'rise', size: [8, 18] }, patternMotion: 'drift', glow: ['primary', '#2d6cdf'] },
+    ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
+    sectionStyle: 'bordered',
+    copy: {
+      cover: { label: 'HAPPY BIRTHDAY', names: 'Raka', ...greetingCover },
+      opening: {
+        title: 'Selamat Ulang Tahun, Bro!',
+        text: 'Level up satu tahun lagi! Semoga makin sehat, makin sukses, rezeki lancar, dan semua target tahun ini tembus. Tetap rendah hati dan jangan berhenti berkembang.',
+      },
+      profile: {
+        title: 'Birthday Boy',
+        people: [{ name: 'Raka', fullName: 'Raka Pratama', parents: 'Resmi naik level ke usia 25' }],
+      },
+      gallery: { title: 'Highlights', caption: 'Momen-momen terbaik sepanjang tahun ini.' },
+      closing: {
+        quote: '“Umur boleh nambah, semangat jangan pernah kurang.”',
+        source: '',
+        message: 'Sukses selalu dan semoga tahun ini jadi tahun terbaikmu. Cheers!',
+        signature: 'Dari teman-temanmu',
+      },
+    },
+  },
+
+  ucapanWisudaCewek: {
+    id: 'ucapanWisudaCewek',
+    name: 'Untuk Cewek',
+    tagline: 'Lavender, emas, anggun',
+    category: 'ucapan', group: 'Ucapan Wisuda', audience: 'female',
+    colors: { primary: '#c2a15a', secondary: '#8a6bb8', background: '#f8f4fc', surface: '#ffffff', text: '#3b2d4f' },
+    fonts: { heading: 'Cormorant Garamond', body: 'Poppins' },
+    headingColor: 'secondary',
+    vars: { '--radius': '22px', '--btn-radius': '999px', '--btn-shadow': '0 10px 24px -12px rgba(138,107,184,.65)', '--heading-spacing': '.01em', '--heading-transform': 'none' },
+    pattern: { id: 'floral', size: 120, opacity: 0.08 },
+    fx: { particles: { shapes: ['mortarboard', 'petal', 'sparkle'], count: 14, motion: 'fall', size: [10, 20] }, patternMotion: 'none', glow: ['secondary', '#f1e4c4'] },
+    ornaments: { divider: 'floral', corner: 'floral', frame: 'arch', band: false },
+    sectionStyle: 'airy',
+    copy: {
+      cover: { label: 'HAPPY GRADUATION', names: 'Ayu', ...greetingCover },
+      opening: {
+        title: 'Selamat Wisuda, Ayu!',
+        text: 'Semua malam panjang, revisi, dan doa akhirnya terbayar. Kamu hebat! Semoga ilmunya berkah dan langkah setelah ini membawamu ke tempat-tempat yang luar biasa.',
+      },
+      profile: {
+        title: 'Sang Wisudawati',
+        people: [{ name: 'Ayu', fullName: 'Ayu Lestari, S.Psi.', parents: 'Psikologi · Universitas Nusantara' }],
+      },
+      gallery: { title: 'Perjalanan Studi', caption: 'Dari mahasiswa baru hingga toga dikenakan.' },
+      closing: {
+        quote: '“Ini bukan akhir, melainkan awal dari cerita yang lebih indah.”',
+        source: '',
+        message: 'Bangga sekali padamu. Selamat menempuh babak baru!',
+        signature: 'Dengan bangga, Keluarga',
+      },
+    },
+  },
+
+  ucapanWisudaCowok: {
+    id: 'ucapanWisudaCowok',
+    name: 'Untuk Cowok',
+    tagline: 'Hitam, emas, klasik',
+    category: 'ucapan', group: 'Ucapan Wisuda', audience: 'male',
+    colors: { primary: '#d4af37', secondary: '#c9a227', background: '#121212', surface: '#1d1d1d', text: '#efe9dc' },
+    fonts: { heading: 'Cinzel', body: 'Montserrat' },
+    headingColor: 'primary',
+    vars: { '--radius': '6px', '--btn-radius': '4px', '--btn-shadow': '0 10px 24px -10px rgba(0,0,0,.85)', '--heading-spacing': '.06em', '--heading-transform': 'none' },
+    pattern: { id: 'grid', size: 48, opacity: 0.07 },
+    fx: { particles: { shapes: ['mortarboard', 'confetti', 'sparkle'], count: 14, motion: 'fall', size: [10, 22] }, patternMotion: 'none', glow: ['primary', '#3a3220'] },
+    ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
+    sectionStyle: 'bordered',
+    copy: {
+      cover: { label: 'CONGRATULATIONS GRADUATE', names: 'Raka', ...greetingCover },
+      opening: {
+        title: 'Selamat Wisuda, Raka!',
+        text: 'Satu misi besar selesai. Kerja keras, begadang, dan perjuanganmu akhirnya berbuah manis. Semoga ilmunya bermanfaat dan karier ke depan makin cemerlang.',
+      },
+      profile: {
+        title: 'Sang Wisudawan',
+        people: [{ name: 'Raka', fullName: 'Raka Pratama, S.T.', parents: 'Teknik Sipil · Universitas Nusantara' }],
+      },
+      gallery: { title: 'Perjalanan Studi', caption: 'Bab demi bab menuju hari ini.' },
+      closing: {
+        quote: '“Gelar adalah awal. Yang membuatnya berarti adalah apa yang kamu bangun setelahnya.”',
+        source: '',
+        message: 'Proud of you! Selamat melangkah ke babak berikutnya.',
+        signature: 'Dari keluarga & sahabat',
+      },
+    },
+  },
+
+  ucapanSuksesCewek: {
+    id: 'ucapanSuksesCewek',
+    name: 'Untuk Cewek',
+    tagline: 'Sage, rose gold, segar',
+    category: 'ucapan', group: 'Ucapan Semoga Sukses', audience: 'female',
+    colors: { primary: '#c58f7a', secondary: '#5f8b76', background: '#f4f8f5', surface: '#ffffff', text: '#2f3b35' },
+    fonts: { heading: 'Playfair Display', body: 'Poppins' },
+    headingColor: 'secondary',
+    vars: { '--radius': '22px', '--btn-radius': '999px', '--btn-shadow': '0 10px 24px -12px rgba(95,139,118,.65)', '--heading-spacing': '0', '--heading-transform': 'none' },
+    pattern: { id: 'leaves', size: 110, opacity: 0.09 },
+    fx: { particles: { shapes: ['leaf', 'flower', 'sparkle'], count: 14, motion: 'rise', size: [8, 18] }, patternMotion: 'none', glow: ['primary', '#d6e8dc'] },
+    ornaments: { divider: 'floral', corner: 'vine', frame: 'arch', band: false },
+    sectionStyle: 'glass',
+    copy: {
+      cover: { label: 'GOOD LUCK', names: 'Ayu', ...greetingCover },
+      opening: {
+        title: 'Semoga Sukses, Ayu!',
+        text: 'Untuk langkah baru yang sedang kamu mulai — semoga dilancarkan, dimudahkan, dan selalu dikelilingi orang-orang baik. Kamu pasti bisa!',
+      },
+      profile: {
+        title: 'Untukmu',
+        people: [{ name: 'Ayu', fullName: 'Ayu Lestari', parents: 'Selamat memulai perjalanan baru' }],
+      },
+      gallery: { title: 'Perjalananmu', caption: 'Setiap langkah kecil membawamu sampai di sini.' },
+      closing: {
+        quote: '“Percaya pada prosesnya. Hal-hal baik sedang menuju ke arahmu.”',
+        source: '',
+        message: 'Kami selalu mendukungmu. Semoga sukses dan bahagia selalu!',
+        signature: 'Dari kami yang selalu mendukungmu',
+      },
+    },
+  },
+
+  ucapanSuksesCowok: {
+    id: 'ucapanSuksesCowok',
+    name: 'Untuk Cowok',
+    tagline: 'Charcoal, teal, tegas',
+    category: 'ucapan', group: 'Ucapan Semoga Sukses', audience: 'male',
+    colors: { primary: '#3fc1a5', secondary: '#2fa58c', background: '#1c2128', surface: '#252b34', text: '#eef1f4' },
+    fonts: { heading: 'Bebas Neue', body: 'Inter' },
+    headingColor: 'primary',
+    vars: { '--radius': '8px', '--btn-radius': '6px', '--btn-shadow': '0 10px 24px -10px rgba(0,0,0,.8)', '--heading-spacing': '.06em', '--heading-transform': 'uppercase' },
+    pattern: { id: 'chevron', size: 40, opacity: 0.08 },
+    fx: { particles: { shapes: ['diamond', 'sparkle', 'dot'], count: 12, motion: 'rise', size: [6, 14] }, patternMotion: 'drift', glow: ['primary', '#2b3b4e'] },
+    ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
+    sectionStyle: 'bordered',
+    copy: {
+      cover: { label: 'GOOD LUCK', names: 'Raka', ...greetingCover },
+      opening: {
+        title: 'Semoga Sukses, Raka!',
+        text: 'Tantangan baru, level baru. Semoga semua rencana berjalan lancar, setiap usaha membuahkan hasil, dan kamu terus melangkah lebih jauh dari yang kamu bayangkan.',
+      },
+      profile: {
+        title: 'Untukmu',
+        people: [{ name: 'Raka', fullName: 'Raka Pratama', parents: 'Selamat atas langkah barunya' }],
+      },
+      gallery: { title: 'Perjalanan', caption: 'Dari titik awal hingga sekarang.' },
+      closing: {
+        quote: '“Kerja keras hari ini adalah kemenangan esok hari.”',
+        source: '',
+        message: 'Gas terus! Kami tunggu kabar baiknya.',
+        signature: 'Dari teman-temanmu',
+      },
+    },
+  },
 };
+
+// Turunkan sifat dari kategori: tema Ucapan memakai mode "greeting".
+for (const t of Object.values(themes)) {
+  const cat = themeCategories.find((c) => c.id === t.category);
+  t.kind = cat?.kind ?? 'invitation';
+  t.hiddenSections = t.kind === 'greeting' ? GREETING_HIDDEN_SECTIONS : [];
+}
 
 export const themeList = Object.values(themes);
 export const DEFAULT_THEME = 'wedding';

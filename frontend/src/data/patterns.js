@@ -109,6 +109,73 @@ export const patterns = {
   grid: (c) =>
     toUrl(svg(48, 48, c, `<path d='M24 0L48 24 24 48 0 24z'/><circle cx='24' cy='24' r='1.6' fill='${c}'/>`)),
 
+  /** Panah chevron ke atas: simbol pertumbuhan (ucapan sukses) */
+  chevron: (c) => toUrl(svg(40, 40, c, `<path d='M10 24l10-8 10 8'/><path d='M14 30l6-5 6 5' stroke-opacity='.5'/>`)),
+
+  /** Mega mendung: awan berlapis khas Cirebon / Jawa Barat (Sunda) */
+  megamendung: (c) => {
+    const cloud = 'M-30 8c-9 0-9-13 0-13 0-11 15-13 19-4 4-9 19-9 21 2 11-2 13 15 0 15z';
+    const layered = (x, y, s) =>
+      `<g transform='translate(${x} ${y}) scale(${s})'>${[1, 0.68, 0.38].map((k) => `<path transform='scale(${k})' d='${cloud}'/>`).join('')}</g>`;
+    return toUrl(svg(120, 80, c, `${layered(32, 22, 0.9)}${layered(92, 62, 0.9)}${layered(-28, 62, 0.9)}${layered(152, 22, 0.9)}`));
+  },
+
+  /** Patra: sulur ukiran Bali */
+  patra: (c) =>
+    toUrl(
+      svg(
+        80,
+        80,
+        c,
+        `<path d='M8 72c0-26 26-30 30-12 2 10-12 14-16 6-3-6 4-10 8-6'/>
+         <path transform='rotate(180 40 40)' d='M8 72c0-26 26-30 30-12 2 10-12 14-16 6-3-6 4-10 8-6'/>
+         <path d='M44 44c6-2 10 2 8 8M36 36c-6 2-10-2-8-8' stroke-opacity='.6'/>
+         <circle cx='70' cy='70' r='2' fill='${c}'/><circle cx='10' cy='10' r='2' fill='${c}'/>`,
+      ),
+    ),
+
+  /** Songket Minang: belah ketupat berisi dan bintik emas */
+  songket: (c) =>
+    toUrl(
+      svg(
+        40,
+        40,
+        c,
+        `<path d='M20 2L38 20 20 38 2 20z'/>
+         <path d='M20 11l9 9-9 9-9-9z' fill='${c}' fill-opacity='.35'/>
+         <circle cx='0' cy='0' r='2' fill='${c}'/><circle cx='40' cy='0' r='2' fill='${c}'/>
+         <circle cx='0' cy='40' r='2' fill='${c}'/><circle cx='40' cy='40' r='2' fill='${c}'/>`,
+      ),
+    ),
+
+  /** Gorga Batak: sulur spiral berpasangan */
+  gorga: (c) => {
+    const curl = 'M28 30h-8a8 8 0 1 1 8-8 4 4 0 1 1-4 4';
+    return toUrl(
+      svg(
+        60,
+        60,
+        c,
+        `<path d='${curl}'/><path transform='rotate(180 30 30)' d='${curl}'/>
+         <path d='M30 26l4 4-4 4-4-4z' fill='${c}'/>
+         <path d='M0 0l6 6M60 0l-6 6M0 60l6-6M60 60l-6-6'/>`,
+      ),
+    );
+  },
+
+  /** Lipa' sabbe Bugis: kotak-kotak sarung sutra */
+  sabbe: (c) =>
+    toUrl(
+      svg(
+        48,
+        48,
+        c,
+        `<path d='M0 10h48M0 14h48M10 0v48M14 0v48'/>
+         <path d='M0 34h48M34 0v48' stroke-opacity='.5'/>
+         <rect x='10' y='10' width='4' height='4' fill='${c}' fill-opacity='.5' stroke='none'/>`,
+      ),
+    ),
+
   /** Pita tumpal (segitiga berderet) untuk batas section bergaya Jawa */
   tumpalBand: (c) =>
     toUrl(
