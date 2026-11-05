@@ -11,4 +11,8 @@ export const shapes = {
   sparkle: '<path d="M12 1l2.2 8.8L23 12l-8.8 2.2L12 23l-2.2-8.8L1 12l8.8-2.2z"/>',
   diamond: '<path d="M12 1l7 11-7 11-7-11z"/>',
   dot: '<circle cx="12" cy="12" r="6"/>',
+  balloon: '<ellipse cx="12" cy="9" rx="6.5" ry="8"/><path d="M10.4 16.6h3.2L12 18.8z"/><rect x="11.6" y="18.6" width=".8" height="5.2" rx=".4"/>',
+  confetti: '<rect x="9" y="2" width="6" height="20" rx="1.5" transform="rotate(28 12 12)"/>',
+  leaf: '<path d="M4 20C4 10 10 4 20 4c0 10-6 16-16 16z"/>',
+  mortarboard: '<path d="M12 4L1 9l11 5 11-5z"/><path d="M5.5 11.6v4.4c0 1.7 2.9 3 6.5 3s6.5-1.3 6.5-3v-4.4L12 14.6z"/>',
 };
