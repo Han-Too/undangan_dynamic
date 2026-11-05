@@ -1,5 +1,6 @@
 import ColorEditor from '../components/builder/ColorEditor.vue';
 import ContentEditor from '../components/builder/ContentEditor.vue';
+import CoverEditor from '../components/builder/CoverEditor.vue';
 import EventEditor from '../components/builder/EventEditor.vue';
 import GalleryEditor from '../components/builder/GalleryEditor.vue';
 import GiftEditor from '../components/builder/GiftEditor.vue';
@@ -20,6 +21,7 @@ export const editorGroups = [
     label: 'Design',
     items: [
       { id: 'theme', label: 'Tema', icon: 'palette', component: ThemeSelector },
+      { id: 'cover', label: 'Cover', icon: 'layers', component: CoverEditor },
       { id: 'typography', label: 'Font', icon: 'type', component: TypographyEditor },
       { id: 'colors', label: 'Warna', icon: 'droplet', component: ColorEditor },
     ],

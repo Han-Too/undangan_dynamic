@@ -5,6 +5,7 @@ import { useMusic } from '../../composables/useMusic';
 import { sectionsForTheme } from '../../data/sections';
 import BackgroundFx from './fx/BackgroundFx.vue';
 import { shapes } from './fx/shapes';
+import GalleryLightbox from './GalleryLightbox.vue';
 import InvitationCover from './InvitationCover.vue';
 import MusicButton from './MusicButton.vue';
 import SectionShell from './SectionShell.vue';
@@ -24,6 +25,10 @@ provide('invEditor', {
   editable: toRef(props, 'editable'),
   request: (panel, focus) => emit('edit', { panel, focus }),
 });
+
+/** Lightbox galeri hidup di root agar menutupi seluruh layar undangan (bukan hanya section). */
+const lightbox = ref({ photos: [], index: null });
+provide('invLightbox', { open: (photos, index) => (lightbox.value = { photos, index }) });
 
 const scroller = ref(null);
 const sections = computed(() => sectionsForTheme(theme.value).filter((s) => state.sections[s.id] !== false));
@@ -106,5 +111,6 @@ defineExpose({ scrollToSection, showCover });
       />
     </div>
     <MusicButton v-if="opened && state.music.enabled" />
+    <GalleryLightbox v-if="lightbox.index !== null && lightbox.photos.length" v-model="lightbox.index" :photos="lightbox.photos" />
   </div>
 </template>

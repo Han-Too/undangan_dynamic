@@ -3,6 +3,10 @@ import { clone, deepMerge } from '../utils/object';
 
 export const createPhoto = () => ({ src: '', fit: 'cover', x: 50, y: 50, zoom: 1 });
 
+/** Jumlah slot foto galeri yang disiapkan; user memilih menampilkan 4, 6, atau 8. */
+export const MAX_GALLERY = 8;
+export const GALLERY_COUNTS = [4, 6, 8];
+
 /** Isi yang tidak bergantung pada tema. Teks khas tema ada di `themes[id].copy`. */
 export const baseContent = () => ({
   cover: { label: '', names: '', date: '2026-12-12T10:00', guestText: 'Kepada Yth. Bapak/Ibu/Saudara/i', buttonText: 'Buka Undangan' },
@@ -26,9 +30,13 @@ export function createDefaultInvitation() {
     theme: DEFAULT_THEME,
     typography: { heading: '', body: '' },
     colors: { primary: '', secondary: '', background: '', text: '' },
+    /** Desain cover. String kosong = ikuti bawaan tema (lihat `theme.cover`). */
+    coverStyle: { layout: '', frame: '', background: '' },
+    /** Tampilan galeri: jumlah foto, 'grid' | 'carousel', geser otomatis. */
+    gallery: { count: 4, mode: 'grid', autoplay: true },
     sections: { opening: true, profile: true, event: true, countdown: true, gallery: true, location: true, rsvp: true, gift: true, closing: true },
     content: deepMerge(baseContent(), clone(themes[DEFAULT_THEME].copy)),
-    photos: { cover: createPhoto(), profile: createPhoto(), gallery: [createPhoto(), createPhoto(), createPhoto(), createPhoto()] },
+    photos: { cover: createPhoto(), profile: createPhoto(), gallery: Array.from({ length: MAX_GALLERY }, createPhoto) },
     music: { enabled: true, custom: false, name: '', volume: 0.6 },
     location: {
       name: 'Gedung Graha Anggun',

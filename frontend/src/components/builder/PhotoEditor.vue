@@ -14,14 +14,15 @@ const { state, meta } = useInvitation();
 const { push } = useToast();
 
 // `ratio` = lebar / tinggi, sama dengan kotak tampil di undangan.
-const slots = [
+// Slot galeri mengikuti jumlah foto yang dipilih di menu Galeri (4 / 6 / 8).
+const slots = computed(() => [
   { key: 'cover', label: 'Foto cover', hint: 'Latar halaman pembuka (vertikal)', ratio: 9 / 16 },
   { key: 'profile', label: 'Foto profil / pasangan', hint: 'Dalam bingkai tema', ratio: 4 / 5 },
-  ...[0, 1, 2, 3].map((i) => ({ key: `gallery.${i}`, label: `Galeri ${i + 1}`, hint: '', ratio: i % 3 === 0 ? 3 / 4 : 1 })),
-];
+  ...Array.from({ length: state.gallery.count }, (_, i) => ({ key: `gallery.${i}`, label: `Galeri ${i + 1}`, hint: '', ratio: 4 / 5 })),
+]);
 
 const photoOf = (key) => key.split('.').reduce((o, k) => o[k], state.photos);
-const slotByKey = (key) => slots.find((s) => s.key === key);
+const slotByKey = (key) => slots.value.find((s) => s.key === key);
 
 const fileInput = ref(null);
 const pendingKey = ref(null); // slot yang sedang menerima file

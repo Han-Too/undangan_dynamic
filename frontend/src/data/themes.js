@@ -17,7 +17,8 @@
  *                glow        daftar warna cahaya lembut ('primary' | 'secondary' | hex)
  *  ornaments   divider: floral|star|wayang|heart|siger|gonjong|spiral · corner: floral|geometric|tumpal|vine
  *              frame: arch|oval|octagon|rect · band: true → pita tumpal di batas section
- *  sectionStyle  airy | framed | bordered | glass (lihat styles/invitation.css)
+ *  sectionStyle  airy | framed | bordered | glass | card | minimal (lihat styles/invitation.css)
+ *  cover       desain cover bawaan { layout, frame, background } (lihat coverBackgrounds.js & coverFrames.js)
  *  copy        teks bawaan tema. Dipakai saat ganti tema bila user belum mengubah teksnya.
  * ─────────────────────────────────────────────────────────────────────────────
  */
@@ -55,6 +56,7 @@ export const themes = {
     fx: { particles: { shapes: ['petal', 'flower'], count: 14, motion: 'fall', size: [10, 22] }, patternMotion: 'none', glow: ['primary', '#e8d9bd'] },
     ornaments: { divider: 'floral', corner: 'floral', frame: 'arch', band: false },
     sectionStyle: 'airy',
+    cover: { layout: 'arch', frame: 'bouquet', background: 'soft' },
     copy: {
       cover: { label: 'THE WEDDING OF', names: 'Raka & Ayu' },
       opening: {
@@ -90,13 +92,14 @@ export const themes = {
     tagline: 'Islami, ceria, hangat',
     category: 'syukuran',
     colors: { primary: '#c3a04d', secondary: '#0f6b4f', background: '#f7f3e6', surface: '#fffdf5', text: '#12392e' },
-    fonts: { heading: 'Playfair Display', body: 'Poppins' },
+    fonts: { heading: 'Playfair Display', body: 'Nunito' },
     headingColor: 'secondary',
     vars: { '--radius': '14px', '--btn-radius': '12px', '--btn-shadow': '0 8px 20px -10px rgba(15,107,79,.65)', '--heading-spacing': '0', '--heading-transform': 'none' },
     pattern: { id: 'islamicStar', size: 80, opacity: 0.09 },
     fx: { particles: { shapes: ['star8', 'sparkle', 'crescent'], count: 12, motion: 'twinkle', size: [10, 20] }, patternMotion: 'drift', glow: ['#0f6b4f', 'primary'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'octagon', band: false },
     sectionStyle: 'framed',
+    cover: { layout: 'center', frame: 'mihrab', background: 'islamic' },
     copy: {
       cover: { label: 'KHITANAN', names: 'Muhammad Raka' },
       opening: {
@@ -129,13 +132,14 @@ export const themes = {
     tagline: 'Tradisi, anggun, berkelas',
     category: 'pernikahan', group: 'Adat Nusantara',
     colors: { primary: '#c9a14a', secondary: '#8b2332', background: '#2a1a12', surface: '#37251b', text: '#f3e7cf' },
-    fonts: { heading: 'Cinzel', body: 'Lora' },
+    fonts: { heading: 'Cinzel Decorative', body: 'Lora' },
     headingColor: 'primary',
     vars: { '--radius': '6px', '--btn-radius': '4px', '--btn-shadow': '0 8px 22px -10px rgba(0,0,0,.8)', '--heading-spacing': '.06em', '--heading-transform': 'none' },
     pattern: { id: 'kawung', size: 64, opacity: 0.1 },
     fx: { particles: { shapes: ['dot', 'diamond', 'sparkle'], count: 16, motion: 'rise', size: [6, 14] }, patternMotion: 'drift', glow: ['#8b2332', 'primary'] },
     ornaments: { divider: 'wayang', corner: 'tumpal', frame: 'arch', band: true },
     sectionStyle: 'bordered',
+    cover: { layout: 'center', frame: 'gunungan', background: 'theme' },
     copy: {
       cover: { label: 'PAWIWAHAN', names: 'Raka & Ayu' },
       opening: {
@@ -171,13 +175,14 @@ export const themes = {
     tagline: 'Lembut, modern, penuh cinta',
     category: 'pernikahan', group: 'Modern',
     colors: { primary: '#c9507a', secondary: '#7b1e3a', background: '#fdf0f3', surface: '#fff8f9', text: '#4a1f2e' },
-    fonts: { heading: 'Great Vibes', body: 'Montserrat' },
+    fonts: { heading: 'Pinyon Script', body: 'Montserrat' },
     headingColor: 'secondary',
     vars: { '--radius': '28px', '--btn-radius': '999px', '--btn-shadow': '0 12px 28px -10px rgba(201,80,122,.65)', '--heading-spacing': '.01em', '--heading-transform': 'none' },
     pattern: { id: 'hearts', size: 90, opacity: 0.09 },
     fx: { particles: { shapes: ['heart', 'petal', 'sparkle'], count: 18, motion: 'rise', size: [10, 24] }, patternMotion: 'none', glow: ['primary', '#c9a7e8'] },
     ornaments: { divider: 'heart', corner: 'vine', frame: 'oval', band: false },
     sectionStyle: 'glass',
+    cover: { layout: 'card', frame: 'vine', background: 'aurora' },
     copy: {
       cover: { label: 'WE ARE GETTING MARRIED', names: 'Raka & Ayu' },
       opening: {
@@ -213,13 +218,14 @@ export const themes = {
     tagline: 'Hangat, kalem, intim',
     category: 'pernikahan', group: 'Lamaran & Tunangan',
     colors: { primary: '#c48b7a', secondary: '#6e8470', background: '#f8f3ef', surface: '#fffaf6', text: '#463a35' },
-    fonts: { heading: 'Cormorant Garamond', body: 'Inter' },
+    fonts: { heading: 'Italiana', body: 'Jost' },
     headingColor: 'text',
     vars: { '--radius': '20px', '--btn-radius': '999px', '--btn-shadow': '0 10px 24px -12px rgba(110,132,112,.7)', '--heading-spacing': '.01em', '--heading-transform': 'none' },
     pattern: { id: 'floral', size: 120, opacity: 0.08 },
     fx: { particles: { shapes: ['petal', 'sparkle'], count: 12, motion: 'fall', size: [8, 18] }, patternMotion: 'none', glow: ['primary', '#dfe6d8'] },
     ornaments: { divider: 'floral', corner: 'vine', frame: 'arch', band: false },
-    sectionStyle: 'airy',
+    sectionStyle: 'minimal',
+    cover: { layout: 'split', frame: 'floral4', background: 'paper' },
     copy: {
       cover: { label: 'THE ENGAGEMENT OF', names: 'Raka & Ayu' },
       opening: {
@@ -254,13 +260,14 @@ export const themes = {
     tagline: 'Ceria, warna-warni, seru',
     category: 'ulangTahun',
     colors: { primary: '#f0913e', secondary: '#3d7dd8', background: '#fff8ec', surface: '#ffffff', text: '#3a3352' },
-    fonts: { heading: 'Dancing Script', body: 'Poppins' },
+    fonts: { heading: 'Fredoka', body: 'Quicksand' },
     headingColor: 'secondary',
     vars: { '--radius': '24px', '--btn-radius': '999px', '--btn-shadow': '0 10px 22px -10px rgba(61,125,216,.6)', '--heading-spacing': '0', '--heading-transform': 'none' },
     pattern: { id: 'confetti', size: 100, opacity: 0.14 },
     fx: { particles: { shapes: ['balloon', 'confetti', 'star8'], count: 16, motion: 'rise', size: [12, 26] }, patternMotion: 'drift', glow: ['primary', '#ffd3e0'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'oval', band: false },
-    sectionStyle: 'airy',
+    sectionStyle: 'card',
+    cover: { layout: 'center', frame: 'balloons', background: 'confetti' },
     copy: {
       cover: { label: 'ULANG TAHUN KE-5', names: 'Alya' },
       opening: {
@@ -292,13 +299,14 @@ export const themes = {
     tagline: 'Elegan, malam, berkilau',
     category: 'ulangTahun',
     colors: { primary: '#d4af6a', secondary: '#e07a9b', background: '#1b1f33', surface: '#252a42', text: '#f1ecdf' },
-    fonts: { heading: 'Playfair Display', body: 'Montserrat' },
+    fonts: { heading: 'DM Serif Display', body: 'Outfit' },
     headingColor: 'primary',
     vars: { '--radius': '16px', '--btn-radius': '999px', '--btn-shadow': '0 10px 26px -10px rgba(0,0,0,.8)', '--heading-spacing': '.02em', '--heading-transform': 'none' },
     pattern: { id: 'dots', size: 36, opacity: 0.08 },
     fx: { particles: { shapes: ['sparkle', 'confetti', 'dot'], count: 18, motion: 'rise', size: [6, 16] }, patternMotion: 'drift', glow: ['primary', 'secondary'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
     sectionStyle: 'glass',
+    cover: { layout: 'editorial', frame: 'stars', background: 'bokeh' },
     copy: {
       cover: { label: 'HAPPY BIRTHDAY', names: 'Raka Pratama' },
       opening: {
@@ -330,13 +338,14 @@ export const themes = {
     tagline: 'Manis, girly, berkilau',
     category: 'ulangTahun',
     colors: { primary: '#a66cc9', secondary: '#d9568f', background: '#fbf4fd', surface: '#ffffff', text: '#45284f' },
-    fonts: { heading: 'Great Vibes', body: 'Poppins' },
+    fonts: { heading: 'Alex Brush', body: 'Poppins' },
     headingColor: 'secondary',
     vars: { '--radius': '26px', '--btn-radius': '999px', '--btn-shadow': '0 12px 26px -10px rgba(217,86,143,.6)', '--heading-spacing': '.01em', '--heading-transform': 'none' },
     pattern: { id: 'dots', size: 44, opacity: 0.1 },
     fx: { particles: { shapes: ['sparkle', 'heart', 'dot'], count: 18, motion: 'twinkle', size: [8, 18] }, patternMotion: 'none', glow: ['primary', '#ffc9de'] },
     ornaments: { divider: 'heart', corner: 'vine', frame: 'oval', band: false },
     sectionStyle: 'glass',
+    cover: { layout: 'arch', frame: 'stars', background: 'aurora' },
     copy: {
       cover: { label: 'SWEET SEVENTEEN', names: 'Ayu' },
       opening: {
@@ -368,13 +377,14 @@ export const themes = {
     tagline: 'Lembut, islami, penuh syukur',
     category: 'syukuran',
     colors: { primary: '#c9a85c', secondary: '#3f8a7f', background: '#f2f8f6', surface: '#ffffff', text: '#24433e' },
-    fonts: { heading: 'Playfair Display', body: 'Poppins' },
+    fonts: { heading: 'Gilda Display', body: 'Nunito' },
     headingColor: 'secondary',
     vars: { '--radius': '18px', '--btn-radius': '999px', '--btn-shadow': '0 8px 20px -10px rgba(63,138,127,.6)', '--heading-spacing': '0', '--heading-transform': 'none' },
     pattern: { id: 'islamicStar', size: 80, opacity: 0.08 },
     fx: { particles: { shapes: ['star8', 'crescent', 'sparkle'], count: 12, motion: 'twinkle', size: [8, 18] }, patternMotion: 'drift', glow: ['secondary', '#f3e6c4'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'arch', band: false },
     sectionStyle: 'framed',
+    cover: { layout: 'center', frame: 'floralTop', background: 'glow' },
     copy: {
       cover: { label: 'TASYAKURAN AQIQAH', names: 'Arsyad' },
       opening: {
@@ -406,13 +416,14 @@ export const themes = {
     tagline: 'Natural, sederhana, hangat',
     category: 'syukuran',
     colors: { primary: '#b5853f', secondary: '#4f6b3a', background: '#f6f1e4', surface: '#fffcf3', text: '#3b3226' },
-    fonts: { heading: 'Lora', body: 'Poppins' },
+    fonts: { heading: 'Crimson Pro', body: 'Lato' },
     headingColor: 'secondary',
     vars: { '--radius': '14px', '--btn-radius': '12px', '--btn-shadow': '0 8px 20px -10px rgba(79,107,58,.6)', '--heading-spacing': '0', '--heading-transform': 'none' },
     pattern: { id: 'leaves', size: 110, opacity: 0.1 },
     fx: { particles: { shapes: ['leaf', 'petal'], count: 12, motion: 'fall', size: [10, 20] }, patternMotion: 'none', glow: ['primary', '#d9e2c6'] },
     ornaments: { divider: 'floral', corner: 'vine', frame: 'arch', band: false },
-    sectionStyle: 'framed',
+    sectionStyle: 'minimal',
+    cover: { layout: 'bottom', frame: 'leaves', background: 'paper' },
     copy: {
       cover: { label: 'TASYAKURAN', names: 'Keluarga Pratama' },
       opening: {
@@ -445,13 +456,14 @@ export const themes = {
     tagline: 'Formal, bangga, berprestasi',
     category: 'lainnya',
     colors: { primary: '#c9a227', secondary: '#1f3a68', background: '#f5f6fa', surface: '#ffffff', text: '#1d2742' },
-    fonts: { heading: 'Cinzel', body: 'Inter' },
+    fonts: { heading: 'Cinzel', body: 'Raleway' },
     headingColor: 'secondary',
     vars: { '--radius': '10px', '--btn-radius': '8px', '--btn-shadow': '0 8px 20px -10px rgba(31,58,104,.6)', '--heading-spacing': '.04em', '--heading-transform': 'none' },
     pattern: { id: 'grid', size: 48, opacity: 0.07 },
     fx: { particles: { shapes: ['mortarboard', 'confetti', 'sparkle'], count: 14, motion: 'fall', size: [10, 22] }, patternMotion: 'none', glow: ['primary', '#c9d4ea'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
-    sectionStyle: 'bordered',
+    sectionStyle: 'card',
+    cover: { layout: 'editorial', frame: 'royal', background: 'split' },
     copy: {
       cover: { label: 'GRADUATION CELEBRATION', names: 'Ayu Lestari' },
       opening: {
@@ -483,13 +495,14 @@ export const themes = {
     tagline: 'Modern, minimalis, serbaguna',
     category: 'lainnya',
     colors: { primary: '#e0663f', secondary: '#1f2a37', background: '#f7f5f2', surface: '#ffffff', text: '#1f2a37' },
-    fonts: { heading: 'Montserrat', body: 'Inter' },
+    fonts: { heading: 'Oswald', body: 'Inter' },
     headingColor: 'secondary',
     vars: { '--radius': '12px', '--btn-radius': '10px', '--btn-shadow': '0 8px 20px -12px rgba(31,42,55,.7)', '--heading-spacing': '.02em', '--heading-transform': 'none' },
     pattern: { id: 'grid', size: 56, opacity: 0.06 },
     fx: { particles: { shapes: ['dot', 'diamond'], count: 10, motion: 'twinkle', size: [5, 11] }, patternMotion: 'drift', glow: ['primary', '#d7dde6'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
-    sectionStyle: 'airy',
+    sectionStyle: 'minimal',
+    cover: { layout: 'editorial', frame: 'bracket', background: 'stripes' },
     copy: {
       cover: { label: 'YOU’RE INVITED', names: 'Reuni Akbar 2026' },
       opening: {
@@ -531,6 +544,7 @@ export const themes = {
     fx: { particles: { shapes: ['flower', 'petal', 'sparkle'], count: 14, motion: 'fall', size: [8, 18] }, patternMotion: 'drift', glow: ['primary', '#cfe0d5'] },
     ornaments: { divider: 'siger', corner: 'floral', frame: 'arch', band: false },
     sectionStyle: 'framed',
+    cover: { layout: 'arch', frame: 'floralTop', background: 'theme' },
     copy: {
       cover: { label: 'NIKAH ADAT SUNDA', names: 'Raka & Ayu' },
       opening: {
@@ -566,13 +580,14 @@ export const themes = {
     tagline: 'Patra, jepun, merah prada',
     category: 'pernikahan', group: 'Adat Nusantara',
     colors: { primary: '#c99a3b', secondary: '#9c2b23', background: '#fbf4e4', surface: '#fffaf0', text: '#3d2418' },
-    fonts: { heading: 'Cinzel', body: 'Lora' },
+    fonts: { heading: 'Cinzel Decorative', body: 'Lora' },
     headingColor: 'secondary',
     vars: { '--radius': '8px', '--btn-radius': '6px', '--btn-shadow': '0 10px 22px -10px rgba(156,43,35,.6)', '--heading-spacing': '.05em', '--heading-transform': 'none' },
     pattern: { id: 'patra', size: 90, opacity: 0.11 },
     fx: { particles: { shapes: ['flower', 'petal', 'sparkle'], count: 14, motion: 'fall', size: [10, 20] }, patternMotion: 'none', glow: ['primary', '#f1d6c4'] },
     ornaments: { divider: 'wayang', corner: 'tumpal', frame: 'arch', band: true },
     sectionStyle: 'bordered',
+    cover: { layout: 'center', frame: 'tumpal', background: 'theme' },
     copy: {
       cover: { label: 'UPACARA PAWIWAHAN', names: 'Gede & Ayu' },
       opening: {
@@ -608,13 +623,14 @@ export const themes = {
     tagline: 'Gonjong, songket, merah emas',
     category: 'pernikahan', group: 'Adat Nusantara',
     colors: { primary: '#d6a640', secondary: '#b3242c', background: '#2a0f10', surface: '#3a1718', text: '#f6e6c8' },
-    fonts: { heading: 'Playfair Display', body: 'Lora' },
+    fonts: { heading: 'Prata', body: 'Lora' },
     headingColor: 'primary',
     vars: { '--radius': '6px', '--btn-radius': '4px', '--btn-shadow': '0 10px 24px -10px rgba(0,0,0,.85)', '--heading-spacing': '.03em', '--heading-transform': 'none' },
     pattern: { id: 'songket', size: 44, opacity: 0.1 },
     fx: { particles: { shapes: ['diamond', 'sparkle', 'dot'], count: 16, motion: 'rise', size: [6, 14] }, patternMotion: 'drift', glow: ['secondary', 'primary'] },
     ornaments: { divider: 'gonjong', corner: 'tumpal', frame: 'arch', band: true },
     sectionStyle: 'bordered',
+    cover: { layout: 'card', frame: 'deco', background: 'songket' },
     copy: {
       cover: { label: 'BARALEK GADANG', names: 'Raka & Ayu' },
       opening: {
@@ -650,13 +666,14 @@ export const themes = {
     tagline: 'Gorga, ulos, merah hitam putih',
     category: 'pernikahan', group: 'Adat Nusantara',
     colors: { primary: '#e2d3b5', secondary: '#b3261e', background: '#141111', surface: '#201b1a', text: '#f2ece4' },
-    fonts: { heading: 'Cinzel', body: 'Montserrat' },
+    fonts: { heading: 'Cinzel', body: 'Josefin Sans' },
     headingColor: 'primary',
     vars: { '--radius': '4px', '--btn-radius': '4px', '--btn-shadow': '0 10px 24px -10px rgba(179,38,30,.6)', '--heading-spacing': '.06em', '--heading-transform': 'none' },
     pattern: { id: 'gorga', size: 60, opacity: 0.09 },
     fx: { particles: { shapes: ['diamond', 'dot'], count: 12, motion: 'rise', size: [5, 12] }, patternMotion: 'none', glow: ['secondary', '#3a2a24'] },
     ornaments: { divider: 'spiral', corner: 'geometric', frame: 'rect', band: true },
     sectionStyle: 'bordered',
+    cover: { layout: 'center', frame: 'double', background: 'vignette' },
     copy: {
       cover: { label: 'PESTA UNJUK', names: 'Raka & Ayu' },
       opening: {
@@ -692,13 +709,14 @@ export const themes = {
     tagline: 'Baju bodo, sabbe, emas magenta',
     category: 'pernikahan', group: 'Adat Nusantara',
     colors: { primary: '#c99d3e', secondary: '#8e2a5a', background: '#faf3e6', surface: '#fffaf0', text: '#3a2a1c' },
-    fonts: { heading: 'Playfair Display', body: 'Poppins' },
+    fonts: { heading: 'Bodoni Moda', body: 'Poppins' },
     headingColor: 'secondary',
     vars: { '--radius': '12px', '--btn-radius': '999px', '--btn-shadow': '0 10px 22px -10px rgba(142,42,90,.6)', '--heading-spacing': '.02em', '--heading-transform': 'none' },
     pattern: { id: 'sabbe', size: 48, opacity: 0.09 },
     fx: { particles: { shapes: ['sparkle', 'diamond', 'petal'], count: 14, motion: 'twinkle', size: [7, 16] }, patternMotion: 'none', glow: ['secondary', 'primary'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'arch', band: false },
     sectionStyle: 'framed',
+    cover: { layout: 'arch', frame: 'dots', background: 'theme' },
     copy: {
       cover: { label: 'MAPPABOTTING', names: 'Andi & Ayu' },
       opening: {
@@ -736,13 +754,14 @@ export const themes = {
     tagline: 'Peach, balon, manis',
     category: 'ucapan', group: 'Ucapan Ulang Tahun', audience: 'female',
     colors: { primary: '#e88a7d', secondary: '#c85a7c', background: '#fff4ef', surface: '#ffffff', text: '#4d2c35' },
-    fonts: { heading: 'Dancing Script', body: 'Poppins' },
+    fonts: { heading: 'Dancing Script', body: 'Quicksand' },
     headingColor: 'secondary',
     vars: { '--radius': '26px', '--btn-radius': '999px', '--btn-shadow': '0 12px 26px -10px rgba(200,90,124,.55)', '--heading-spacing': '0', '--heading-transform': 'none' },
     pattern: { id: 'dots', size: 40, opacity: 0.12 },
     fx: { particles: { shapes: ['balloon', 'heart', 'sparkle'], count: 16, motion: 'rise', size: [10, 24] }, patternMotion: 'none', glow: ['primary', '#ffd6e4'] },
     ornaments: { divider: 'heart', corner: 'vine', frame: 'oval', band: false },
-    sectionStyle: 'glass',
+    sectionStyle: 'card',
+    cover: { layout: 'card', frame: 'balloons', background: 'bokeh' },
     copy: {
       cover: { label: 'HAPPY BIRTHDAY', names: 'Ayu', ...greetingCover },
       opening: {
@@ -776,6 +795,7 @@ export const themes = {
     fx: { particles: { shapes: ['confetti', 'star8', 'dot'], count: 16, motion: 'rise', size: [8, 18] }, patternMotion: 'drift', glow: ['primary', '#2d6cdf'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
     sectionStyle: 'bordered',
+    cover: { layout: 'editorial', frame: 'bracket', background: 'theme' },
     copy: {
       cover: { label: 'HAPPY BIRTHDAY', names: 'Raka', ...greetingCover },
       opening: {
@@ -802,13 +822,14 @@ export const themes = {
     tagline: 'Lavender, emas, anggun',
     category: 'ucapan', group: 'Ucapan Wisuda', audience: 'female',
     colors: { primary: '#c2a15a', secondary: '#8a6bb8', background: '#f8f4fc', surface: '#ffffff', text: '#3b2d4f' },
-    fonts: { heading: 'Cormorant Garamond', body: 'Poppins' },
+    fonts: { heading: 'Allura', body: 'Josefin Sans' },
     headingColor: 'secondary',
     vars: { '--radius': '22px', '--btn-radius': '999px', '--btn-shadow': '0 10px 24px -12px rgba(138,107,184,.65)', '--heading-spacing': '.01em', '--heading-transform': 'none' },
     pattern: { id: 'floral', size: 120, opacity: 0.08 },
     fx: { particles: { shapes: ['mortarboard', 'petal', 'sparkle'], count: 14, motion: 'fall', size: [10, 20] }, patternMotion: 'none', glow: ['secondary', '#f1e4c4'] },
     ornaments: { divider: 'floral', corner: 'floral', frame: 'arch', band: false },
     sectionStyle: 'airy',
+    cover: { layout: 'arch', frame: 'floralTop', background: 'soft' },
     copy: {
       cover: { label: 'HAPPY GRADUATION', names: 'Ayu', ...greetingCover },
       opening: {
@@ -842,6 +863,7 @@ export const themes = {
     fx: { particles: { shapes: ['mortarboard', 'confetti', 'sparkle'], count: 14, motion: 'fall', size: [10, 22] }, patternMotion: 'none', glow: ['primary', '#3a3220'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
     sectionStyle: 'bordered',
+    cover: { layout: 'center', frame: 'royal', background: 'marble' },
     copy: {
       cover: { label: 'CONGRATULATIONS GRADUATE', names: 'Raka', ...greetingCover },
       opening: {
@@ -868,13 +890,14 @@ export const themes = {
     tagline: 'Sage, rose gold, segar',
     category: 'ucapan', group: 'Ucapan Semoga Sukses', audience: 'female',
     colors: { primary: '#c58f7a', secondary: '#5f8b76', background: '#f4f8f5', surface: '#ffffff', text: '#2f3b35' },
-    fonts: { heading: 'Playfair Display', body: 'Poppins' },
+    fonts: { heading: 'Parisienne', body: 'Nunito' },
     headingColor: 'secondary',
     vars: { '--radius': '22px', '--btn-radius': '999px', '--btn-shadow': '0 10px 24px -12px rgba(95,139,118,.65)', '--heading-spacing': '0', '--heading-transform': 'none' },
     pattern: { id: 'leaves', size: 110, opacity: 0.09 },
     fx: { particles: { shapes: ['leaf', 'flower', 'sparkle'], count: 14, motion: 'rise', size: [8, 18] }, patternMotion: 'none', glow: ['primary', '#d6e8dc'] },
     ornaments: { divider: 'floral', corner: 'vine', frame: 'arch', band: false },
-    sectionStyle: 'glass',
+    sectionStyle: 'minimal',
+    cover: { layout: 'split', frame: 'leaves', background: 'paper' },
     copy: {
       cover: { label: 'GOOD LUCK', names: 'Ayu', ...greetingCover },
       opening: {
@@ -908,6 +931,7 @@ export const themes = {
     fx: { particles: { shapes: ['diamond', 'sparkle', 'dot'], count: 12, motion: 'rise', size: [6, 14] }, patternMotion: 'drift', glow: ['primary', '#2b3b4e'] },
     ornaments: { divider: 'star', corner: 'geometric', frame: 'rect', band: false },
     sectionStyle: 'bordered',
+    cover: { layout: 'editorial', frame: 'ribbon', background: 'theme' },
     copy: {
       cover: { label: 'GOOD LUCK', names: 'Raka', ...greetingCover },
       opening: {
@@ -933,6 +957,7 @@ export const themes = {
 for (const t of Object.values(themes)) {
   const cat = themeCategories.find((c) => c.id === t.category);
   t.kind = cat?.kind ?? 'invitation';
+  t.cover = { layout: 'center', frame: 'theme', background: 'theme', ...t.cover };
   t.hiddenSections = t.kind === 'greeting' ? GREETING_HIDDEN_SECTIONS : [];
 }
 

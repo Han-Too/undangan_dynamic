@@ -83,6 +83,11 @@ watch(
   async () => {
     const skip = fromPreview;
     fromPreview = false;
+    // Panel Cover: tampilkan cover di preview supaya perubahan desain langsung terlihat.
+    if (ui.panel === 'cover' && ui.mode === 'edit') {
+      showCover();
+      return;
+    }
     const target = getPanel(ui.panel).section;
     if (skip || !target || ui.mode !== 'edit') return;
     opened.value = true;

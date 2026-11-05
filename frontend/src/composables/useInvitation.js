@@ -1,5 +1,5 @@
 import { computed, reactive, ref, shallowRef, watchEffect } from 'vue';
-import { baseContent, createDefaultInvitation } from '../data/defaults';
+import { baseContent, createDefaultInvitation, createPhoto, MAX_GALLERY } from '../data/defaults';
 import { fontStack, getFont } from '../data/fonts';
 import { patterns } from '../data/patterns';
 import { getTheme, themes } from '../data/themes';
@@ -30,6 +30,12 @@ const dirty = computed(() => audioChanged.value || JSON.stringify(state) !== sav
 const theme = computed(() => getTheme(state.theme));
 /** Tema kategori "Ucapan": kartu ucapan tanpa detail acara (lihat `hiddenSections` di themes.js). */
 const isGreeting = computed(() => theme.value.kind === 'greeting');
+/** Desain cover efektif: pilihan user, atau bawaan tema. */
+const coverDesign = computed(() => ({
+  layout: state.coverStyle.layout || theme.value.cover.layout,
+  frame: state.coverStyle.frame || theme.value.cover.frame,
+  background: state.coverStyle.background || theme.value.cover.background,
+}));
 
 /** `blob` = file lokal yang belum diunggah; null = pakai audio dari server (bila ada). */
 const setAudioBlob = (blob) => {
@@ -48,6 +54,8 @@ function loadInvitation(invitation, { guest: g = null } = {}) {
   const { config, ...rest } = invitation;
   const source = config && typeof config === 'object' && !Array.isArray(config) ? config : {};
   assignInPlace(state, deepMerge(createDefaultInvitation(), clone(source)));
+  // Undangan lama hanya punya 4 slot galeri: lengkapi sampai MAX_GALLERY.
+  while (state.photos.gallery.length < MAX_GALLERY) state.photos.gallery.push(createPhoto());
   meta.value = rest;
   guest.value = g;
   setAudioBlob(null);
@@ -98,6 +106,7 @@ const cssVars = computed(() => {
     '--pattern-size': `${t.pattern.size}px`,
     '--pattern-opacity': t.pattern.opacity,
     '--band-img': t.ornaments.band ? patterns.tumpalBand(primary) : 'none',
+    '--tumpal-img': patterns.tumpalBand(primary),
     '--glow-a': glowColor(t.fx.glow[0], primary, secondary),
     '--glow-b': glowColor(t.fx.glow[1] ?? t.fx.glow[0], primary, secondary),
     ...t.vars,
@@ -176,6 +185,7 @@ export function useInvitation() {
     guest,
     theme,
     isGreeting,
+    coverDesign,
     cssVars,
     headingFont,
     bodyFont,

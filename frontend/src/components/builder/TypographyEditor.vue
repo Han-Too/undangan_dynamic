@@ -1,11 +1,20 @@
 <script setup>
+import { reactive } from 'vue';
 import { useInvitation } from '../../composables/useInvitation';
-import { fontStack, fonts } from '../../data/fonts';
+import { fontGroups, fontStack, fonts } from '../../data/fonts';
 import { useFontsPreload } from './useFontsPreload';
 import PanelHeader from './ui/PanelHeader.vue';
 
 const { state, theme, headingFont, bodyFont } = useInvitation();
 useFontsPreload();
+
+// Filter grup per daftar; font isi hanya menawarkan grup yang nyaman dibaca untuk teks panjang.
+const tab = reactive({ heading: 'all', body: 'all' });
+const groupsFor = (key) => fontGroups.filter((g) => key === 'heading' || g.body);
+const listFor = (key) => {
+  const allowed = groupsFor(key).map((g) => g.id);
+  return fonts.filter((f) => allowed.includes(f.group) && (tab[key] === 'all' || f.group === tab[key]));
+};
 
 const groups = [
   { key: 'heading', title: 'Heading', hint: 'Nama, judul, dan headline', sample: 'Raka & Ayu' },
@@ -29,6 +38,20 @@ const groups = [
         <h3>{{ g.title }} Font</h3>
         <small>{{ g.hint }}</small>
       </div>
+      <div class="chips" role="tablist" :aria-label="`Grup ${g.title} font`">
+        <button type="button" role="tab" :aria-selected="tab[g.key] === 'all'" :class="{ 'is-on': tab[g.key] === 'all' }" @click="tab[g.key] = 'all'">Semua</button>
+        <button
+          v-for="fg in groupsFor(g.key)"
+          :key="fg.id"
+          type="button"
+          role="tab"
+          :aria-selected="tab[g.key] === fg.id"
+          :class="{ 'is-on': tab[g.key] === fg.id }"
+          @click="tab[g.key] = fg.id"
+        >
+          {{ fg.name }}
+        </button>
+      </div>
       <div class="fonts" role="radiogroup" :aria-label="`${g.title} font`">
         <button
           type="button"
@@ -42,7 +65,7 @@ const groups = [
           <span class="font__sub">{{ theme.fonts[g.key] }}</span>
         </button>
         <button
-          v-for="f in fonts"
+          v-for="f in listFor(g.key)"
           :key="f.name"
           type="button"
           role="radio"
@@ -69,6 +92,9 @@ const groups = [
 }
 .sample__h { margin: 0 0 6px; font-size: 34px; line-height: 1.15; }
 .sample__b { margin: 0; font-size: 13px; color: var(--ui-muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chips button { padding: 4px 10px; font-size: 11.5px; font-weight: 600; color: var(--ui-muted); background: var(--ui-surface); border: 1px solid var(--ui-border); border-radius: 999px; }
+.chips button.is-on { color: #fff; background: var(--ui-ink); border-color: var(--ui-ink); }
 .head h3 { margin: 0; font-size: 14px; }
 .head small { color: var(--ui-muted); font-size: 12px; }
 .fonts { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
