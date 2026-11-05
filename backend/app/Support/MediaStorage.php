@@ -22,9 +22,13 @@ class MediaStorage
 
     private const API_VERSION = '13';
 
+    /**
+     * Blob aktif bila ada BLOB_READ_WRITE_TOKEN (store lama) atau BLOB_STORE_ID (store baru, auth via OIDC).
+     * Keduanya otomatis ditambahkan Vercel saat Blob store dihubungkan ke project.
+     */
     public static function usesBlob(): bool
     {
-        return filled(config('services.vercel_blob.token'));
+        return filled(config('services.vercel_blob.token')) || filled(config('services.vercel_blob.store_id'));
     }
 
     /** Simpan file di folder `$dir`; mengembalikan nilai yang disimpan di DB (path lokal atau URL Blob). */
@@ -123,15 +127,52 @@ class MediaStorage
 
     private static function request()
     {
-        $token = config('services.vercel_blob.token');
-        // Format token: vercel_blob_rw_<storeId>_<secret>
-        $storeId = explode('_', $token)[3] ?? '';
+        [$token, $storeId] = self::credentials();
 
         return Http::withToken($token)
             ->withHeaders(['x-api-version' => self::API_VERSION, 'x-vercel-blob-store-id' => $storeId])
             ->acceptJson()
             ->timeout(60)
             ->retry(2, 500, throw: false);
+    }
+
+    /**
+     * Sama seperti resolveBlobAuth() di SDK @vercel/blob:
+     * 1. Read-write token (format vercel_blob_rw_<storeId>_<secret>).
+     * 2. OIDC token Vercel + BLOB_STORE_ID. Token diambil dari header request `x-vercel-oidc-token`,
+     *    file VERCEL_OIDC_TOKEN_FILE, atau env VERCEL_OIDC_TOKEN (urutan yang sama dengan @vercel/oidc).
+     *
+     * @return array{0: string, 1: string} [token, storeId]
+     */
+    private static function credentials(): array
+    {
+        $readWrite = config('services.vercel_blob.token');
+        if (filled($readWrite)) {
+            return [$readWrite, explode('_', $readWrite)[3] ?? ''];
+        }
+
+        $storeId = (string) config('services.vercel_blob.store_id');
+        $storeId = str_starts_with($storeId, 'store_') ? substr($storeId, 6) : $storeId;
+
+        $oidc = app()->bound('request') ? request()->header('x-vercel-oidc-token') : null;
+        if (blank($oidc) && ($file = self::env('VERCEL_OIDC_TOKEN_FILE')) && is_readable($file)) {
+            $oidc = trim((string) file_get_contents($file));
+        }
+        $oidc = filled($oidc) ? $oidc : self::env('VERCEL_OIDC_TOKEN');
+
+        if (blank($oidc) || blank($storeId)) {
+            throw new RuntimeException('Vercel Blob: token OIDC tidak ditemukan. Tambahkan env BLOB_READ_WRITE_TOKEN dari halaman Blob store.');
+        }
+
+        return [$oidc, $storeId];
+    }
+
+    /** Env runtime yang diinjeksi Vercel (bukan dari .env), jadi dibaca langsung dan tidak lewat config. */
+    private static function env(string $key): ?string
+    {
+        $value = $_SERVER[$key] ?? $_ENV[$key] ?? getenv($key);
+
+        return is_string($value) && trim($value) !== '' ? trim($value) : null;
     }
 
     private static function isUrl(string $value): bool

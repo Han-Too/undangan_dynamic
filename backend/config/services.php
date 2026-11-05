@@ -31,6 +31,7 @@ return [
     // Vercel Blob untuk file unggahan di produksi. Kosong = pakai disk `public` lokal.
     'vercel_blob' => [
         'token' => env('BLOB_READ_WRITE_TOKEN'),
+        'store_id' => env('BLOB_STORE_ID'),
     ],
 
     'slack' => [
