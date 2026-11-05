@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Invitation;
 use App\Models\User;
+use App\Support\MediaStorage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class InvitationController extends Controller
@@ -96,7 +96,7 @@ class InvitationController extends Controller
         Gate::authorize('manage', $invitation);
         $request->validate(['file' => ['required', 'image', 'max:8192']]);
 
-        $path = $request->file('file')->store($invitation->mediaDir().'/photos', 'public');
+        $path = MediaStorage::store($request->file('file'), $invitation->mediaDir().'/photos');
 
         return ['url' => Invitation::publicUrl($path)];
     }
@@ -107,11 +107,9 @@ class InvitationController extends Controller
         $request->validate(['file' => ['required', 'file', 'max:15360', 'mimetypes:audio/*,video/mp4,video/ogg,video/webm']]);
 
         $old = $invitation->audio_path;
-        $invitation->audio_path = $request->file('file')->store($invitation->mediaDir().'/audio', 'public');
+        $invitation->audio_path = MediaStorage::store($request->file('file'), $invitation->mediaDir().'/audio');
         $invitation->save();
-        if ($old) {
-            Storage::disk('public')->delete($old);
-        }
+        MediaStorage::delete($old);
 
         return ['audio_url' => $invitation->audio_url];
     }
@@ -120,7 +118,7 @@ class InvitationController extends Controller
     {
         Gate::authorize('manage', $invitation);
         if ($invitation->audio_path) {
-            Storage::disk('public')->delete($invitation->audio_path);
+            MediaStorage::delete($invitation->audio_path);
             $invitation->audio_path = null;
             $invitation->save();
         }

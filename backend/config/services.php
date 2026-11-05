@@ -28,6 +28,11 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    // Vercel Blob untuk file unggahan di produksi. Kosong = pakai disk `public` lokal.
+    'vercel_blob' => [
+        'token' => env('BLOB_READ_WRITE_TOKEN'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

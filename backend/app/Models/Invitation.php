@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Support\MediaStorage;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Invitation extends Model
@@ -44,7 +44,7 @@ class Invitation extends Model
     protected static function booted(): void
     {
         // File unggahan (foto & musik) disimpan per undangan; ikut dihapus bersama undangannya.
-        static::deleted(fn (Invitation $inv) => Storage::disk('public')->deleteDirectory($inv->mediaDir()));
+        static::deleted(fn (Invitation $inv) => MediaStorage::deleteDirectory($inv->mediaDir()));
     }
 
     public function user(): BelongsTo
@@ -67,10 +67,10 @@ class Invitation extends Model
         return "invitations/{$this->id}";
     }
 
-    /** URL relatif (/storage/...) agar tetap benar di belakang proxy dev maupun domain produksi. */
+    /** Lokal: URL relatif /storage/... (diteruskan proxy dev). Produksi: URL absolut Vercel Blob. */
     public static function publicUrl(?string $path): ?string
     {
-        return $path ? '/storage/'.ltrim($path, '/') : null;
+        return MediaStorage::url($path);
     }
 
     public function getAudioUrlAttribute(): ?string
