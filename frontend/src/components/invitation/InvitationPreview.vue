@@ -1,11 +1,11 @@
 <script setup>
-import { computed, provide, ref, toRef } from 'vue';
+import { computed, onBeforeUnmount, provide, ref, toRef } from 'vue';
 import { useInvitation } from '../../composables/useInvitation';
 import { useMusic } from '../../composables/useMusic';
 import { sectionsForTheme } from '../../data/sections';
+import { closePhotoViewer, openPhotoViewer } from '../../utils/photoViewer';
 import BackgroundFx from './fx/BackgroundFx.vue';
 import { shapes } from './fx/shapes';
-import GalleryLightbox from './GalleryLightbox.vue';
 import InvitationCover from './InvitationCover.vue';
 import MusicButton from './MusicButton.vue';
 import SectionShell from './SectionShell.vue';
@@ -18,7 +18,7 @@ const props = defineProps({ editable: { type: Boolean, default: false } });
 const emit = defineEmits(['edit']);
 const opened = defineModel('opened', { type: Boolean, default: false });
 
-const { state, theme, cssVars } = useInvitation();
+const { state, theme, cssVars, motion, fx } = useInvitation();
 const { play, pause } = useMusic();
 
 provide('invEditor', {
@@ -26,9 +26,9 @@ provide('invEditor', {
   request: (panel, focus) => emit('edit', { panel, focus }),
 });
 
-/** Lightbox galeri hidup di root agar menutupi seluruh layar undangan (bukan hanya section). */
-const lightbox = ref({ photos: [], index: null });
-provide('invLightbox', { open: (photos, index) => (lightbox.value = { photos, index }) });
+/** Foto galeri dibuka layar penuh lewat Viewer.js. */
+provide('invLightbox', { open: openPhotoViewer });
+onBeforeUnmount(closePhotoViewer);
 
 const scroller = ref(null);
 const sections = computed(() => sectionsForTheme(theme.value).filter((s) => state.sections[s.id] !== false));
@@ -37,7 +37,7 @@ const sections = computed(() => sectionsForTheme(theme.value).filter((s) => stat
 const burst = ref(null);
 let burstTimer;
 function fireBurst({ x, y }) {
-  const names = theme.value.fx.particles.shapes;
+  const names = fx.value.particles.count ? fx.value.particles.shapes : theme.value.fx.particles.shapes;
   const n = 14;
   const particles = Array.from({ length: n }, (_, i) => {
     const angle = (i / n) * Math.PI * 2 + (i % 2 ? 0.2 : -0.1);
@@ -61,7 +61,7 @@ function fireBurst({ x, y }) {
 }
 
 function open(origin) {
-  if (origin) fireBurst(origin);
+  if (origin && motion.value.burst) fireBurst(origin);
   opened.value = true;
   play(); // dipanggil dari klik user, jadi lolos kebijakan autoplay browser
   scroller.value?.scrollTo({ top: 0 });
@@ -88,11 +88,14 @@ defineExpose({ scrollToSection, showCover });
     :data-theme="theme.id"
     :data-section-style="theme.sectionStyle"
     :data-editable="editable"
+    :data-reveal="motion.reveal"
+    :data-anim="motion.enabled ? 'on' : 'off'"
+    :data-orn-motion="motion.ornaments ? 'on' : 'off'"
   >
-    <BackgroundFx :fx="theme.fx" />
+    <BackgroundFx :fx="fx" />
 
     <div ref="scroller" class="inv-scroll" :class="{ 'is-locked': !opened }">
-      <SectionShell v-for="s in sections" :id="s.id" :key="s.id" :label="s.label" :panel="s.panel" :focus="s.focus">
+      <SectionShell v-for="s in sections" :id="s.id" :key="`${s.id}-${motion.reveal}`" :label="s.label" :panel="s.panel" :focus="s.focus">
         <component :is="s.component" />
       </SectionShell>
     </div>
@@ -111,6 +114,5 @@ defineExpose({ scrollToSection, showCover });
       />
     </div>
     <MusicButton v-if="opened && state.music.enabled" />
-    <GalleryLightbox v-if="lightbox.index !== null && lightbox.photos.length" v-model="lightbox.index" :photos="lightbox.photos" />
   </div>
 </template>

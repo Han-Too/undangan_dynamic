@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -16,6 +17,30 @@ class Guest extends Model
             'opened_at' => 'datetime',
             'open_count' => 'integer',
         ];
+    }
+
+    /** Nomor WA selalu disimpan dalam format wa.me: "0812-345 678" / "+62 812..." -> "62812345678". */
+    protected function phone(): Attribute
+    {
+        return Attribute::make(set: fn ($value) => self::normalizePhone($value));
+    }
+
+    public static function normalizePhone(?string $raw): ?string
+    {
+        $text = trim((string) $raw);
+        $digits = preg_replace('/\D/', '', $text);
+        if ($digits === '') {
+            return null;
+        }
+
+        return match (true) {
+            str_starts_with($text, '+') => $digits,
+            str_starts_with($digits, '00') => substr($digits, 2),
+            str_starts_with($digits, '62') => $digits,
+            str_starts_with($digits, '0') => '62'.substr($digits, 1),
+            str_starts_with($digits, '8') => '62'.$digits,
+            default => $digits,
+        };
     }
 
     public function invitation(): BelongsTo

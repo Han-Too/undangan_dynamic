@@ -6,6 +6,7 @@ const ui = reactive({
   panel: 'theme',
   focus: null, // sub-bagian yang dibuka di dalam panel (mis. 'cover' di panel General)
   sheetOpen: false, // bottom sheet editor di mobile
+  coverTick: 0, // dinaikkan untuk meminta preview menampilkan cover lagi (mis. mencoba animasi pembuka)
 });
 
 export function useBuilderUi() {
@@ -15,6 +16,10 @@ export function useBuilderUi() {
       ui.panel = panel;
       ui.focus = focus;
       ui.sheetOpen = true;
+    },
+    /** Tampilkan cover di preview agar animasi pembuka bisa dicoba lagi. */
+    replayCover() {
+      ui.coverTick++;
     },
     setMode(mode) {
       ui.mode = mode;

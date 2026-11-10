@@ -1,13 +1,9 @@
+import { normalizePhone } from './phone';
+
 /** URL publik undangan. Tanpa `guestSlug` = link umum, dengan `guestSlug` = link pribadi tamu. */
 export const invitationUrl = (slug, guestSlug) => `${location.origin}/${slug}${guestSlug ? `/${guestSlug}` : ''}`;
 
-/** 0812-345 / +62 812 345 -> 62812345 (format wa.me). */
-export function normalizePhone(phone) {
-  const digits = String(phone || '').replace(/\D/g, '');
-  if (!digits) return '';
-  if (digits.startsWith('0')) return `62${digits.slice(1)}`;
-  return digits;
-}
+export { normalizePhone } from './phone';
 
 export const DEFAULT_SHARE_TEMPLATE = `Kepada Yth.
 {nama}

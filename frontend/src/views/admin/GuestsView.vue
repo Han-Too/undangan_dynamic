@@ -4,6 +4,8 @@ import { RouterLink, useRoute } from 'vue-router';
 import { toast } from 'vue-sonner';
 import {
   ArrowLeftIcon,
+  CircleAlertIcon,
+  ClipboardPasteIcon,
   CopyIcon,
   EllipsisVerticalIcon,
   ExternalLinkIcon,
@@ -43,6 +45,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { api } from '@/services/api';
 import { copyText } from '@/utils/clipboard';
 import { DEFAULT_SHARE_TEMPLATE, fillTemplate, invitationUrl, whatsappUrl } from '@/utils/links';
+import { formatPhone, isValidPhone, normalizePhone } from '@/utils/phone';
 
 const route = useRoute();
 const id = computed(() => route.params.id);
@@ -81,7 +84,8 @@ const messageOf = (g) => fillTemplate(template.value, { name: g.name, link: link
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase();
   if (!q) return guests.value;
-  return guests.value.filter((g) => g.name.toLowerCase().includes(q) || g.slug.includes(q) || g.phone?.includes(q));
+  const qPhone = /\d{3,}/.test(q) ? normalizePhone(q) : '';
+  return guests.value.filter((g) => g.name.toLowerCase().includes(q) || g.slug.includes(q) || (qPhone && normalizePhone(g.phone).includes(qPhone)));
 });
 
 const stats = computed(() => {
@@ -119,12 +123,47 @@ async function load() {
 onMounted(load);
 onBeforeUnmount(() => (pageCrumb.value = ''));
 
-const bulkCount = computed(() => bulk.value.split('\n').filter((l) => l.trim()).length);
+/**
+ * Mode banyak: satu tamu per baris, "Nama" atau "Nama | No. WA".
+ * Pemisah | , tab (tempel dari Excel/Sheets) atau ; diterima. Nomor dinormalisasi otomatis.
+ */
+const bulkRows = computed(() =>
+  bulk.value
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const [name, phone = ''] = line.split(/\s*[|\t;]\s*/);
+      const p = phone.trim();
+      return { name: name.trim(), phone: p ? normalizePhone(p) : '', phoneOk: !p || isValidPhone(p) };
+    })
+    .filter((r) => r.name),
+);
+const bulkCount = computed(() => bulkRows.value.length);
+const bulkInvalid = computed(() => bulkRows.value.filter((r) => !r.phoneOk).length);
+const BULK_EXAMPLE = 'Adit & Istri | 0812-3456-7890\nKeluarga Bpk. Slamet | +62 813 1111 2222\nJoko & Partner';
+const fillExample = () => (bulk.value = BULK_EXAMPLE);
+
+/** Pratinjau nomor di bawah input: kosong = tidak tampil, valid = format rapi, tidak valid = pesan. */
+function phoneHint(raw) {
+  if (!String(raw || '').trim()) return null;
+  return isValidPhone(raw) ? { ok: true, text: `Disimpan sebagai ${formatPhone(raw)}` } : { ok: false, text: 'Nomor tidak valid. Contoh: 0812-3456-7890' };
+}
+const singleHint = computed(() => phoneHint(single.phone));
+const editHint = computed(() => phoneHint(editForm.phone));
+const tidyPhone = (target) => {
+  if (isValidPhone(target.phone)) target.phone = formatPhone(target.phone);
+};
 
 async function onAdd() {
   adding.value = true;
   try {
-    const body = addMode.value === 'bulk' ? { names: bulk.value } : { name: single.name, phone: single.phone || null };
+    if (addMode.value === 'single' && singleHint.value && !singleHint.value.ok) throw new Error('Periksa kembali nomor WhatsApp.');
+    if (addMode.value === 'bulk' && bulkInvalid.value) throw new Error(`${bulkInvalid.value} nomor WhatsApp tidak valid. Perbaiki baris yang ditandai.`);
+    const body =
+      addMode.value === 'bulk'
+        ? { names: bulkRows.value.map((r) => (r.phone ? `${r.name} | ${r.phone}` : r.name)).join('\n') }
+        : { name: single.name, phone: normalizePhone(single.phone) || null };
     const created = await api.post(`/invitations/${id.value}/guests`, body);
     guests.value = [...created.reverse(), ...guests.value];
     single.name = '';
@@ -147,14 +186,15 @@ const copyAll = () => copy(filtered.value.map((g) => `${g.name}: ${linkOf(g)}`).
 
 function openEdit(g) {
   editing.value = g;
-  Object.assign(editForm, { name: g.name, phone: g.phone ?? '', slug: g.slug });
+  Object.assign(editForm, { name: g.name, phone: g.phone ? formatPhone(g.phone) : '', slug: g.slug });
 }
 
 async function onEdit() {
+  if (editHint.value && !editHint.value.ok) return toast.error('Periksa kembali nomor WhatsApp.');
   try {
     const updated = await api.put(`/invitations/${id.value}/guests/${editing.value.id}`, {
       name: editForm.name,
-      phone: editForm.phone || null,
+      phone: normalizePhone(editForm.phone) || null,
       slug: editForm.slug || null,
     });
     guests.value = guests.value.map((g) => (g.id === updated.id ? updated : g));
@@ -231,24 +271,55 @@ async function onDelete() {
               </div>
               <div class="grid gap-2">
                 <Label for="g-phone">No. WhatsApp <span class="text-muted-foreground font-normal">(opsional)</span></Label>
-                <Input id="g-phone" v-model="single.phone" inputmode="tel" maxlength="30" placeholder="08123456789" />
+                <Input id="g-phone" v-model="single.phone" type="tel" inputmode="tel" maxlength="30" placeholder="0812-3456-7890" :aria-invalid="!!singleHint && !singleHint.ok" @blur="tidyPhone(single)" />
+                <p v-if="singleHint" class="text-xs" :class="singleHint.ok ? 'text-muted-foreground' : 'text-destructive'">{{ singleHint.text }}</p>
+                <p v-else class="text-muted-foreground text-xs">Boleh ditulis 08…, 8…, 62… atau +62…, nanti dirapikan otomatis.</p>
               </div>
             </template>
-            <div v-else class="grid gap-2">
-              <Label for="g-bulk">Satu tamu per baris</Label>
-              <Textarea id="g-bulk" v-model="bulk" rows="7" required class="font-mono text-xs" placeholder="Adit & Istri | 08123456789&#10;Joko & Istri&#10;Keluarga Bpk. Slamet" />
-              <p class="text-muted-foreground text-xs">Format <code>Nama</code> atau <code>Nama | No. WA</code> · {{ bulkCount }} tamu</p>
+            <div v-else class="grid min-w-0 gap-3">
+              <div class="bg-muted/50 grid gap-2 rounded-md border p-3 text-xs">
+                <p class="font-medium">Tulis satu tamu per baris</p>
+                <div class="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-2 gap-y-1">
+                  <span class="text-muted-foreground">Nama saja</span>
+                  <code class="bg-background truncate rounded border px-1.5 py-0.5">Joko &amp; Partner</code>
+                  <span class="text-muted-foreground">Dengan WA</span>
+                  <code class="bg-background truncate rounded border px-1.5 py-0.5">Adit &amp; Istri <b class="text-primary">|</b> 0812-3456-7890</code>
+                </div>
+                <p class="text-muted-foreground">Pisahkan nama dan nomor dengan <b>|</b>. Bisa juga tempel dua kolom langsung dari Excel / Google Sheets.</p>
+              </div>
+              <div class="grid gap-2">
+                <div class="flex items-center justify-between gap-2">
+                  <Label for="g-bulk">Daftar tamu</Label>
+                  <Button v-if="!bulk" type="button" variant="link" size="sm" class="h-auto p-0 text-xs" @click="fillExample"><ClipboardPasteIcon /> Isi contoh</Button>
+                </div>
+                <Textarea id="g-bulk" v-model="bulk" rows="6" required class="font-mono text-xs" :placeholder="BULK_EXAMPLE" />
+              </div>
+              <div v-if="bulkRows.length" class="grid min-w-0 gap-1.5">
+                <div class="flex items-center justify-between gap-2 text-xs">
+                  <span class="font-medium">Pratinjau · {{ bulkCount }} tamu</span>
+                  <span v-if="bulkInvalid" class="text-destructive flex items-center gap-1"><CircleAlertIcon class="size-3.5" /> {{ bulkInvalid }} nomor perlu dicek</span>
+                </div>
+                <ol class="max-h-56 divide-y overflow-y-auto rounded-md border text-xs">
+                  <li v-for="(r, i) in bulkRows" :key="i" class="grid grid-cols-[1.5rem_minmax(0,1fr)_auto] items-center gap-2 px-2.5 py-1.5" :class="{ 'bg-destructive/5': !r.phoneOk }">
+                    <span class="text-muted-foreground tabular-nums">{{ i + 1 }}</span>
+                    <span class="truncate font-medium">{{ r.name }}</span>
+                    <span v-if="!r.phoneOk" class="text-destructive">Nomor tidak valid</span>
+                    <span v-else-if="r.phone" class="text-muted-foreground font-mono">{{ formatPhone(r.phone) }}</span>
+                    <span v-else class="text-muted-foreground/60">Tanpa WA</span>
+                  </li>
+                </ol>
+              </div>
             </div>
-            <Button type="submit" :disabled="adding">
+            <Button type="submit" class="min-w-0" :disabled="adding || (addMode === 'bulk' && !bulkCount)">
               <PlusIcon /> {{ adding ? 'Menambahkan…' : addMode === 'bulk' ? `Tambah ${bulkCount || ''} tamu` : 'Tambah & buat link' }}
             </Button>
           </form>
         </CardContent>
         <Separator />
         <CardFooter class="flex-col items-stretch gap-3">
-          <div class="grid min-w-0 gap-1.5">
+          <div class="grid min-w-0 grid-cols-1 gap-1.5">
             <span class="text-sm font-medium">Link umum</span>
-            <div class="bg-muted/60 flex items-center gap-2 rounded-md border py-1 pr-1 pl-2.5">
+            <div class="bg-muted/60 flex min-w-0 items-center gap-2 rounded-md border py-1 pr-1 pl-2.5">
               <LinkIcon class="text-muted-foreground size-3.5 shrink-0" />
               <span class="text-muted-foreground min-w-0 flex-1 truncate font-mono text-xs">{{ invitationUrl(invitation.slug) }}</span>
               <Button variant="ghost" size="icon-xs" aria-label="Salin link umum" @click="copy(invitationUrl(invitation.slug), 'Link umum')"><CopyIcon /></Button>
@@ -288,7 +359,7 @@ async function onDelete() {
             <TableRow v-for="g in filtered" :key="g.id">
               <TableCell class="pl-4 whitespace-normal">
                 <div class="truncate font-medium">
-                  {{ g.name }}<span v-if="g.phone" class="text-muted-foreground font-normal"> · {{ g.phone }}</span>
+                  {{ g.name }}<span v-if="g.phone" class="text-muted-foreground font-normal"> · {{ formatPhone(g.phone) }}</span>
                 </div>
                 <div class="text-muted-foreground truncate font-mono text-xs">{{ linkOf(g) }}</div>
                 <div class="mt-1.5 md:hidden"><GuestStatus :guest="g" /></div>
@@ -355,7 +426,8 @@ async function onDelete() {
           </div>
           <div class="grid gap-2">
             <Label for="e-phone">No. WhatsApp</Label>
-            <Input id="e-phone" v-model="editForm.phone" inputmode="tel" maxlength="30" />
+            <Input id="e-phone" v-model="editForm.phone" type="tel" inputmode="tel" maxlength="30" placeholder="0812-3456-7890" :aria-invalid="!!editHint && !editHint.ok" @blur="tidyPhone(editForm)" />
+            <p v-if="editHint" class="text-xs" :class="editHint.ok ? 'text-muted-foreground' : 'text-destructive'">{{ editHint.text }}</p>
           </div>
           <div class="grid gap-2">
             <Label for="e-slug">Akhiran link</Label>

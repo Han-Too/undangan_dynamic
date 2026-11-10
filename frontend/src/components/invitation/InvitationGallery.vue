@@ -2,13 +2,12 @@
 import { computed, inject, onBeforeUnmount, ref, watch } from 'vue';
 import { useInvitation } from '../../composables/useInvitation';
 import Icon from '../Icon.vue';
-import GalleryLightbox from './GalleryLightbox.vue';
 import InvPhoto from './InvPhoto.vue';
 import OrnamentDivider from './ornaments/OrnamentDivider.vue';
 
 /**
  * Galeri: 4 / 6 / 8 foto, tampil sebagai grid atau carousel (geser otomatis, bisa swipe).
- * Klik foto → lightbox. Foto kosong tampil sebagai placeholder dan tidak bisa dibuka.
+ * Klik foto → tampil layar penuh (Viewer.js). Foto kosong tampil sebagai placeholder dan tidak bisa dibuka.
  */
 const { state, theme } = useInvitation();
 const lightboxHost = inject('invLightbox', null);

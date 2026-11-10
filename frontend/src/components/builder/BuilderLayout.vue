@@ -99,6 +99,7 @@ watch(
 function showCover() {
   preview.value?.showCover();
 }
+watch(() => ui.coverTick, showCover);
 
 function togglePreviewMode(mode) {
   setMode(mode);

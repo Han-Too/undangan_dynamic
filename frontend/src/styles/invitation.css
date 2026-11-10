@@ -90,12 +90,44 @@
   gap: 18px;
 }
 
+/* Animasi muncul section: gaya dipilih lewat .inv-root[data-reveal] (lihat data/animations.js) */
 .reveal {
   opacity: 0;
-  transform: translateY(24px);
-  transition: opacity 0.9s ease var(--reveal-delay, 0ms), transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) var(--reveal-delay, 0ms);
+  transform: var(--rv-from, translateY(24px));
+  filter: var(--rv-filter, none);
+  transform-origin: var(--rv-origin, 50% 50%);
+  transition:
+    opacity 0.9s ease var(--reveal-delay, 0ms),
+    transform var(--rv-dur, 0.9s) var(--rv-ease, cubic-bezier(0.2, 0.7, 0.2, 1)) var(--reveal-delay, 0ms),
+    filter 0.9s ease var(--reveal-delay, 0ms);
 }
-.reveal.is-visible { opacity: 1; transform: none; }
+.reveal.is-visible { opacity: 1; transform: none; filter: none; }
+.inv-root[data-reveal='fade'] { --rv-from: none; }
+.inv-root[data-reveal='zoomIn'] { --rv-from: scale(0.86); }
+.inv-root[data-reveal='zoomOut'] { --rv-from: scale(1.14); }
+.inv-root[data-reveal='slideLeft'] { --rv-from: translateX(70px); }
+.inv-root[data-reveal='slideRight'] { --rv-from: translateX(-70px); }
+.inv-root[data-reveal='alternate'] .inv-section:nth-child(odd) { --rv-from: translateX(-70px) rotate(-2deg); }
+.inv-root[data-reveal='alternate'] .inv-section:nth-child(even) { --rv-from: translateX(70px) rotate(2deg); }
+.inv-root[data-reveal='drop'] { --rv-from: translateY(-50px); --rv-ease: cubic-bezier(0.3, 1.4, 0.5, 1); --rv-dur: 1s; }
+.inv-root[data-reveal='bounce'] { --rv-from: translateY(70px) scale(0.92); --rv-ease: cubic-bezier(0.34, 1.7, 0.5, 1); --rv-dur: 1.1s; }
+.inv-root[data-reveal='flip'] { --rv-from: perspective(900px) rotateX(55deg) translateY(30px); --rv-origin: 50% 0; --rv-dur: 1.1s; }
+.inv-root[data-reveal='rotate'] { --rv-from: rotate(-8deg) translateY(40px) scale(0.94); --rv-origin: 0 100%; }
+.inv-root[data-reveal='blur'] { --rv-from: scale(1.04); --rv-filter: blur(12px); --rv-dur: 1.2s; }
+.inv-root[data-reveal='none'] .reveal { opacity: 1; transform: none; filter: none; transition: none; }
+/* stagger: isi section muncul satu per satu */
+.inv-root[data-reveal='stagger'] .reveal { opacity: 1; transform: none; transition: none; }
+.inv-root[data-reveal='stagger'] .reveal > * {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s ease, transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.inv-root[data-reveal='stagger'] .reveal.is-visible > * { opacity: 1; transform: none; }
+.inv-root[data-reveal='stagger'] .reveal > :nth-child(2) { transition-delay: 0.12s; }
+.inv-root[data-reveal='stagger'] .reveal > :nth-child(3) { transition-delay: 0.24s; }
+.inv-root[data-reveal='stagger'] .reveal > :nth-child(4) { transition-delay: 0.36s; }
+.inv-root[data-reveal='stagger'] .reveal > :nth-child(5) { transition-delay: 0.48s; }
+.inv-root[data-reveal='stagger'] .reveal > :nth-child(n + 6) { transition-delay: 0.6s; }
 
 /* framed (khitanan): bingkai ganda */
 .inv-root[data-section-style='framed'] .inv-section__inner {
@@ -151,6 +183,51 @@
   height: 1px;
   translate: -50% 0;
   background: var(--c-primary);
+}
+
+/* dashed: kartu tipis bergaris putus-putus */
+.inv-root[data-section-style='dashed'] .inv-section__inner {
+  padding: 38px 22px;
+  background: color-mix(in srgb, var(--c-surface) 55%, transparent);
+  border: 1.5px dashed color-mix(in srgb, var(--c-primary) 70%, transparent);
+  border-radius: var(--radius);
+}
+
+/* offset: kartu dengan bayangan blok bergeser (gaya modern/retro) */
+.inv-root[data-section-style='offset'] .inv-section { padding: 40px 26px 48px 20px; }
+.inv-root[data-section-style='offset'] .inv-section__inner {
+  padding: 36px 22px;
+  background: var(--c-surface);
+  border: 1.5px solid var(--c-text);
+  border-radius: var(--radius);
+  box-shadow: 8px 8px 0 color-mix(in srgb, var(--c-primary) 75%, transparent);
+}
+
+/* arch: tiap section dalam panel berkubah */
+.inv-root[data-section-style='arch'] .inv-section { padding: 44px 20px; }
+.inv-root[data-section-style='arch'] .inv-section__inner {
+  padding: 70px 22px 40px;
+  background: color-mix(in srgb, var(--c-surface) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--c-primary) 55%, transparent);
+  border-radius: 999px 999px var(--radius) var(--radius);
+  outline: 1px solid color-mix(in srgb, var(--c-primary) 25%, transparent);
+  outline-offset: 6px;
+}
+
+/* tinted: blok warna selang-seling penuh selebar layar + pembatas gelombang */
+.inv-root[data-section-style='tinted'] .inv-section:nth-child(even) { background: color-mix(in srgb, var(--c-primary) 12%, var(--c-bg)); }
+.inv-root[data-section-style='tinted'] .inv-section + .inv-section::before {
+  content: '';
+  position: absolute;
+  inset: -1px 0 auto;
+  height: 10px;
+  background: radial-gradient(circle at 50% 0, var(--c-bg) 6px, transparent 6.5px) 0 0 / 16px 10px repeat-x;
+}
+.inv-root[data-section-style='tinted'] .inv-section:nth-child(odd) + .inv-section::before {
+  background-image: radial-gradient(circle at 50% 0, var(--c-bg) 6px, transparent 6.5px);
+}
+.inv-root[data-section-style='tinted'] .inv-section:nth-child(even) + .inv-section::before {
+  background-image: radial-gradient(circle at 50% 0, color-mix(in srgb, var(--c-primary) 12%, var(--c-bg)) 6px, transparent 6.5px);
 }
 
 /* ── Tombol & form ─────────────────────────────────────────── */
@@ -263,23 +340,94 @@ textarea.inv-input { min-height: 88px; resize: vertical; }
     radial-gradient(circle at 80% 90%, color-mix(in srgb, var(--c-secondary) 18%, transparent), transparent 55%);
 }
 
-/* Bingkai foto: cincin dua lapis; bentuk dari konfigurasi tema (ornaments.frame) */
-.inv-frame {
-  --ring: 4px;
-  width: min(240px, 72%);
-  padding: var(--ring);
-  background: linear-gradient(135deg, var(--c-primary), color-mix(in srgb, var(--c-primary) 45%, var(--c-bg)), var(--c-primary));
-  box-shadow: 0 22px 40px -26px rgba(0, 0, 0, 0.55);
+/* Bingkai foto (PhotoFrame.vue): bentuk × border × hiasan, lihat data/photoFrames.js */
+.pf {
+  position: relative;
+  width: min(250px, var(--pf-w));
+  isolation: isolate;
 }
-.inv-frame__inner { width: 100%; height: 100%; overflow: hidden; }
-.inv-frame[data-shape='arch'], .inv-frame[data-shape='arch'] .inv-frame__inner { border-radius: 999px 999px 18px 18px; }
-.inv-frame[data-shape='oval'], .inv-frame[data-shape='oval'] .inv-frame__inner { border-radius: 50%; }
-.inv-frame[data-shape='rect'], .inv-frame[data-shape='rect'] .inv-frame__inner { border-radius: calc(var(--radius) * 0.8); }
-.inv-frame[data-shape='octagon'], .inv-frame[data-shape='octagon'] .inv-frame__inner {
-  clip-path: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+.pf__body { position: relative; z-index: 1; }
+.pf--shadow .pf__body { filter: drop-shadow(0 18px 20px rgba(0, 0, 0, 0.28)); }
+.pf--glow .pf__body { filter: drop-shadow(0 0 10px var(--pf-glow)) drop-shadow(0 0 3px var(--pf-glow)); }
+.pf__l { width: 100%; height: 100%; }
+.pf__l--outer { aspect-ratio: var(--pf-ratio); }
+.pf__img { width: 100%; height: 100%; overflow: hidden; }
+.pf__l, .pf__img, .pf__offset { border-radius: var(--pf-radius); }
+.pf--masked :is(.pf__l, .pf__img, .pf__offset) {
+  border-radius: 0;
+  -webkit-mask: var(--pf-mask) center / 100% 100% no-repeat;
+  mask: var(--pf-mask) center / 100% 100% no-repeat;
 }
-.inv-frame[data-shape='octagon'] { --ring: 5px; box-shadow: none; }
-.inv-frame[data-shape='oval'] { width: min(220px, 66%); }
+.pf__offset {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  translate: 12px 12px;
+  background: color-mix(in srgb, var(--c-secondary) 40%, transparent);
+}
+
+/* Hiasan partikel di sekitar foto */
+.pf__decor { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.pf__deco {
+  position: absolute;
+  translate: -50% -50%;
+  rotate: var(--r);
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.15));
+  animation: pf-twinkle 3.6s ease-in-out var(--d) infinite;
+}
+/* Hiasan khusus di belakang foto */
+.pf__special { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.pf__special i { position: absolute; display: block; }
+.pf__special[data-special='orbit'] i:first-child {
+  inset: -9%;
+  border: 1.5px dashed color-mix(in srgb, var(--c-primary) 70%, transparent);
+  border-radius: 50%;
+  animation: inv-spin 40s linear infinite;
+}
+.pf__special[data-special='orbit'] i:nth-child(2) {
+  inset: -4% -14%;
+  border: 1px solid color-mix(in srgb, var(--c-secondary) 45%, transparent);
+  border-radius: 50%;
+  rotate: -18deg;
+}
+.pf__special[data-special='blob'] i:first-child {
+  inset: -8% -14% 10% 8%;
+  background: color-mix(in srgb, var(--c-primary) 30%, transparent);
+  border-radius: 58% 42% 55% 45% / 46% 58% 42% 54%;
+  animation: pf-morph 12s ease-in-out infinite alternate;
+}
+.pf__special[data-special='blob'] i:nth-child(2) {
+  inset: 18% 4% -10% -16%;
+  background: color-mix(in srgb, var(--c-secondary) 24%, transparent);
+  border-radius: 42% 58% 46% 54% / 56% 44% 56% 44%;
+  animation: pf-morph 14s ease-in-out -5s infinite alternate-reverse;
+}
+.pf__special[data-special='corners'] i { width: 26%; aspect-ratio: 1; border: 2px solid var(--c-primary); }
+.pf__special[data-special='corners'] i:nth-child(1) { top: -12px; left: -12px; border-width: 2px 0 0 2px; }
+.pf__special[data-special='corners'] i:nth-child(2) { top: -12px; right: -12px; border-width: 2px 2px 0 0; }
+.pf__special[data-special='corners'] i:nth-child(3) { bottom: -12px; left: -12px; border-width: 0 0 2px 2px; }
+.pf__special[data-special='corners'] i:nth-child(4) { bottom: -12px; right: -12px; border-width: 0 2px 2px 0; }
+
+/* Gerak foto */
+.pf[data-motion='float'] { animation: pf-float 5s ease-in-out infinite; }
+.pf[data-motion='sway'] { transform-origin: 50% 0; animation: pf-sway 6s ease-in-out infinite; }
+.pf[data-motion='pulse'] { animation: pf-pulse 4s ease-in-out infinite; }
+.pf[data-motion='tilt'] { animation: pf-tilt 8s ease-in-out infinite; }
+
+@keyframes pf-twinkle {
+  0%, 100% { scale: 1; opacity: 1; }
+  50% { scale: 0.75; opacity: 0.55; }
+}
+@keyframes pf-morph {
+  to { border-radius: 40% 60% 38% 62% / 60% 40% 60% 40%; rotate: 14deg; }
+}
+@keyframes pf-float { 50% { translate: 0 -10px; } }
+@keyframes pf-sway { 0%, 100% { rotate: -2.5deg; } 50% { rotate: 2.5deg; } }
+@keyframes pf-pulse { 50% { scale: 1.04; } }
+@keyframes pf-tilt {
+  0%, 100% { transform: perspective(700px) rotateY(-9deg) rotateX(3deg); }
+  50% { transform: perspective(700px) rotateY(9deg) rotateX(-3deg); }
+}
 
 /* ── Cover ─────────────────────────────────────────────────── */
 .inv-cover {
@@ -307,14 +455,92 @@ textarea.inv-input { min-height: 88px; resize: vertical; }
   inherits: false;
   initial-value: 0%;
 }
+@property --blind {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
 .inv-cover.is-open {
-  --hole: 150%;
   pointer-events: none;
   visibility: hidden;
+  transition: visibility 0s linear 1.6s;
+}
+/* Gaya pembuka dipilih lewat data-open (lihat data/animations.js → openingAnims) */
+.inv-cover[data-open='iris'].is-open {
+  --hole: 150%;
   -webkit-mask: radial-gradient(circle at var(--open-x, 50%) var(--open-y, 70%), transparent var(--hole), #000 calc(var(--hole) + 1px));
   mask: radial-gradient(circle at var(--open-x, 50%) var(--open-y, 70%), transparent var(--hole), #000 calc(var(--hole) + 1px));
   transition: --hole 1.15s cubic-bezier(0.65, 0, 0.25, 1) 0.4s, visibility 0s linear 1.6s;
 }
+.inv-cover[data-open='fade'].is-open { opacity: 0; transition: opacity 0.9s ease 0.35s, visibility 0s linear 1.3s; }
+.inv-cover[data-open='slideUp'].is-open { transform: translateY(-102%); transition: transform 1.1s cubic-bezier(0.7, 0, 0.2, 1) 0.35s, visibility 0s linear 1.5s; }
+.inv-cover[data-open='slideDown'].is-open { transform: translateY(102%); transition: transform 1.1s cubic-bezier(0.7, 0, 0.2, 1) 0.35s, visibility 0s linear 1.5s; }
+.inv-cover[data-open='curtain'] { clip-path: polygon(0 0, 50% 0, 50% 100%, 50% 100%, 50% 0, 100% 0, 100% 100%, 0 100%); }
+.inv-cover[data-open='curtain'].is-open {
+  clip-path: polygon(0 0, 0 0, 0 100%, 100% 100%, 100% 0, 100% 0, 100% 100%, 0 100%);
+  transition: clip-path 1.2s cubic-bezier(0.7, 0, 0.25, 1) 0.35s, visibility 0s linear 1.6s;
+}
+.inv-cover[data-open='book'] { transform-origin: 0 50%; }
+.inv-cover[data-open='book'].is-open {
+  transform: perspective(1400px) rotateY(-105deg);
+  opacity: 0;
+  transition: transform 1.3s cubic-bezier(0.6, 0, 0.3, 1) 0.3s, opacity 0.5s ease 1.1s, visibility 0s linear 1.7s;
+}
+.inv-cover[data-open='zoom'].is-open {
+  transform: scale(1.8);
+  opacity: 0;
+  transition: transform 1.1s cubic-bezier(0.6, 0, 0.3, 1) 0.3s, opacity 0.8s ease 0.5s, visibility 0s linear 1.5s;
+}
+.inv-cover[data-open='blinds'].is-open {
+  --blind: 10%;
+  -webkit-mask: repeating-linear-gradient(90deg, transparent 0 var(--blind), #000 var(--blind) 10%);
+  mask: repeating-linear-gradient(90deg, transparent 0 var(--blind), #000 var(--blind) 10%);
+  transition: --blind 1s cubic-bezier(0.65, 0, 0.3, 1) 0.4s, visibility 0s linear 1.5s;
+}
+.inv-cover[data-open='wipe'].is-open {
+  --hole: 160%;
+  -webkit-mask: linear-gradient(135deg, transparent var(--hole), #000 calc(var(--hole) + 12%));
+  mask: linear-gradient(135deg, transparent var(--hole), #000 calc(var(--hole) + 12%));
+  transition: --hole 1.2s cubic-bezier(0.65, 0, 0.3, 1) 0.35s, visibility 0s linear 1.6s;
+}
+.inv-cover[data-open='none'].is-open,
+.inv-cover[data-open='none'].is-open :is(.inv-cover__body, .corner, .cframe__line, .cframe__svgline, .cframe__mid, .cframe__edge) { transition: none; }
+.inv-root[data-anim='off'] .inv-scroll { transition: none; }
+.inv-root[data-anim='off'] .inv-scroll.is-locked { transform: none; opacity: 1; }
+
+/* Animasi masuk teks cover (data-text) */
+.inv-cover:not(.is-open) .inv-cover__body > * { animation: var(--ct-anim, none) 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+.inv-cover[data-text='rise'] { --ct-anim: ct-rise; }
+.inv-cover[data-text='fade'] { --ct-anim: ct-fade; }
+.inv-cover[data-text='zoom'] { --ct-anim: ct-zoom; }
+.inv-cover[data-text='blur'] { --ct-anim: ct-blur; }
+.inv-cover[data-text='tracking'] { --ct-anim: ct-tracking; }
+.inv-cover[data-text='drop'] { --ct-anim: ct-drop; }
+.inv-cover__body > :nth-child(1) { animation-delay: 0.15s !important; }
+.inv-cover__body > :nth-child(2) { animation-delay: 0.3s !important; }
+.inv-cover__body > :nth-child(3) { animation-delay: 0.45s !important; }
+.inv-cover__body > :nth-child(4) { animation-delay: 0.6s !important; }
+.inv-cover__body > :nth-child(5) { animation-delay: 0.72s !important; }
+.inv-cover__body > :nth-child(n + 6) { animation-delay: 0.85s !important; }
+@keyframes ct-rise { from { opacity: 0; transform: translateY(22px); } }
+@keyframes ct-fade { from { opacity: 0; } }
+@keyframes ct-zoom { from { opacity: 0; transform: scale(0.7); } }
+@keyframes ct-blur { from { opacity: 0; filter: blur(10px); transform: scale(1.06); } }
+@keyframes ct-tracking { from { opacity: 0; letter-spacing: 0.6em; filter: blur(4px); } }
+@keyframes ct-drop { 0% { opacity: 0; transform: translateY(-34px); } 60% { opacity: 1; transform: translateY(5px); } }
+
+/* Ornamen bingkai cover bergoyang pelan (data-orn-motion) */
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner { animation: orn-sway 7s ease-in-out infinite alternate; }
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--tr { animation-delay: -1.7s; }
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--bl { animation-delay: -3.4s; }
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--br { animation-delay: -5.1s; }
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .cframe__mid { animation: orn-breathe 5s ease-in-out infinite; }
+.inv-root[data-orn-motion='on'] .inv-section .divider { animation: orn-breathe 6s ease-in-out infinite; }
+@keyframes orn-sway { from { rotate: -2.5deg; scale: 1; } to { rotate: 2.5deg; scale: 1.04; } }
+@keyframes orn-breathe { 50% { opacity: 0.65; scale: 1.05; } }
+
+/* Saklar animasi mati: hentikan semua gerakan dekoratif */
+.inv-root[data-anim='off'] :is(.pf, .pf *, .inv-music .icon, .inv-music::after) { animation: none !important; }
 .inv-cover.is-open .fx * { animation-play-state: paused !important; }
 
 .inv-cover__body { transition: opacity 0.5s ease, transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1), filter 0.5s ease; }
@@ -457,6 +683,21 @@ textarea.inv-input { min-height: 88px; resize: vertical; }
   border-radius: 4px;
   box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
+.cframe[data-line='dotted'] .cframe__line { inset: 16px; border-style: dotted; border-width: 2.5px; }
+.cframe[data-line='rounded'] .cframe__line { inset: 16px; border-radius: 34px; outline: 1px solid color-mix(in srgb, var(--c-primary) 35%, transparent); outline-offset: -7px; }
+.cframe[data-line='oval'] .cframe__line { inset: 20px 16px; border-radius: 50%; outline: 1px solid color-mix(in srgb, var(--c-primary) 35%, transparent); outline-offset: -8px; }
+.cframe[data-line='thick'] .cframe__line { inset: 12px; border-width: 4px; outline: 1px solid color-mix(in srgb, var(--c-primary) 45%, transparent); outline-offset: -10px; }
+.cframe[data-line='triple'] .cframe__line { outline: 1px solid color-mix(in srgb, var(--c-primary) 45%, transparent); outline-offset: -6px; }
+.cframe[data-line='triple'] .cframe__line::after,
+.cframe[data-line='offset'] .cframe__line::after {
+  content: '';
+  position: absolute;
+  inset: 11px;
+  border: 1px solid color-mix(in srgb, var(--c-primary) 30%, transparent);
+  border-radius: inherit;
+}
+.cframe[data-line='offset'] .cframe__line { inset: 12px 20px 20px 12px; }
+.cframe[data-line='offset'] .cframe__line::after { inset: -1px; translate: 9px 9px; border-color: color-mix(in srgb, var(--c-secondary) 60%, transparent); }
 .cframe__svgline { position: absolute; inset: 20px 14px 14px; width: calc(100% - 28px); height: calc(100% - 34px); }
 .cframe__mid { position: absolute; left: 50%; width: min(180px, 52%); height: auto; translate: -50% 0; }
 .cframe__mid--top { top: 20px; }
@@ -473,6 +714,33 @@ textarea.inv-input { min-height: 88px; resize: vertical; }
   background: radial-gradient(circle, var(--c-primary) 2.2px, transparent 2.7px) 0 50% / 14px 14px repeat-x;
 }
 .cframe[data-edge='dots'] .cframe__edge--bottom { top: auto; bottom: 6px; }
+.cframe[data-edge='bunting'] .cframe__edge {
+  height: 22px;
+  background:
+    linear-gradient(var(--c-primary), var(--c-primary)) 0 1px / 100% 1px no-repeat,
+    conic-gradient(from 150deg at 50% 1px, var(--c-primary) 0 60deg, transparent 0) 0 0 / 40px 22px repeat-x,
+    conic-gradient(from 150deg at 50% 1px, var(--c-secondary) 0 60deg, transparent 0) 20px 0 / 40px 22px repeat-x;
+  opacity: 0.85;
+}
+.cframe[data-edge='wave'] .cframe__edge {
+  top: 4px;
+  background: radial-gradient(circle at 50% 100%, transparent 6px, color-mix(in srgb, var(--c-primary) 70%, transparent) 6.5px 7.6px, transparent 8.2px) 0 0 / 16px 9px repeat-x;
+}
+.cframe[data-edge='wave'] .cframe__edge--bottom { top: auto; bottom: 4px; }
+.cframe[data-edge='zigzag'] .cframe__edge {
+  height: 10px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--c-primary) 55%, transparent) 25%, transparent 25%) -6px 0 / 12px 12px repeat-x,
+    linear-gradient(225deg, color-mix(in srgb, var(--c-primary) 55%, transparent) 25%, transparent 25%) -6px 0 / 12px 12px repeat-x;
+}
+.cframe[data-edge='lights'] .cframe__edge {
+  height: 26px;
+  background:
+    radial-gradient(ellipse 60% 45% at 50% 0, transparent 70%, color-mix(in srgb, var(--c-primary) 60%, transparent) 72% 76%, transparent 78%) 0 -6px / 44px 26px repeat-x,
+    radial-gradient(circle at 50% 70%, #fff8d6 2px, color-mix(in srgb, var(--c-primary) 85%, #fff) 3.2px, color-mix(in srgb, var(--c-primary) 30%, transparent) 5px, transparent 9px) 0 0 / 22px 26px repeat-x;
+}
+.inv-root[data-orn-motion='on'] .cframe[data-edge='lights'] .cframe__edge { animation: orn-lights 1.6s steps(2) infinite; }
+@keyframes orn-lights { 50% { opacity: 0.55; } }
 
 /* ── Layout cover ──────────────────────────────────────────── */
 .inv-cover[data-layout='bottom'] { place-items: end center; padding-bottom: 58px; }
@@ -648,6 +916,18 @@ textarea.inv-input { min-height: 88px; resize: vertical; }
   .inv-cover.is-open .corner { translate: none; }
   .inv-cover.is-open .cframe__mid { translate: -50% 0; }
   .inv-burst { display: none; }
+  .inv-cover .inv-cover__body > *, .pf, .pf *, .corner, .cframe__mid, .divider { animation: none !important; }
   .inv-music.is-playing .icon,
   .inv-music.is-playing::after { animation: none; }
 }
+
+/* ── Viewer.js (foto galeri layar penuh) ───────────────────── */
+.inv-viewer.viewer-backdrop { background-color: rgba(10, 8, 6, 0.92); }
+.inv-viewer .viewer-title { margin-bottom: 8px; font-size: 12px; letter-spacing: 0.14em; color: rgba(255, 255, 255, 0.75); opacity: 1; }
+.inv-viewer .viewer-toolbar > ul > li { width: 30px; height: 30px; margin: 0 4px; background-color: rgba(255, 255, 255, 0.14); backdrop-filter: blur(6px); }
+.inv-viewer .viewer-toolbar > ul > li::before { margin: 5px; }
+.inv-viewer .viewer-toolbar > ul > li:hover { background-color: rgba(255, 255, 255, 0.28); }
+.inv-viewer .viewer-navbar { background-color: transparent; }
+.inv-viewer .viewer-list > li { border-radius: 4px; opacity: 0.45; }
+.inv-viewer .viewer-list > .viewer-active { opacity: 1; box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.85); }
+.inv-viewer .viewer-close { background-color: rgba(255, 255, 255, 0.14); }

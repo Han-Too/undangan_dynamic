@@ -12,7 +12,7 @@ import OrnamentDivider from './ornaments/OrnamentDivider.vue';
 defineProps({ opened: { type: Boolean, default: false } });
 const emit = defineEmits(['open']);
 
-const { state, theme, guest, isGreeting, coverDesign, effective } = useInvitation();
+const { state, theme, guest, isGreeting, coverDesign, effective, motion, fx } = useInvitation();
 const editor = inject('invEditor', null);
 const cover = computed(() => state.content.cover);
 const hasPhoto = computed(() => !!state.photos.cover.src);
@@ -45,6 +45,8 @@ function open(e) {
     class="inv-cover"
     :class="{ 'is-open': opened, 'has-photo': hasPhoto, 'has-bg': !!bgStyle }"
     :data-layout="layout"
+    :data-open="motion.opening"
+    :data-text="motion.coverText"
     :style="{ '--open-x': origin.x, '--open-y': origin.y, ...bgStyle }"
     data-section="cover"
     :inert="opened"
@@ -53,7 +55,7 @@ function open(e) {
       <InvPhoto :photo="state.photos.cover" label="Foto Cover" :placeholder="false" />
     </div>
     <div v-if="hasPhoto && layout !== 'split'" class="inv-cover__veil" />
-    <BackgroundFx :fx="theme.fx" />
+    <BackgroundFx :fx="fx" />
 
     <CoverFrame :frame="coverDesign.frame" :theme-corner="theme.ornaments.corner" />
 
@@ -61,7 +63,7 @@ function open(e) {
       <InvPhoto v-if="hasPhoto" :photo="state.photos.cover" label="Foto Cover" :placeholder="false" />
     </div>
 
-    <div class="inv-cover__body">
+    <div :key="motion.coverText" class="inv-cover__body">
       <p class="inv-eyebrow">{{ cover.label }}</p>
       <h1 class="inv-cover__names">{{ cover.names }}</h1>
       <OrnamentDivider :type="theme.ornaments.divider" />

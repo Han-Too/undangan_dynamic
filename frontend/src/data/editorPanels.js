@@ -1,3 +1,4 @@
+import AnimationEditor from '../components/builder/AnimationEditor.vue';
 import ColorEditor from '../components/builder/ColorEditor.vue';
 import ContentEditor from '../components/builder/ContentEditor.vue';
 import CoverEditor from '../components/builder/CoverEditor.vue';
@@ -7,6 +8,7 @@ import GiftEditor from '../components/builder/GiftEditor.vue';
 import LocationEditor from '../components/builder/LocationEditor.vue';
 import MusicEditor from '../components/builder/MusicEditor.vue';
 import PhotoEditor from '../components/builder/PhotoEditor.vue';
+import PhotoFrameEditor from '../components/builder/PhotoFrameEditor.vue';
 import RsvpEditor from '../components/builder/RsvpEditor.vue';
 import ThemeSelector from '../components/builder/ThemeSelector.vue';
 import TypographyEditor from '../components/builder/TypographyEditor.vue';
@@ -24,6 +26,8 @@ export const editorGroups = [
       { id: 'cover', label: 'Cover', icon: 'layers', component: CoverEditor },
       { id: 'typography', label: 'Font', icon: 'type', component: TypographyEditor },
       { id: 'colors', label: 'Warna', icon: 'droplet', component: ColorEditor },
+      { id: 'photoFrame', label: 'Bingkai Foto', icon: 'frame', component: PhotoFrameEditor, section: 'profile' },
+      { id: 'animation', label: 'Animasi', icon: 'sparkles', component: AnimationEditor },
     ],
   },
   {

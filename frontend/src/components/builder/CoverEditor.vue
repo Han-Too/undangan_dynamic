@@ -140,6 +140,18 @@ const customized = computed(() => Object.values(state.coverStyle).some(Boolean))
 .mini :deep(.cframe__mid--top) { top: 5px; }
 .mini :deep(.cframe__mid--bottom) { bottom: 5px; }
 .mini :deep(.cframe__edge) { height: 6px; background-size: 10px 6px !important; }
+.mini :deep(.cframe[data-edge='bunting'] .cframe__edge),
+.mini :deep(.cframe[data-edge='lights'] .cframe__edge) { height: 8px; background-size: 100% 1px, 14px 8px, 14px 8px !important; background-position: 0 0, 0 0, 7px 0 !important; }
+.mini :deep(.cframe[data-line='dotted'] .cframe__line),
+.mini :deep(.cframe[data-line='rounded'] .cframe__line),
+.mini :deep(.cframe[data-line='thick'] .cframe__line) { inset: 5px; outline-offset: -4px; }
+.mini :deep(.cframe[data-line='rounded'] .cframe__line) { border-radius: 12px; }
+.mini :deep(.cframe[data-line='thick'] .cframe__line) { border-width: 2px; }
+.mini :deep(.cframe[data-line='oval'] .cframe__line) { inset: 7px 5px; outline-offset: -4px; }
+.mini :deep(.cframe[data-line='triple'] .cframe__line) { outline-offset: -3px; }
+.mini :deep(.cframe__line::after) { inset: 5px !important; }
+.mini :deep(.cframe[data-line='offset'] .cframe__line) { inset: 4px 8px 8px 4px; }
+.mini :deep(.cframe[data-line='offset'] .cframe__line::after) { inset: -1px !important; translate: 4px 4px; }
 
 /* Skema layout */
 .lay {

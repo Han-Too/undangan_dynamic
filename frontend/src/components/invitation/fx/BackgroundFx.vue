@@ -17,7 +17,7 @@ const rand = (i, salt) => {
 const items = computed(() => {
   const { shapes: names, count, size, motion } = props.fx.particles;
   return Array.from({ length: count }, (_, i) => {
-    const dur = motion === 'twinkle' ? 4 + rand(i, 3) * 5 : 14 + rand(i, 3) * 16;
+    const dur = motion === 'twinkle' ? 4 + rand(i, 3) * 5 : motion === 'float' ? 9 + rand(i, 3) * 8 : 14 + rand(i, 3) * 16;
     return {
       key: i,
       svg: shapes[names[i % names.length]],
@@ -38,7 +38,7 @@ const items = computed(() => {
 </script>
 
 <template>
-  <div class="fx" aria-hidden="true">
+  <div class="fx" :class="{ 'fx--still': fx.still }" aria-hidden="true">
     <div class="fx__pattern" :data-motion="fx.patternMotion" />
     <div class="fx__glow fx__glow--a" />
     <div class="fx__glow fx__glow--b" />
@@ -121,6 +121,12 @@ const items = computed(() => {
   animation-name: fx-rise;
   animation-timing-function: linear;
 }
+.fx__p[data-motion='float'] {
+  top: var(--y);
+  animation-name: fx-float;
+  animation-timing-function: ease-in-out;
+  animation-direction: alternate;
+}
 .fx__p[data-motion='twinkle'] {
   top: var(--y);
   animation-name: fx-twinkle;
@@ -145,6 +151,12 @@ const items = computed(() => {
   0%, 100% { transform: scale(0.6) rotate(var(--rot)); opacity: 0; }
   50% { transform: scale(1) rotate(calc(var(--rot) + 45deg)); opacity: var(--o); }
 }
+@keyframes fx-float {
+  0% { transform: translate3d(0, 0, 0) rotate(calc(var(--rot) * .1)); opacity: 0; }
+  15%, 85% { opacity: var(--o); }
+  50% { transform: translate3d(var(--sway), -40px, 0) rotate(calc(var(--rot) * -.1)) scale(.9); }
+  100% { transform: translate3d(calc(var(--sway) * -1), 10px, 0) rotate(calc(var(--rot) * .1)); opacity: 0; }
+}
 @keyframes fx-drift {
   to { transform: translate(var(--pattern-size), var(--pattern-size)); }
 }
@@ -154,6 +166,18 @@ const items = computed(() => {
 @keyframes fx-breathe {
   0%, 100% { transform: scale(1); opacity: 0.16; }
   50% { transform: scale(1.15); opacity: 0.28; }
+}
+
+/* Animasi dimatikan user: partikel tampil diam di posisinya. */
+.fx--still .fx__pattern,
+.fx--still .fx__glow,
+.fx--still .fx__p {
+  animation: none !important;
+}
+.fx--still .fx__p {
+  top: var(--y);
+  opacity: var(--o);
+  transform: rotate(var(--rot));
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,6 +1,8 @@
 <script setup>
 import { computed, ref } from 'vue';
+import { useBuilderUi } from '../../composables/useBuilderUi';
 import { createPhoto } from '../../data/defaults';
+import { getPhotoShape } from '../../data/photoFrames';
 import { useInvitation } from '../../composables/useInvitation';
 import { useToast } from '../../composables/useToast';
 import { api } from '../../services/api';
@@ -10,14 +12,17 @@ import InvPhoto from '../invitation/InvPhoto.vue';
 import PhotoCropModal from './PhotoCropModal.vue';
 import PanelHeader from './ui/PanelHeader.vue';
 
-const { state, meta } = useInvitation();
+const { state, meta, photoStyle } = useInvitation();
 const { push } = useToast();
+const { openPanel } = useBuilderUi();
+/** Rasio crop foto profil mengikuti bentuk bingkai yang dipilih (bundar/love = kotak, dst.). */
+const profileRatio = computed(() => getPhotoShape(photoStyle.value.shape)?.ratio ?? 4 / 5);
 
 // `ratio` = lebar / tinggi, sama dengan kotak tampil di undangan.
 // Slot galeri mengikuti jumlah foto yang dipilih di menu Galeri (4 / 6 / 8).
 const slots = computed(() => [
   { key: 'cover', label: 'Foto cover', hint: 'Latar halaman pembuka (vertikal)', ratio: 9 / 16 },
-  { key: 'profile', label: 'Foto profil / pasangan', hint: 'Dalam bingkai tema', ratio: 4 / 5 },
+  { key: 'profile', label: 'Foto profil / pasangan', hint: 'Bentuk & border bisa diganti di menu Bingkai Foto', ratio: profileRatio.value },
   ...Array.from({ length: state.gallery.count }, (_, i) => ({ key: `gallery.${i}`, label: `Galeri ${i + 1}`, hint: '', ratio: 4 / 5 })),
 ]);
 
@@ -83,12 +88,14 @@ function remove(key) {
           <small v-if="s.hint">{{ s.hint }}</small>
           <div class="slot__actions">
             <button type="button" class="btn btn--sm" :disabled="busy" @click="pick(s.key)">
-              <Icon name="upload" :size="14" /> {{ busy && pendingKey === s.key ? 'Mengunggah…' : photoOf(s.key).src ? 'Ganti' : 'Unggah' }}
+              <Icon name="upload" :size="14" />
+              <span class="slot__btn-label">{{ busy && pendingKey === s.key ? 'Mengunggah…' : photoOf(s.key).src ? 'Ganti' : 'Unggah' }}</span>
             </button>
             <template v-if="photoOf(s.key).src">
               <button type="button" class="btn btn--sm" @click="adjust(s.key)"><Icon name="crop" :size="14" /> Atur</button>
               <button type="button" class="btn btn--sm btn--danger" :aria-label="`Hapus ${s.label}`" @click="remove(s.key)"><Icon name="trash" :size="14" /></button>
             </template>
+            <button v-if="s.key === 'profile'" type="button" class="btn btn--sm" @click="openPanel('photoFrame')"><Icon name="frame" :size="14" /> Bingkai</button>
           </div>
         </div>
       </article>
@@ -107,17 +114,19 @@ function remove(key) {
 </template>
 
 <style scoped>
-.slots { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.slots { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .slot {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr;
   gap: 10px;
+  min-width: 0;
   padding: 10px;
   background: var(--ui-surface);
   border: 1px solid var(--ui-border);
   border-radius: var(--ui-radius);
 }
-.slot--wide { grid-column: 1 / -1; grid-template-columns: 110px 1fr; grid-template-rows: auto; align-items: start; }
+.slot--wide { grid-column: 1 / -1; grid-template-columns: 110px minmax(0, 1fr); grid-template-rows: auto; align-items: start; }
 .slot__thumb {
   position: relative;
   width: 100%;
@@ -140,7 +149,9 @@ function remove(key) {
 }
 .slot__body { display: grid; gap: 2px; align-content: start; min-width: 0; }
 .slot__body small { color: var(--ui-muted); font-size: 12px; }
-.slot__actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.slot__actions { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; min-width: 0; }
+.slot__actions .btn { min-width: 0; max-width: 100%; }
+.slot__btn-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
 /* thumbnail galeri/placeholder memakai CSS var tema undangan → beri fallback netral */
 .slot__thumb :deep(.inv-photo__ph) { color: var(--ui-faint); background: var(--ui-sunken); font-size: 9px; text-align: center; padding: 4px; }
 </style>

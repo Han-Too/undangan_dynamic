@@ -1,4 +1,5 @@
 import { computed, reactive, ref, shallowRef, watchEffect } from 'vue';
+import { getDensity, getParticlePreset } from '../data/animations';
 import { baseContent, createDefaultInvitation, createPhoto, MAX_GALLERY } from '../data/defaults';
 import { fontStack, getFont } from '../data/fonts';
 import { patterns } from '../data/patterns';
@@ -39,6 +40,42 @@ const coverDesign = computed(() => ({
   frame: state.coverStyle.frame || theme.value.cover.frame,
   background: state.coverStyle.background || theme.value.cover.background,
 }));
+
+/** Bingkai foto profil efektif: pilihan user, atau bawaan tema. */
+const photoStyle = computed(() => ({
+  shape: state.profileStyle.shape || theme.value.photo.shape,
+  border: state.profileStyle.border || theme.value.photo.border,
+  decor: state.profileStyle.decor || theme.value.photo.decor,
+}));
+
+/** Animasi efektif. Saklar utama mati → semua gerakan dihentikan. */
+const motion = computed(() => {
+  const a = state.animation;
+  const t = theme.value.motion;
+  if (!a.enabled) {
+    return { enabled: false, reveal: 'none', opening: 'none', coverText: 'none', photo: 'none', burst: false, ornaments: false };
+  }
+  return {
+    enabled: true,
+    reveal: a.reveal || t.reveal,
+    opening: a.opening || t.opening,
+    coverText: a.coverText || t.coverText,
+    photo: a.photo || t.photo,
+    burst: a.burst,
+    ornaments: a.ornaments,
+  };
+});
+
+/** Konfigurasi latar animasi (BackgroundFx) setelah pilihan partikel / kepadatan / saklar animasi diterapkan. */
+const fx = computed(() => {
+  const base = theme.value.fx;
+  const a = state.animation;
+  const preset = getParticlePreset(a.particles);
+  const particles = { ...base.particles, ...(preset ? { shapes: preset.shapes, motion: preset.motion, size: preset.size ?? base.particles.size } : {}) };
+  if (a.motion) particles.motion = a.motion;
+  particles.count = a.particles === 'none' ? 0 : Math.round(base.particles.count * getDensity(a.density).factor);
+  return { ...base, particles, still: !a.enabled, patternMotion: a.enabled ? base.patternMotion : 'none' };
+});
 
 /** `blob` = file lokal yang belum diunggah; null = pakai audio dari server (bila ada). */
 const setAudioBlob = (blob) => {
@@ -199,6 +236,9 @@ export function useInvitation() {
     theme,
     isGreeting,
     coverDesign,
+    photoStyle,
+    motion,
+    fx,
     cssVars,
     headingFont,
     bodyFont,

@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { useInvitation } from '../../composables/useInvitation';
-import { buildEmbedUrl, buildOpenUrl, hasCoords, parseMapsUrl } from '../../utils/maps';
+import { buildEmbedUrl, buildOpenUrl, parseMapsUrl } from '../../utils/maps';
 import Icon from '../Icon.vue';
 import FieldText from './ui/FieldText.vue';
 import PanelHeader from './ui/PanelHeader.vue';
@@ -35,12 +35,6 @@ function onUrl(value) {
   }
   if (parsed.name && !loc.name) loc.name = parsed.name;
 }
-
-function generateUrl() {
-  const q = hasCoords(loc) ? `${loc.latitude},${loc.longitude}` : [loc.name, loc.address].filter(Boolean).join(', ');
-  if (!q) return (status.value = { kind: 'error', text: 'Isi koordinat atau nama/alamat dulu.' });
-  onUrl(`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`);
-}
 </script>
 
 <template>
@@ -69,9 +63,8 @@ function generateUrl() {
       <div v-else class="map__empty"><Icon name="pin" :size="22" />Isi lokasi untuk melihat peta</div>
     </div>
 
-    <div class="actions">
-      <button type="button" class="btn" @click="generateUrl"><Icon name="link" :size="15" /> Buat link dari data</button>
-      <a v-if="openUrl" class="btn" :href="openUrl" target="_blank" rel="noopener noreferrer"><Icon name="external" :size="15" /> Uji link</a>
+    <div v-if="openUrl" class="actions">
+      <a class="btn" :href="openUrl" target="_blank" rel="noopener noreferrer"><Icon name="external" :size="15" /> Uji link</a>
     </div>
   </div>
 </template>

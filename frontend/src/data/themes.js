@@ -17,11 +17,17 @@
  *                glow        daftar warna cahaya lembut ('primary' | 'secondary' | hex)
  *  ornaments   divider: floral|star|wayang|heart|siger|gonjong|spiral · corner: floral|geometric|tumpal|vine
  *              frame: arch|oval|octagon|rect · band: true → pita tumpal di batas section
- *  sectionStyle  airy | framed | bordered | glass | card | minimal (lihat styles/invitation.css)
+ *  sectionStyle  airy | framed | bordered | glass | card | minimal | dashed | offset | arch | tinted
+ *              (lihat styles/invitation.css)
  *  cover       desain cover bawaan { layout, frame, background } (lihat coverBackgrounds.js & coverFrames.js)
+ *  photo       bingkai foto profil bawaan { shape, border, decor } (data/photoFrames.js) — opsional
+ *  motion      animasi bawaan { reveal, opening, coverText, photo } (data/animations.js) — opsional
  *  copy        teks bawaan tema. Dipakai saat ganti tema bila user belum mengubah teksnya.
  * ─────────────────────────────────────────────────────────────────────────────
  */
+
+import { DEFAULT_MOTION } from './animations.js';
+import { moreThemes } from './themesMore.js';
 
 const people2 = (a, b) => [a, b];
 
@@ -258,7 +264,7 @@ export const themes = {
     id: 'ulangTahunAnak',
     name: 'Ulang Tahun Anak',
     tagline: 'Ceria, warna-warni, seru',
-    category: 'ulangTahun',
+    category: 'ulangTahun', group: 'Anak',
     colors: { primary: '#f0913e', secondary: '#3d7dd8', background: '#fff8ec', surface: '#ffffff', text: '#3a3352' },
     fonts: { heading: 'Fredoka', body: 'Quicksand' },
     headingColor: 'secondary',
@@ -297,7 +303,7 @@ export const themes = {
     id: 'ulangTahun',
     name: 'Ulang Tahun',
     tagline: 'Elegan, malam, berkilau',
-    category: 'ulangTahun',
+    category: 'ulangTahun', group: 'Remaja & Dewasa',
     colors: { primary: '#d4af6a', secondary: '#e07a9b', background: '#1b1f33', surface: '#252a42', text: '#f1ecdf' },
     fonts: { heading: 'DM Serif Display', body: 'Outfit' },
     headingColor: 'primary',
@@ -336,7 +342,7 @@ export const themes = {
     id: 'sweet17',
     name: 'Sweet Seventeen',
     tagline: 'Manis, girly, berkilau',
-    category: 'ulangTahun',
+    category: 'ulangTahun', group: 'Remaja & Dewasa',
     colors: { primary: '#a66cc9', secondary: '#d9568f', background: '#fbf4fd', surface: '#ffffff', text: '#45284f' },
     fonts: { heading: 'Alex Brush', body: 'Poppins' },
     headingColor: 'secondary',
@@ -454,7 +460,7 @@ export const themes = {
     id: 'wisuda',
     name: 'Wisuda',
     tagline: 'Formal, bangga, berprestasi',
-    category: 'lainnya',
+    category: 'lainnya', group: 'Wisuda & Umum',
     colors: { primary: '#c9a227', secondary: '#1f3a68', background: '#f5f6fa', surface: '#ffffff', text: '#1d2742' },
     fonts: { heading: 'Cinzel', body: 'Raleway' },
     headingColor: 'secondary',
@@ -493,7 +499,7 @@ export const themes = {
     id: 'umum',
     name: 'Acara Umum',
     tagline: 'Modern, minimalis, serbaguna',
-    category: 'lainnya',
+    category: 'lainnya', group: 'Wisuda & Umum',
     colors: { primary: '#e0663f', secondary: '#1f2a37', background: '#f7f5f2', surface: '#ffffff', text: '#1f2a37' },
     fonts: { heading: 'Oswald', body: 'Inter' },
     headingColor: 'secondary',
@@ -953,12 +959,16 @@ export const themes = {
   },
 };
 
+Object.assign(themes, moreThemes);
+
 // Turunkan sifat dari kategori: tema Ucapan memakai mode "greeting".
 for (const t of Object.values(themes)) {
   const cat = themeCategories.find((c) => c.id === t.category);
   t.kind = cat?.kind ?? 'invitation';
   t.cover = { layout: 'center', frame: 'theme', background: 'theme', ...t.cover };
   t.hiddenSections = t.kind === 'greeting' ? GREETING_HIDDEN_SECTIONS : [];
+  t.photo = { shape: t.ornaments.frame, border: 'ring', decor: 'none', ...t.photo };
+  t.motion = { ...DEFAULT_MOTION, ...t.motion };
 }
 
 export const themeList = Object.values(themes);

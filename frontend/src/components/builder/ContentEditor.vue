@@ -4,6 +4,7 @@ import { useBuilderUi } from '../../composables/useBuilderUi';
 import { useInvitation } from '../../composables/useInvitation';
 import { sectionsForTheme } from '../../data/sections';
 import AccordionGroup from './ui/AccordionGroup.vue';
+import FieldDate from './ui/FieldDate.vue';
 import FieldText from './ui/FieldText.vue';
 import PanelHeader from './ui/PanelHeader.vue';
 import ToggleSwitch from './ui/ToggleSwitch.vue';
@@ -40,7 +41,7 @@ const removePerson = (i) => c.profile.people.splice(i, 1);
     <AccordionGroup v-model="open.cover" :title="isGreeting ? 'Cover' : 'Cover & tanggal'">
       <FieldText v-model="c.cover.label" label="Teks atas" :placeholder="isGreeting ? 'HAPPY BIRTHDAY' : 'THE WEDDING OF'" />
       <FieldText v-model="c.cover.names" :label="isGreeting ? 'Nama penerima ucapan' : 'Nama pasangan / nama anak'" />
-      <FieldText v-if="!isGreeting" v-model="c.cover.date" type="datetime-local" label="Tanggal & jam acara" hint="Dipakai untuk tampilan tanggal dan hitung mundur." />
+      <FieldDate v-if="!isGreeting" v-model="c.cover.date" with-time label="Tanggal & jam acara" hint="Dipakai untuk tampilan tanggal dan hitung mundur." />
       <FieldText v-model="c.cover.guestText" :label="isGreeting ? 'Teks sapaan' : 'Sapaan tamu'" />
       <FieldText v-model="c.cover.buttonText" label="Teks tombol" />
       <FieldText v-if="!isGreeting" v-model="c.countdown.title" label="Judul countdown" />

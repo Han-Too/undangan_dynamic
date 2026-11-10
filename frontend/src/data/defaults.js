@@ -32,6 +32,24 @@ export function createDefaultInvitation() {
     colors: { primary: '', secondary: '', background: '', text: '' },
     /** Desain cover. String kosong = ikuti bawaan tema (lihat `theme.cover`). */
     coverStyle: { layout: '', frame: '', background: '' },
+    /** Bingkai foto profil (lihat data/photoFrames.js). String kosong = ikuti tema (`theme.photo`). */
+    profileStyle: { shape: '', border: '', decor: '' },
+    /**
+     * Animasi (lihat data/animations.js). `enabled` = saklar utama; string kosong = ikuti tema (`theme.motion`).
+     * particles: id preset | '' · motion: arah partikel | '' · density: low | normal | high
+     */
+    animation: {
+      enabled: true,
+      reveal: '',
+      opening: '',
+      coverText: '',
+      photo: '',
+      particles: '',
+      motion: '',
+      density: 'normal',
+      burst: true,
+      ornaments: true,
+    },
     /** Tampilan galeri: jumlah foto, 'grid' | 'carousel', geser otomatis. */
     gallery: { count: 4, mode: 'grid', autoplay: true },
     sections: { opening: true, profile: true, event: true, countdown: true, gallery: true, location: true, rsvp: true, gift: true, closing: true },

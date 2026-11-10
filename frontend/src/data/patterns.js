@@ -176,6 +176,72 @@ export const patterns = {
       ),
     ),
 
+  /** Langit malam: bintang kecil & titik */
+  stars: (c) =>
+    toUrl(
+      svg(
+        90,
+        90,
+        c,
+        `<path d='M20 12l2 6 6 2-6 2-2 6-2-6-6-2 6-2z' fill='${c}' stroke='none'/>
+         <path d='M66 54l1.4 4 4 1.4-4 1.4-1.4 4-1.4-4-4-1.4 4-1.4z' fill='${c}' stroke='none'/>
+         <circle cx='70' cy='16' r='1.4' fill='${c}' stroke='none'/><circle cx='30' cy='70' r='1.2' fill='${c}' stroke='none'/>
+         <circle cx='48' cy='38' r='.9' fill='${c}' stroke='none'/><circle cx='84' cy='80' r='.9' fill='${c}' stroke='none'/>`,
+      ),
+    ),
+
+  /** Ombak berlapis */
+  waves: (c) => toUrl(svg(60, 30, c, `<path d='M0 10q7.5-8 15 0t15 0 15 0 15 0'/><path d='M0 25q7.5-8 15 0t15 0 15 0 15 0' stroke-opacity='.5'/>`)),
+
+  /** Kepingan salju */
+  snow: (c) =>
+    toUrl(
+      svg(
+        80,
+        80,
+        c,
+        `<g transform='translate(22 22)'>${[0, 60, 120].map((a) => `<path transform='rotate(${a})' d='M0-9V9M-3-6l3 3 3-3M-3 6l3-3 3 3'/>`).join('')}</g>
+         <g transform='translate(62 60) scale(.6)'>${[0, 60, 120].map((a) => `<path transform='rotate(${a})' d='M0-9V9'/>`).join('')}</g>
+         <circle cx='62' cy='18' r='1.5' fill='${c}' stroke='none'/><circle cx='18' cy='64' r='1.5' fill='${c}' stroke='none'/>`,
+      ),
+    ),
+
+  /** Kotak-kotak gingham (piknik) */
+  gingham: (c) =>
+    toUrl(
+      svg(28, 28, c, `<rect width='14' height='28' fill='${c}' fill-opacity='.5' stroke='none'/><rect width='28' height='14' fill='${c}' fill-opacity='.5' stroke='none'/>`),
+    ),
+
+  /** Terrazzo: serpihan acak */
+  terrazzo: (c) =>
+    toUrl(
+      svg(
+        100,
+        100,
+        c,
+        `<path d='M12 14l8-3 3 7-7 3z' fill='${c}' stroke='none'/><path d='M62 20l10 2-3 8-8-3z' fill='${c}' fill-opacity='.6' stroke='none'/>
+         <path d='M34 58l6-6 5 6-6 5z' fill='${c}' fill-opacity='.8' stroke='none'/><path d='M80 66l9 1-1 8-9-2z' fill='${c}' stroke='none'/>
+         <circle cx='18' cy='84' r='3' fill='${c}' fill-opacity='.6' stroke='none'/><circle cx='52' cy='88' r='1.6' fill='${c}' stroke='none'/>
+         <circle cx='88' cy='36' r='1.8' fill='${c}' stroke='none'/><circle cx='44' cy='30' r='1.2' fill='${c}' stroke='none'/>`,
+      ),
+    ),
+
+  /** Ketupat & bintang (Lebaran) */
+  ketupat: (c) =>
+    toUrl(
+      svg(
+        70,
+        70,
+        c,
+        `<path d='M20 8l10 10-10 10-10-10z' fill='${c}' fill-opacity='.35'/><path d='M15 13l10 10M25 13L15 23'/>
+         <path d='M54 44l2 5 5 2-5 2-2 5-2-5-5-2 5-2z' fill='${c}' stroke='none'/>`,
+      ),
+    ),
+
+  /** Lingkaran bertumpuk ala art deco */
+  deco: (c) =>
+    toUrl(svg(40, 20, c, `<path d='M0 20a20 20 0 0 1 40 0M6 20a14 14 0 0 1 28 0M12 20a8 8 0 0 1 16 0'/>`)),
+
   /** Pita tumpal (segitiga berderet) untuk batas section bergaya Jawa */
   tumpalBand: (c) =>
     toUrl(

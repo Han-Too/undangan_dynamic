@@ -4,14 +4,14 @@ import InvPhoto from './InvPhoto.vue';
 import OrnamentDivider from './ornaments/OrnamentDivider.vue';
 import PhotoFrame from './PhotoFrame.vue';
 
-const { state, theme } = useInvitation();
+const { state, theme, photoStyle, motion } = useInvitation();
 </script>
 
 <template>
   <h2 class="inv-title">{{ state.content.profile.title }}</h2>
   <OrnamentDivider :type="theme.ornaments.divider" />
 
-  <PhotoFrame :shape="theme.ornaments.frame" ratio="4 / 5">
+  <PhotoFrame :shape="photoStyle.shape" :border="photoStyle.border" :decor="photoStyle.decor" :motion="motion.photo">
     <InvPhoto :photo="state.photos.profile" label="Foto Profil" />
   </PhotoFrame>
 
