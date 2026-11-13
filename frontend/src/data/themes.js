@@ -29,6 +29,7 @@
 
 import { DEFAULT_MOTION } from './animations.js';
 import { catalogThemes } from './themesCatalog.js';
+import { eventThemes, LEGACY_GROUPS } from './themesEvents.js';
 import { moreThemes } from './themesMore.js';
 
 const people2 = (a, b) => [a, b];
@@ -964,6 +965,26 @@ export const themes = {
 Object.assign(themes, moreThemes);
 for (const id of Object.keys(catalogThemes)) if (themes[id]) console.warn(`[tema] id ganda: ${id}`);
 Object.assign(themes, catalogThemes);
+for (const id of Object.keys(eventThemes)) if (themes[id]) console.warn(`[tema] id ganda: ${id}`);
+Object.assign(themes, eventThemes);
+for (const [id, group] of Object.entries(LEGACY_GROUPS)) if (themes[id]) themes[id].group = group;
+
+/** Rasio kontras WCAG antara dua warna hex. */
+const luminance = (hex) => {
+  const ch = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((v) => (v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+};
+const contrast = (a, b) => {
+  const [x, y] = [luminance(a), luminance(b)].sort((m, n) => n - m);
+  return (x + 0.05) / (y + 0.05);
+};
+/** Warna judul harus terbaca (≥ 3:1, batas teks besar). Bila tidak, pakai peran warna lain yang paling kontras. */
+function readableHeading(t) {
+  const role = (r) => contrast(t.colors[r], t.colors.background);
+  if (role(t.headingColor) >= 3) return t.headingColor;
+  const pick = ['secondary', 'primary', 'text'].find((r) => role(r) >= 3);
+  return pick ?? 'text';
+}
 
 // Turunkan sifat dari kategori: tema Ucapan memakai mode "greeting".
 for (const t of Object.values(themes)) {
@@ -973,6 +994,7 @@ for (const t of Object.values(themes)) {
   t.hiddenSections = t.kind === 'greeting' ? GREETING_HIDDEN_SECTIONS : [];
   t.photo = { shape: t.ornaments.frame, border: 'ring', decor: 'none', ...t.photo };
   t.motion = { ...DEFAULT_MOTION, ...t.motion };
+  t.headingColor = readableHeading(t);
 }
 
 export const themeList = Object.values(themes);

@@ -41,6 +41,12 @@ const words = computed(() => {
     .filter(Boolean)
     .map((w) => ({ text: w, amp: w === '&' || w.toLowerCase() === 'dan', chars: [...w].map((ch) => ({ ch, i: i++ })) }));
 });
+/** Kata terpanjang menentukan skala huruf nama agar kata panjang tidak terpotong di layar sempit. */
+const nameFit = computed(() => {
+  const longest = Math.max(0, ...words.value.map((w) => w.text.length));
+  const limit = layout.value === 'stacked' ? 7 : 10;
+  return longest > limit ? Math.max(0.55, limit / longest).toFixed(3) : 1;
+});
 /** Inisial untuk layout monogram: "Raka & Ayu" → R & A. */
 const initials = computed(() => {
   const parts = String(cover.value.names || '').split(/\s*(?:&|\+|\bdan\b)\s*/i).filter(Boolean);
@@ -145,7 +151,7 @@ onBeforeUnmount(() => window.removeEventListener('deviceorientation', onOrient))
         <span>{{ initials[0] }}</span><i>&amp;</i><span>{{ initials[1] }}</span>
       </div>
       <p class="inv-eyebrow">{{ cover.label }}</p>
-      <h1 class="inv-cover__names" :aria-label="cover.names">
+      <h1 class="inv-cover__names" :aria-label="cover.names" :style="{ '--name-fit': nameFit }">
         <template v-for="(w, wi) in words" :key="`${wi}-${w.text}`">
           <span class="w" :class="{ 'w--amp': w.amp }" aria-hidden="true">
             <template v-if="charMode"><span v-for="c in w.chars" :key="c.i" class="ch" :style="{ '--ci': c.i }">{{ c.ch }}</span></template>

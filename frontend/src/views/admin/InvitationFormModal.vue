@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
+import ThemePicker from '@/components/ThemePicker.vue';
+import { DEFAULT_THEME, getTheme } from '@/data/themes';
 import { useAuth } from '@/composables/useAuth';
 import { api } from '@/services/api';
 
@@ -18,7 +20,7 @@ const emit = defineEmits(['close', 'saved']);
 
 const KEEP_OWNER = 'keep'; // Select reka-ui tidak menerima nilai kosong/null
 const { isAdmin } = useAuth();
-const form = reactive({ title: '', slug: '', is_published: true, owner: KEEP_OWNER });
+const form = reactive({ title: '', slug: '', is_published: true, owner: KEEP_OWNER, theme: DEFAULT_THEME });
 const owners = ref([]);
 const busy = ref(false);
 const error = ref('');
@@ -36,6 +38,7 @@ watch(
       slug: inv?.slug ?? '',
       is_published: inv?.is_published ?? true,
       owner: inv?.user_id ? String(inv.user_id) : KEEP_OWNER,
+      theme: DEFAULT_THEME,
     });
     if (isAdmin.value && !owners.value.length) {
       owners.value = await api.get('/owners').catch(() => []);
@@ -56,7 +59,7 @@ async function onSubmit() {
     const saved = editing.value
       ? await api.put(`/invitations/${props.invitation.id}`, { ...body, slug: form.slug || slugify(form.title), is_published: form.is_published })
       : await api.post('/invitations', body);
-    emit('saved', saved);
+    emit('saved', saved, editing.value ? {} : { theme: form.theme });
   } catch (e) {
     error.value = e.message;
   } finally {
@@ -67,15 +70,16 @@ async function onSubmit() {
 
 <template>
   <Dialog :open="open" @update:open="(v) => !v && emit('close')">
-    <DialogContent class="sm:max-w-md">
+    <DialogContent :class="editing ? 'sm:max-w-md' : 'flex max-h-[92dvh] flex-col sm:max-w-3xl'">
       <DialogHeader>
         <DialogTitle>{{ editing ? 'Pengaturan undangan' : 'Undangan baru' }}</DialogTitle>
         <DialogDescription>
-          {{ editing ? 'Ubah judul, link, status, atau pemilik undangan.' : 'Isi judul dulu. Desain, acara, dan foto diatur di editor setelah ini.' }}
+          {{ editing ? 'Ubah judul, link, status, atau pemilik undangan.' : 'Isi judul dan pilih tema. Warna, foto, dan detail acara tetap bisa diubah di editor.' }}
         </DialogDescription>
       </DialogHeader>
 
-      <form id="invitation-form" class="grid gap-5" @submit.prevent="onSubmit">
+      <form id="invitation-form" class="-mx-6 grid min-h-0 gap-5 overflow-y-auto px-6" @submit.prevent="onSubmit">
+        <div :class="editing ? 'grid gap-5' : 'grid gap-5 sm:grid-cols-2'">
         <div class="grid gap-2">
           <Label for="inv-title">Judul</Label>
           <Input id="inv-title" v-model="form.title" required maxlength="255" placeholder="mis. Raka & Dinda" />
@@ -100,6 +104,18 @@ async function onSubmit() {
               <SelectItem v-for="o in owners" :key="o.id" :value="String(o.id)">{{ o.name }} <span class="text-muted-foreground">· {{ o.email }}</span></SelectItem>
             </SelectContent>
           </Select>
+        </div>
+
+        </div>
+
+        <div v-if="!editing" class="grid gap-2">
+          <div class="flex items-baseline justify-between gap-2">
+            <Label>Tema</Label>
+            <span class="text-muted-foreground truncate text-xs">Dipilih: <b class="text-foreground">{{ getTheme(form.theme).name }}</b></span>
+          </div>
+          <div class="rounded-lg border p-3">
+            <ThemePicker v-model="form.theme" :columns="0" />
+          </div>
         </div>
 
         <div v-if="editing" class="flex items-start justify-between gap-4 rounded-lg border p-3">

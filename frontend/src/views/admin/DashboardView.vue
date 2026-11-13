@@ -84,12 +84,12 @@ function openEdit(item) {
   formOpen.value = true;
 }
 
-function onSaved(saved) {
+function onSaved(saved, { theme } = {}) {
   const isNew = !editingItem.value;
   formOpen.value = false;
   if (isNew) {
     toast.success('Undangan dibuat', { description: 'Silakan atur desainnya.' });
-    router.push(`/admin/invitations/${saved.id}/edit`);
+    router.push({ path: `/admin/invitations/${saved.id}/edit`, query: theme ? { theme } : {} });
     return;
   }
   toast.success('Pengaturan disimpan');

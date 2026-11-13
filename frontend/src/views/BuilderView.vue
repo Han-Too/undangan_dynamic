@@ -1,6 +1,6 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { RouterLink, onBeforeRouteLeave, useRoute } from 'vue-router';
+import { RouterLink, onBeforeRouteLeave, useRoute, useRouter } from 'vue-router';
 import Icon from '../components/Icon.vue';
 import BuilderLayout from '../components/builder/BuilderLayout.vue';
 import { useBuilderUi } from '../composables/useBuilderUi';
@@ -8,10 +8,12 @@ import { useInvitation } from '../composables/useInvitation';
 import { useMusic } from '../composables/useMusic';
 import { bindRsvp } from '../composables/useRsvp';
 import { api } from '../services/api';
+import { themes } from '../data/themes';
 
 /** Builder untuk satu undangan: muat config dari database, simpan kembali lewat tombol Save. */
 const route = useRoute();
-const { loadInvitation, dirty } = useInvitation();
+const router = useRouter();
+const { loadInvitation, dirty, setTheme, save } = useInvitation();
 const { setMode } = useBuilderUi();
 const { pause } = useMusic();
 
@@ -22,6 +24,16 @@ onMounted(async () => {
   try {
     const invitation = await api.get(`/invitations/${route.params.id}`);
     loadInvitation(invitation);
+    // Undangan baru dengan tema pilihan dari dashboard: terapkan lalu simpan, sekali saja.
+    const picked = route.query.theme;
+    if (picked && themes[picked]) {
+      const fresh = !invitation.config || !Object.keys(invitation.config).length;
+      if (fresh) {
+        setTheme(picked);
+        await save().catch(() => {});
+      }
+      router.replace({ query: {} });
+    }
     setMode('edit');
     document.title = `Edit ${invitation.title} · Undangan Studio`;
     status.value = 'ready';

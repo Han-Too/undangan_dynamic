@@ -503,6 +503,17 @@ export const scenes = {
   storybook: [L('tree', 'left', 30, 'sway'), L('sunHills', 'bottom', 100, 'none', { depth: 0.6 }), L('clouds', 'top', 100, 'drift', { op: 0.5 }), L('birds', 'top', 40, 'fly', { op: 0.6 })],
   party: [L('balloons', 'tr', 36, 'none'), L('balloons', 'tl', 28, 'none', { op: 0.85 }), L('bunting', 'top', 100, 'none')],
   minimal: [],
+  ocean: [L('waves', 'bottom', 100, 'drift', { op: 0.75 }), L('clouds', 'top', 100, 'drift', { op: 0.5 }), L('birds', 'top', 40, 'fly', { op: 0.6 })],
+  space: [L('moon', 'tr', 30, 'pulse', { depth: 0.3 }), L('clouds', 'bottom', 100, 'drift', { op: 0.25 })],
+  jungle: [L('tree', 'left', 32, 'sway'), L('tree', 'right', 30, 'sway'), L('meadow', 'bottom', 100, 'none')],
+  circus: [L('bunting', 'top', 100, 'none'), L('balloons', 'tr', 30, 'none', { op: 0.85 }), L('balloons', 'bl', 24, 'none', { op: 0.6 })],
+  christmas: [L('snowPines', 'bottom', 100, 'none'), L('moon', 'tr', 22, 'pulse', { op: 0.7, depth: 0.3 }), L('bunting', 'top', 100, 'none', { op: 0.6 })],
+  baby: [L('clouds', 'top', 100, 'drift', { op: 0.6 }), L('balloons', 'tr', 28, 'none', { op: 0.7 }), L('clouds', 'bottom', 100, 'drift', { op: 0.35 })],
+  home: [L('sunHills', 'bottom', 100, 'none', { depth: 0.6 }), L('tree', 'left', 28, 'sway', { op: 0.8 }), L('birds', 'top', 40, 'fly', { op: 0.6 })],
+  campus: [L('deco', 'top', 100, 'none', { depth: 0.3, op: 0.7 }), L('birds', 'top', 40, 'fly', { op: 0.5 }), L('brass', 'br', 36, 'sway', { op: 0.6 })],
+  merdeka: [L('bunting', 'top', 100, 'none'), L('birds', 'top', 40, 'fly', { op: 0.5 }), L('hills', 'bottom', 100, 'none', { op: 0.4 })],
+  celebration: [L('bunting', 'top', 100, 'none', { op: 0.85 }), L('disco', 'tr', 22, 'none', { op: 0.8 })],
+  ramadan: [L('lampu', 'tr', 40, 'none'), L('moon', 'tl', 24, 'pulse', { op: 0.85 }), L('mosque', 'bottom', 100, 'none', { op: 0.55 })],
 };
 
 export const sceneList = Object.keys(scenes);
