@@ -15,7 +15,8 @@ export const reveal = {
       },
       { threshold: 0.12 },
     );
-    io.observe(el);
+    // Amati induknya: animasi berbasis clip-path membuat luas elemen ini 0 sehingga observer tidak pernah terpicu.
+    io.observe(el.parentElement ?? el);
     el._revealIo = io;
   },
   unmounted(el) {

@@ -530,11 +530,12 @@ textarea.inv-input { min-height: 88px; resize: vertical; }
 @keyframes ct-drop { 0% { opacity: 0; transform: translateY(-34px); } 60% { opacity: 1; transform: translateY(5px); } }
 
 /* Ornamen bingkai cover bergoyang pelan (data-orn-motion) */
-.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner { animation: orn-sway 7s ease-in-out infinite alternate; }
-.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--tr { animation-delay: -1.7s; }
-.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--bl { animation-delay: -3.4s; }
-.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--br { animation-delay: -5.1s; }
-.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .cframe__mid { animation: orn-breathe 5s ease-in-out infinite; }
+/* corner-in / mid-in (invitation-fx.css) = ornamen mekar saat cover tampil, lalu bergoyang */
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner { animation: corner-in 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.2s backwards, orn-sway 7s ease-in-out infinite alternate; }
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--tr { animation-delay: 0.35s, -1.7s; }
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--bl { animation-delay: 0.5s, -3.4s; }
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .corner--br { animation-delay: 0.65s, -5.1s; }
+.inv-root[data-orn-motion='on'] .inv-cover:not(.is-open) .cframe__mid { animation: mid-in 1.2s ease 0.6s backwards, orn-breathe 5s ease-in-out 1.8s infinite; }
 .inv-root[data-orn-motion='on'] .inv-section .divider { animation: orn-breathe 6s ease-in-out infinite; }
 @keyframes orn-sway { from { rotate: -2.5deg; scale: 1; } to { rotate: 2.5deg; scale: 1.04; } }
 @keyframes orn-breathe { 50% { opacity: 0.65; scale: 1.05; } }

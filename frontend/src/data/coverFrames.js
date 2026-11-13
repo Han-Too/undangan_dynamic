@@ -43,6 +43,23 @@ const wavyLine = (y, len, amp = 4, w = 12) => {
   return `<path d="${d}"/>`;
 };
 
+
+/* ── Bentuk dua warna (currentColor = primary, --c-secondary = isi bunga/aksen) ── */
+const SEC = 'var(--c-secondary)';
+const peonyF = (x, y, s = 1) =>
+  `<g transform="translate(${x} ${y}) scale(${s})" stroke="none">${[0, 60, 120, 180, 240, 300].map((a) => `<ellipse rx="6" ry="8" cy="-7" transform="rotate(${a})" fill="${SEC}" fill-opacity=".45"/>`).join('')}${[0, 72, 144, 216, 288].map((a) => `<ellipse rx="4" ry="5.5" cy="-4" transform="rotate(${a + 36})" fill="${SEC}" fill-opacity=".85"/>`).join('')}<circle r="2.6" fill="currentColor"/></g>`;
+const plumF = (x, y, s = 1) =>
+  `<g transform="translate(${x} ${y}) scale(${s})" stroke="none">${[0, 72, 144, 216, 288].map((a) => `<circle cy="-4.2" r="3.4" transform="rotate(${a})" fill="${SEC}"/>`).join('')}<circle r="1.6" fill="currentColor"/></g>`;
+const pearl = (x, y, r = 3) => `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(2)}" fill="currentColor" fill-opacity=".22"/><circle cx="${(x - r * 0.3).toFixed(1)}" cy="${(y - r * 0.3).toFixed(1)}" r="${(r * 0.3).toFixed(2)}" fill="#fff" fill-opacity=".8" stroke="none"/>`;
+const heartP = (x, y, s, fill, op = 1) => `<path transform="translate(${x} ${y}) scale(${s}) translate(-12 -12)" d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z" fill="${fill}" fill-opacity="${op}" stroke="none"/>`;
+/** Cerminkan seni sudut terhadap diagonal agar simetris di kedua sisi. */
+const diag = (svg) => `${svg}<g transform="matrix(0 1 1 0 0 0)">${svg}</g>`;
+const dove = (x, y, s, flip = false) =>
+  `<g transform="translate(${x} ${y}) scale(${flip ? -s : s} ${s})"><path d="M-14 4c4-8 12-10 18-6l8-6-2 7c4 1 6 4 4 7-6 4-18 5-28-2z" fill="currentColor" fill-opacity=".2"/><path d="M-14 4c4-8 12-10 18-6l8-6-2 7c4 1 6 4 4 7-6 4-18 5-28-2zM-2 -2c-2-8-10-12-16-10 2 6 8 10 16 10z"/><circle cx="9" cy="-3" r=".9" fill="currentColor"/></g>`;
+const lanternF = (x, y, s) =>
+  `<g transform="translate(${x} ${y}) scale(${s})"><ellipse cy="12" rx="10" ry="11" fill="${SEC}" stroke="none"/><path d="M-5 2c-4 6-4 14 0 20M5 2c4 6 4 14 0 20M0 1v22" stroke-opacity=".6"/><path d="M-5 0h10M-5 24h10M0 24v8" stroke-width="1.6"/></g>`;
+const polar = (r, deg) => [(r * Math.cos((deg * Math.PI) / 180)).toFixed(1), (r * Math.sin((deg * Math.PI) / 180)).toFixed(1)];
+
 /** Ornamen sudut kustom (viewBox 120×120, digambar di kiri-atas). */
 export const cornerArt = {
   deco: `<path d="M6 114V6h108"/><path d="M16 114V16h98" stroke-opacity=".5"/><path d="M6 40h14v-14h14V12h14V6M40 6v8h-8v8h-8v8h-8v10" stroke-width="1.4"/><path d="M26 26l8 8M26 26v12M26 26h12" stroke-opacity=".7"/>`,
@@ -68,6 +85,33 @@ export const cornerArt = {
   tropical: `${leaf(2, 2, 8, 4.8, true)}${leaf(2, 2, 45, 5.4, true)}${leaf(2, 2, 82, 4.8, true)}${leaf(6, 40, 40, 2.2)}${leaf(40, 6, 50, 2.2)}<path d="M2 2l84 12M2 2l68 68M2 2l12 84" stroke-opacity=".5"/>${flower(96, 60, 1)}${sparkle(60, 100, 0.4)}`,
   notes: `${wavyLine(14, 110, 3, 20)}${wavyLine(22, 96, 3, 20)}${wavyLine(30, 82, 3, 20)}${note(26, 64, 1.4, -10)}${note(66, 50, 1, 12)}${note(16, 104, 0.9, -20)}`,
   ketupat: `<path d="M24 0v18M58 0v34M90 0v12" stroke-opacity=".7"/>${ketupat(24, 18, 1.3)}${ketupat(58, 34, 1)}${ketupat(90, 12, 0.8)}${sparkle(30, 90, 0.4)}`,
+  peony: `<path d="M4 116C10 70 40 30 104 6" stroke-width="1.6"/><path d="M40 52c8-6 12-16 10-26M70 26c10 2 18 8 22 18"/>${leaf(20, 86, -90, 1.2, true)}${leaf(52, 40, -40, 1.1, true)}${leaf(86, 16, -20, 1, true)}${peonyF(36, 46, 2)}${peonyF(78, 20, 1.3)}${peonyF(14, 84, 1.1)}${plumF(56, 64, 0.9)}`,
+  plum: `<path d="M0 30C26 34 50 26 72 10M36 30c8 8 10 20 6 32M58 20c10-2 22 2 30 10M14 32c-4 12-2 26 6 38" stroke-width="2.2" stroke-linecap="round"/>${[[18, 30, 1.4], [44, 26, 1.6], [70, 12, 1.2], [42, 60, 1.2], [86, 28, 1], [20, 66, 1]].map(([x, y, sc]) => plumF(x, y, sc)).join('')}${[[60, 20], [30, 44], [92, 34]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="2.4" fill="${SEC}" stroke="none"/>`).join('')}`,
+  lattice: `<path d="M4 116V4h112" stroke-width="1.6"/><path d="M14 106V14h92" stroke-opacity=".6"/><path d="M14 44h16V30h14V14M44 30h14v14H44zM30 44v14H14M58 14v16" stroke-width="1.3"/><rect x="34" y="34" width="6" height="6" fill="currentColor"/><path d="M74 14v8h8M14 74h8v8" stroke-opacity=".6"/>`,
+  ruyi: `<path d="M6 70c-4-22 10-34 26-28 4-16 28-18 34 0 16-6 28 10 18 24" fill="${SEC}" fill-opacity=".18"/><path d="M6 70c-4-22 10-34 26-28 4-16 28-18 34 0 16-6 28 10 18 24"/><path d="M26 54c-2-6 6-8 8-2M50 44c0-6 8-6 8 0M70 54c2-6 10-4 8 2" stroke-opacity=".7"/><path d="M6 6h40M6 6v40" stroke-width="1.6"/><path d="M6 6c10 0 14 8 10 14-4 4-10 0-8-4"/>`,
+  filigree: diag(`<path d="M6 114V58c0-18 14-28 28-22 10 4 8 18-2 18-6 0-8-8-2-10"/><path d="M6 80c10 0 16-6 16-14" stroke-opacity=".6"/><circle cx="6" cy="114" r="2.4" fill="currentColor"/><circle cx="20" cy="36" r="1.6" fill="currentColor"/>`) + `<path d="M8 8c14 0 22 6 22 22-16 0-22-8-22-22z" fill="${SEC}" fill-opacity=".25"/><path d="M8 8l18 18"/><circle cx="8" cy="8" r="3" fill="currentColor"/>`,
+  decoFan: `${[30, 52, 74].map((r, i) => `<path d="M0 ${r}A${r} ${r} 0 0 0 ${r} 0"${i === 0 ? ` fill="${SEC}" fill-opacity=".25"` : ''}/>`).join('')}${[15, 30, 45, 60, 75].map((a) => `<path d="M0 0L${polar(86, a).join(' ')}" stroke-opacity=".7"/>`).join('')}<path d="M96 4h20M4 96v20" stroke-width="2"/><path d="M90 10h26M10 90v26" stroke-opacity=".5"/>`,
+  jasmine: `<path d="M0 6h120" stroke-width="1.6"/>${[[12, 70], [30, 96], [48, 60], [66, 84], [84, 46], [102, 64]].map(([x, len]) => `<path d="M${x} 6V${len}" stroke-opacity=".6"/>${Array.from({ length: Math.floor(len / 12) }, (_, j) => `<ellipse cx="${x}" cy="${14 + j * 12}" rx="3" ry="4" fill="#fffdf4"/>`).join('')}<g transform="translate(${x} ${len + 5})">${[0, 60, 120, 180, 240, 300].map((a) => `<path transform="rotate(${a})" d="M0 0c-1.6-3-1.6-7 0-10 1.6 3 1.6 7 0 10z" fill="#fffdf4"/>`).join('')}<circle r="1.4" fill="currentColor"/></g>`).join('')}`,
+  goldLeaf: `<path d="M4 116C12 70 40 32 96 6" stroke-width="1.4"/>${[[10, 96, -100], [16, 74, -80], [26, 54, -65], [40, 38, -50], [58, 24, -35], [78, 12, -20]].map(([x, y, a], i) => `${leaf(x, y, a, 1.3, true)}${leaf(x, y, a + (i % 2 ? 110 : 130), 1, true)}`).join('')}${sparkle(60, 60, 0.5)}${sparkle(24, 30, 0.4)}`,
+  eucalyptus: `<path d="M4 116C14 72 44 34 100 8" stroke-width="1.4"/>${[[12, 96], [18, 78], [28, 60], [42, 44], [58, 30], [76, 18], [94, 10]].map(([x, y], i) => `<circle cx="${x + (i % 2 ? 10 : -6)}" cy="${y + (i % 2 ? -4 : 6)}" r="${7 - i * 0.5}" fill="${SEC}" fill-opacity=".28"/>`).join('')}`,
+  orchid: `<path d="M4 116C10 80 30 46 70 20" stroke-width="1.4"/>${[[30, 70, 1.4], [54, 38, 1.1], [16, 98, 0.9]].map(([x, y, sc]) => `<g transform="translate(${x} ${y}) scale(${sc})">${[0, 120, 240].map((a) => `<ellipse rx="4" ry="11" cy="-10" transform="rotate(${a})" fill="${SEC}" fill-opacity=".35"/>`).join('')}${[60, 300].map((a) => `<ellipse rx="6" ry="9" cy="-8" transform="rotate(${a})" fill="${SEC}" fill-opacity=".6" stroke="none"/>`).join('')}<path d="M-4 2c0 6 8 6 8 0z" fill="currentColor"/></g>`).join('')}${leaf(20, 110, -60, 2, true)}`,
+  pearls: `${Array.from({ length: 11 }, (_, i) => {
+    const t = i / 10;
+    return pearl(8 + t * 104, 8 + Math.sin(Math.PI * t) * 26, 3.4 - Math.abs(0.5 - t) * 2);
+  }).join('')}${Array.from({ length: 8 }, (_, i) => {
+    const t = i / 7;
+    return pearl(8 + Math.sin(Math.PI * t) * 20, 22 + t * 84, 3 - Math.abs(0.5 - t) * 1.6);
+  }).join('')}<path d="M60 34v10"/><path d="M60 44l4 6-4 6-4-6z" fill="currentColor"/>`,
+  feather: `<path d="M4 116C30 90 60 60 92 20" stroke-width="1.4"/>${Array.from({ length: 12 }, (_, i) => {
+    const t = i / 11;
+    const x = (4 + t * 80).toFixed(1);
+    const y = (116 - t * 90).toFixed(1);
+    return `<path d="M${x} ${y}l${(-10 + t * 4).toFixed(1)} ${(-12 + t * 2).toFixed(1)}M${x} ${y}l${(12 - t * 2).toFixed(1)} ${(8 - t * 2).toFixed(1)}" stroke-opacity=".5"/>`;
+  }).join('')}<g transform="translate(92 22) rotate(40)"><ellipse rx="12" ry="17" fill="#6f9a5c" fill-opacity=".45"/><ellipse rx="7" ry="10" fill="${SEC}"/><ellipse rx="3" ry="4.5" fill="currentColor"/></g>`,
+  washi: `<path d="M-6 52L52-6l20 20-58 58z" fill="${SEC}" fill-opacity=".45" stroke="none"/><path d="M-6 52L52-6M14 72L72 14" stroke-dasharray="3 3" stroke-opacity=".7"/><path d="M8 50l40-40M18 60l40-40" stroke="#fff" stroke-opacity=".55" stroke-width="2.5"/>`,
+  photoCorner: `<path d="M6 6h52L6 58z" fill="currentColor" fill-opacity=".75" stroke="none"/><path d="M14 14h30L14 44z" fill="#fff" fill-opacity=".25" stroke="none"/><path d="M6 66v48M66 6h48" stroke-opacity=".5"/>`,
+  hearts: `${heartP(26, 26, 1.8, SEC, 0.85)}${heartP(60, 18, 1, 'currentColor', 0.6)}${heartP(18, 62, 1.1, 'currentColor', 0.6)}${heartP(50, 50, 0.7, SEC, 0.7)}${heartP(86, 30, 0.6, SEC, 0.5)}${heartP(30, 90, 0.6, SEC, 0.5)}${sparkle(76, 64, 0.4)}`,
+  kerawang: `<path d="M4 116V4h112" stroke-width="1.6"/>${Array.from({ length: 6 }, (_, i) => `<path d="M${14 + i * 16} 14l6 6 6-6M14 ${14 + i * 16}l6 6-6 6"/>`).join('')}<path d="M24 24l14 14M38 24v14H24" stroke-width="1.4"/><path d="M30 30l6 6-6 6-6-6z" fill="${SEC}" stroke="none"/>`,
   halftone: Array.from({ length: 64 }, (_, k) => {
     const i = k % 8;
     const j = Math.floor(k / 8);
@@ -97,6 +141,23 @@ export const edgeArt = {
   cake: `<path d="M74 44V28h52v16z" fill="currentColor" fill-opacity=".16"/><path d="M68 44h64M74 44V28h52v16M74 34c4 4 9 4 13 0s9-4 13 0 9 4 13 0 9-4 13 0"/><path d="M88 28v-9M100 28v-9M112 28v-9"/>${[88, 100, 112].map((x) => `<path d="M${x} 18c-2.4-2.6-2.4-5 0-9 2.4 4 2.4 6.4 0 9z" fill="currentColor"/>`).join('')}<path d="M30 44h30M140 44h30"/>`,
   cap: `<path d="M100 8L68 21l32 13 32-13z" fill="currentColor" fill-opacity=".2"/><path d="M100 8L68 21l32 13 32-13zM84 28v9c0 5 32 5 32 0v-9M128 22v13"/><circle cx="128" cy="37" r="2.4" fill="currentColor"/><path d="M24 30h36M140 30h36"/>`,
   butterfly: `${bfly(100, 24, 1.5)}<path d="M28 30c20-10 34 6 50-4M172 30c-20-10-34 6-50-4" stroke-dasharray="3 4"/>`,
+  xi: `<path d="M20 24h46M134 24h46"/><path d="M66 24c-6-6-14-4-14 2s8 6 8 0M134 24c6-6 14-4 14 2s-8 6-8 0" stroke-opacity=".8"/><circle cx="100" cy="24" r="20" fill="${SEC}" stroke="none"/><circle cx="100" cy="24" r="17" stroke-dasharray="2 3"/><text x="100" y="25" text-anchor="middle" dominant-baseline="central" font-size="22" font-family="serif" fill="currentColor" stroke="none">囍</text>`,
+  peony: `${leaf(74, 26, 180, 1.2, true)}${leaf(126, 26, 0, 1.2, true)}${leaf(70, 32, 160, 0.8)}${leaf(130, 20, -20, 0.8)}${peonyF(100, 26, 1.7)}<path d="M18 26h40M142 26h40"/>`,
+  doves: `${dove(76, 26, 1.1)}${dove(124, 26, 1.1, true)}${heartP(100, 14, 0.6, SEC)}<path d="M20 40h44M136 40h44" stroke-opacity=".7"/>`,
+  pagoda: `<path d="M44 40q56-10 112 0l-10-10q-46-8-92 0z" fill="${SEC}" fill-opacity=".8" stroke="none"/><path d="M44 40q56-10 112 0M54 30q46-8 92 0"/><path d="M66 26q34-8 68 0l-8-8q-26-6-52 0z" fill="${SEC}" fill-opacity=".6" stroke="none"/><path d="M100 4v14M96 8h8"/><path d="M14 44h30M156 44h30"/>`,
+  gonjong: `<path d="M50 44l6-16q-2-10-8-20 14 8 22 16 16-4 30-4t30 4q8-8 22-16-6 10-8 20l6 16z" fill="${SEC}" fill-opacity=".7" stroke="none"/><path d="M50 44l6-16q-2-10-8-20 14 8 22 16 16-4 30-4t30 4q8-8 22-16-6 10-8 20l6 16"/><path d="M14 44h28M158 44h28"/>`,
+  sunburst: `<path d="M64 46a36 36 0 0 1 72 0" fill="${SEC}" fill-opacity=".25"/>${Array.from({ length: 11 }, (_, i) => {
+    const a = 180 + 18 * i;
+    const [x1, y1] = polar(40, a);
+    const [x2, y2] = polar(52, a);
+    return `<path d="M${(100 + +x1).toFixed(1)} ${(46 + +y1).toFixed(1)}L${(100 + +x2).toFixed(1)} ${(46 + +y2).toFixed(1)}"/>`;
+  }).join('')}<path d="M10 46h44M146 46h44"/>`,
+  pearls: `${Array.from({ length: 15 }, (_, i) => {
+    const t = i / 14;
+    return pearl(30 + t * 140, 6 + Math.sin(Math.PI * t) * 24, 3.2);
+  }).join('')}<path d="M100 32v6"/><path d="M100 38l5 6-5 4-5-4z" fill="${SEC}" stroke="none"/>`,
+  filigree: `<path d="M100 24c-8-12-24-14-30-4-4 8 4 14 10 10 4-3 2-8-2-8M100 24c8-12 24-14 30-4 4 8-4 14-10 10-4-3-2-8 2-8M70 24H16M130 24h54"/><path d="M60 24c-6 6-14 6-18 0M140 24c6 6 14 6 18 0" stroke-opacity=".6"/><path d="M100 14l7 10-7 10-7-10z" fill="${SEC}" stroke="none"/><circle cx="16" cy="24" r="2" fill="currentColor"/><circle cx="184" cy="24" r="2" fill="currentColor"/>`,
+  lanterns2: `<path d="M0 2h200" stroke-opacity=".6"/><path d="M58 2v10M142 2v10"/>${lanternF(58, 12, 1)}${lanternF(142, 12, 1)}`,
   swirl: `<path d="M100 24c-10-14-30-14-34 0-3 10 10 14 14 6M100 24c10-14 30-14 34 0 3 10-10 14-14 6M66 24H20M134 24h46"/><path d="M100 16l6 8-6 8-6-8z" fill="currentColor"/>`,
 };
 
@@ -113,12 +174,38 @@ const wavyRect = (m, amp, n) => {
   run(0, -1, 1, 0);
   return `${d}Z`;
 };
+/** Lengkung atas bergerigi renda (dibentuk dari busur-busur kecil). */
+function scallopArch(m, off) {
+  const n = 14;
+  const cx = 50;
+  const cy = 34 + off;
+  const rx = 50 - m;
+  const ry = 30 - off;
+  const pts = Array.from({ length: n + 1 }, (_, i) => {
+    const a = Math.PI - (Math.PI * i) / n;
+    return [cx + rx * Math.cos(a), cy - ry * Math.sin(a)];
+  });
+  let d = `M${m} ${100 - m}V${cy}`;
+  for (let i = 1; i < pts.length; i++) {
+    const [x, y] = pts[i];
+    const [px, py] = pts[i - 1];
+    const r = Math.hypot(x - px, y - py) * 0.62;
+    d += `A${r.toFixed(2)} ${r.toFixed(2)} 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)}`;
+  }
+  return `${d}V${100 - m}Z`;
+}
 export const svgLines = {
   mihrab: ['M8 98V32Q8 14 50 3Q92 14 92 32V98Z', 'M12 96V33Q12 17 50 7Q88 17 88 33V96Z'],
   dome: ['M6 98V40C6 26 30 22 40 14 46 9 48 5 50 2 52 5 54 9 60 14 70 22 94 26 94 40V98Z', 'M10 96V41C10 29 32 25 42 17 47 12 49 9 50 7 51 9 53 12 58 17 68 25 90 29 90 41V96Z'],
   chamfer: ['M14 2H86L98 12V88L86 98H14L2 88V12Z', 'M16 5H84L95 14V86L84 95H16L5 86V14Z'],
   ticket: ['M10 2H90A8 6 0 0 0 98 8V92A8 6 0 0 0 90 98H10A8 6 0 0 0 2 92V8A8 6 0 0 0 10 2Z', 'M12 5H88A8 6 0 0 0 95 10V90A8 6 0 0 0 88 95H12A8 6 0 0 0 5 90V10A8 6 0 0 0 12 5Z'],
   wavy: [wavyRect(2, 1.4, 14), wavyRect(5, 1, 14)],
+  pointed: ['M8 98V44C8 28 30 26 40 16C46 10 50 2 50 2C50 2 54 10 60 16C70 26 92 28 92 44V98Z', 'M12 96V45C12 31 32 29 42 19C47 14 50 8 50 8C50 8 53 14 58 19C68 29 88 31 88 45V96Z'],
+  keyhole: ['M12 98V54C12 42 6 34 6 26A44 24 0 0 1 94 26C94 34 88 42 88 54V98Z', 'M16 95V55C16 44 10 36 10 27A40 21 0 0 1 90 27C90 36 84 44 84 55V95Z'],
+  octagon: ['M28 2H72L98 16V84L72 98H28L2 84V16Z', 'M30 5H70L95 18V82L70 95H30L5 82V18Z'],
+  decoStep: ['M12 2H88V6H94V10H98V90H94V94H88V98H12V94H6V90H2V10H6V6H12Z', 'M14 5H86V9H91V13H95V87H91V91H86V95H14V91H9V87H5V13H9V9H14Z'],
+  scallopArch: [scallopArch(8, 0), scallopArch(12, 3)],
+  gothic: ['M8 98V38C8 18 30 6 50 2C70 6 92 18 92 38V98Z', 'M12 96V39C12 21 32 10 50 6C68 10 88 21 88 39V96Z'],
 };
 
 export const coverFrames = [
@@ -185,6 +272,36 @@ export const coverFrames = [
   { id: 'chamfer', name: 'Sudut potong', line: 'chamfer', corner: 'diamond' },
   { id: 'ticket', name: 'Tiket', line: 'ticket', top: 'star' },
   { id: 'wavy', name: 'Bergelombang', line: 'wavy' },
+  { id: 'peony', name: 'Peony', corner: 'peony', corners: ['tr', 'bl'], line: 'single', top: 'peony' },
+  { id: 'plum', name: 'Ranting plum', corner: 'plum', corners: ['tl', 'br'], line: 'double' },
+  { id: 'chineseWindow', name: 'Jendela kisi', corner: 'lattice', line: 'double', top: 'xi' },
+  { id: 'xiMedal', name: 'Medali 囍', line: 'chamfer', top: 'xi', corner: 'ruyi', corners: ['bl', 'br'] },
+  { id: 'ruyi', name: 'Awan ruyi', corner: 'ruyi', line: 'rounded', top: 'cloud' },
+  { id: 'pagoda', name: 'Atap pagoda', line: 'single', top: 'pagoda', corner: 'lattice', corners: ['bl', 'br'] },
+  { id: 'lanternPair', name: 'Sepasang lampion', top: 'lanterns2', line: 'octagon', corner: 'plum', corners: ['bl', 'br'] },
+  { id: 'filigree', name: 'Filigri emas', corner: 'filigree', line: 'double', top: 'filigree', bottom: 'filigree' },
+  { id: 'luxe', name: 'Bingkai mewah', line: 'decoStep', corner: 'filigree', top: 'crown', bottom: 'swirl' },
+  { id: 'decoFan', name: 'Kipas deco', corner: 'decoFan', line: 'decoStep', top: 'sunburst' },
+  { id: 'gatsby', name: 'Gatsby', line: 'decoStep', corner: 'deco', top: 'fan', bottom: 'fan' },
+  { id: 'sunburst', name: 'Mentari', line: 'triple', top: 'sunburst', bottom: 'sunburst' },
+  { id: 'jasmine', name: 'Untaian melati', corner: 'jasmine', corners: ['tl', 'tr'], line: 'arch' },
+  { id: 'pointed', name: 'Lengkung runcing', line: 'pointed', top: 'crescent', corner: 'geometric', corners: ['bl', 'br'] },
+  { id: 'keyhole', name: 'Lubang kunci', line: 'keyhole', top: 'star' },
+  { id: 'octagon', name: 'Oktagon', line: 'octagon', corner: 'diamond' },
+  { id: 'scallopArch', name: 'Lengkung renda', line: 'scallopArch', top: 'pearls' },
+  { id: 'gothic', name: 'Jendela katedral', line: 'gothic', top: 'crown' },
+  { id: 'pearls', name: 'Untaian mutiara', corner: 'pearls', line: 'rounded', top: 'pearls' },
+  { id: 'goldLeaf', name: 'Daun emas', corner: 'goldLeaf', corners: ['tl', 'br'], line: 'single' },
+  { id: 'eucalyptus', name: 'Eukaliptus', corner: 'eucalyptus', corners: ['tr', 'bl'], line: 'oval' },
+  { id: 'orchid', name: 'Anggrek', corner: 'orchid', corners: ['tl', 'br'], line: 'single' },
+  { id: 'peacock', name: 'Bulu merak', corner: 'feather', corners: ['bl', 'br'], top: 'peony' },
+  { id: 'doves', name: 'Merpati', line: 'double', top: 'doves', bottom: 'laurel' },
+  { id: 'heartsCluster', name: 'Taburan hati', corner: 'hearts', corners: ['tl', 'br'], top: 'heart' },
+  { id: 'washi', name: 'Selotip washi', corner: 'washi', corners: ['tl', 'br'], line: 'single' },
+  { id: 'album', name: 'Sudut album', corner: 'photoCorner', line: 'single' },
+  { id: 'kerawang', name: 'Kerawang', corner: 'kerawang', line: 'double', edge: 'tumpal' },
+  { id: 'gonjong', name: 'Atap gonjong', line: 'double', top: 'gonjong', corner: 'tumpal' },
+  { id: 'moonGate', name: 'Gerbang bulan', line: 'oval', corner: 'lattice', corners: ['bl', 'br'], top: 'xi' },
 ];
 
 export const getFrame = (id) => coverFrames.find((f) => f.id === id) ?? coverFrames[0];

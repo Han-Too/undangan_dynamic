@@ -5,5 +5,6 @@ import 'vue-sonner/style.css';
 import './styles/shadcn.css';
 import './styles/builder.css';
 import './styles/invitation.css';
+import './styles/invitation-fx.css';
 
 createApp(App).use(router).mount('#app');

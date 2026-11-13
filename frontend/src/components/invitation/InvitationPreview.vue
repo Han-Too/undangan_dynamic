@@ -3,6 +3,7 @@ import { computed, onBeforeUnmount, provide, ref, toRef } from 'vue';
 import { useInvitation } from '../../composables/useInvitation';
 import { useLuxuryMotion } from '../../composables/useLuxuryMotion';
 import { useMusic } from '../../composables/useMusic';
+import { usePointerTrail } from '../../composables/usePointerTrail';
 import { sectionsForTheme } from '../../data/sections';
 import { closePhotoViewer, openPhotoViewer } from '../../utils/photoViewer';
 import BackgroundFx from './fx/BackgroundFx.vue';
@@ -36,6 +37,8 @@ const root = ref(null);
 const scroller = ref(null);
 const content = ref(null);
 const sections = computed(() => sectionsForTheme(theme.value).filter((s) => state.sections[s.id] !== false));
+
+usePointerTrail(root, () => motion.value.trail);
 
 /** GSAP + Lenis: aktif setelah cover dibuka. SplitText hanya di halaman tamu (lihat useLuxuryMotion). */
 const luxury = useLuxuryMotion({
@@ -107,6 +110,7 @@ defineExpose({ scrollToSection, showCover });
     :data-reveal="motion.reveal"
     :data-anim="motion.enabled ? 'on' : 'off'"
     :data-orn-motion="motion.ornaments ? 'on' : 'off'"
+    :data-shimmer="motion.shimmer ? 'on' : 'off'"
   >
     <BackgroundFx :fx="fx" />
     <SceneFx :scene="fx.scene" :still="fx.still" />

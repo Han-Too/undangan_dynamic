@@ -175,6 +175,14 @@ const customized = computed(() => Object.values(state.coverStyle).some(Boolean))
 .lay[data-l='editorial'] .lay__box { justify-items: start; }
 .lay[data-l='editorial'] .lay__box b:nth-child(2) { height: 13px; width: 90%; }
 .lay[data-l='split'] { grid-template-rows: 1fr auto; padding: 8px 8px 6px; }
+.lay[data-l='monogram'] .lay__box::before { content: ''; width: 18px; aspect-ratio: 1; margin-bottom: 2px; border: 1px solid var(--c-primary); border-radius: 50%; }
+.lay:is([data-l='circle'], [data-l='polaroid']) { grid-template-rows: auto auto; align-content: center; gap: 5px; }
+.lay:is([data-l='circle'], [data-l='polaroid']) .lay__hero { display: block; }
+.lay[data-l='circle'] .lay__hero { width: 46%; aspect-ratio: 1; border-radius: 50%; background: color-mix(in srgb, var(--c-primary) 35%, transparent); box-shadow: 0 0 0 2px var(--c-surface), 0 0 0 3px var(--c-primary); }
+.lay[data-l='polaroid'] .lay__hero { width: 50%; aspect-ratio: 0.85; background: color-mix(in srgb, var(--c-primary) 35%, transparent); border: 3px solid #fff; border-bottom-width: 8px; rotate: -5deg; box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.4); }
+.lay[data-l='glass'] .lay__box { padding: 10px 4px; background: color-mix(in srgb, #fff 45%, transparent); border: 1px solid #fff; border-radius: 7px; outline: 1px solid color-mix(in srgb, var(--c-primary) 50%, transparent); outline-offset: -3px; }
+.lay[data-l='stacked'] .lay__box b:nth-child(2) { height: 20px; width: 64%; background: repeating-linear-gradient(180deg, var(--c-heading) 0 5px, transparent 5px 7px); }
+.lay[data-l='top'] { place-items: start center; padding-top: 12px; }
 .lay[data-l='split'] .lay__hero {
   display: block;
   width: 80%;

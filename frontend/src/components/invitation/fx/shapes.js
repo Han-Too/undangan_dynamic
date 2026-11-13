@@ -42,6 +42,7 @@ export const shapes = {
   lavender: '<rect x="11.4" y="8" width="1.2" height="15" rx=".6"/>' + [2, 5, 8, 11, 14].map((y, i) => `<ellipse cx="${i % 2 ? 13.6 : 10.4}" cy="${y}" rx="2.2" ry="1.6"/>`).join(''),
   koi: '<path d="M3 12c3-5 9-6.5 14-3.5l4-3-1 6.5 1 6.5-4-3C12 18.5 6 17 3 12z"/><circle cx="6.8" cy="11" r="1" fill="#fff" fill-opacity=".8"/><path d="M10 9.2c1.4 1 1.4 4.6 0 5.6M13 9.6c1 .8 1 4 0 4.8" stroke="#fff" stroke-opacity=".45" stroke-width="1.2" fill="none"/>',
   frangipani: `${rotated(5, '<path d="M12 12C9 10 8.6 5 11 2.5c2.6 1.8 3.5 6.6 1 9.5z"/>')}<circle cx="12" cy="12" r="2" fill-opacity=".45"/>`,
+  bokeh: '<circle cx="12" cy="12" r="11.5" fill-opacity=".16"/><circle cx="12" cy="12" r="8.5" fill-opacity=".14"/><circle cx="12" cy="12" r="11" fill="none" stroke="currentColor" stroke-opacity=".25" stroke-width=".6"/>',
   firefly: '<circle cx="12" cy="12" r="10" fill-opacity=".14"/><circle cx="12" cy="12" r="5.5" fill-opacity=".3"/><circle cx="12" cy="12" r="2.6"/>',
   disco: '<circle cx="12" cy="12" r="10"/><path d="M2.5 9h19M2.5 15h19M12 2c-3 3-3 17 0 20M12 2c3 3 3 17 0 20M6 4.5c-1.8 4-1.8 11 0 15M18 4.5c1.8 4 1.8 11 0 15" stroke="#fff" stroke-opacity=".4" stroke-width=".9" fill="none"/>',
 };

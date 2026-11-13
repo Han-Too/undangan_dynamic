@@ -17,7 +17,7 @@ const rand = (i, salt) => {
 const items = computed(() => {
   const { shapes: names, count, size, motion } = props.fx.particles;
   return Array.from({ length: count }, (_, i) => {
-    const dur = motion === 'twinkle' ? 4 + rand(i, 3) * 5 : motion === 'float' ? 9 + rand(i, 3) * 8 : 14 + rand(i, 3) * 16;
+    const dur = motion === 'twinkle' ? 4 + rand(i, 3) * 5 : motion === 'float' ? 9 + rand(i, 3) * 8 : motion === 'drift' ? 12 + rand(i, 3) * 10 : 14 + rand(i, 3) * 16;
     return {
       key: i,
       svg: shapes[names[i % names.length]],
@@ -62,6 +62,7 @@ const items = computed(() => {
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
+  container-type: size;
 }
 
 .fx__pattern {
@@ -127,6 +128,17 @@ const items = computed(() => {
   animation-timing-function: ease-in-out;
   animation-direction: alternate;
 }
+.fx__p[data-motion='drift'] {
+  top: var(--y);
+  left: 0;
+  animation-name: fx-wind;
+  animation-timing-function: linear;
+}
+.fx__p[data-motion='swirl'] {
+  top: -8%;
+  animation-name: fx-swirl;
+  animation-timing-function: linear;
+}
 .fx__p[data-motion='twinkle'] {
   top: var(--y);
   animation-name: fx-twinkle;
@@ -156,6 +168,24 @@ const items = computed(() => {
   15%, 85% { opacity: var(--o); }
   50% { transform: translate3d(var(--sway), -40px, 0) rotate(calc(var(--rot) * -.1)) scale(.9); }
   100% { transform: translate3d(calc(var(--sway) * -1), 10px, 0) rotate(calc(var(--rot) * .1)); opacity: 0; }
+}
+@keyframes fx-wind {
+  0% { transform: translate3d(-12cqw, 0, 0) rotate(var(--rot)); opacity: 0; }
+  10% { opacity: var(--o); }
+  35% { transform: translate3d(30cqw, calc(var(--sway) * 0.6), 0) rotate(calc(var(--rot) + 140deg)); }
+  65% { transform: translate3d(70cqw, calc(var(--sway) * -0.4 + 8cqh), 0) rotate(calc(var(--rot) + 260deg)); }
+  90% { opacity: var(--o); }
+  100% { transform: translate3d(115cqw, 16cqh, 0) rotate(calc(var(--rot) + 400deg)); opacity: 0; }
+}
+@keyframes fx-swirl {
+  0% { transform: translate3d(0, 0, 0) rotate(var(--rot)); opacity: 0; }
+  8% { opacity: var(--o); }
+  20% { transform: translate3d(calc(var(--sway) + 28px), 20cqh, 0) rotate(calc(var(--rot) + 90deg)); }
+  40% { transform: translate3d(calc(var(--sway) * -1 - 24px), 40cqh, 0) rotate(calc(var(--rot) + 180deg)); }
+  60% { transform: translate3d(calc(var(--sway) + 30px), 60cqh, 0) rotate(calc(var(--rot) + 270deg)); }
+  80% { transform: translate3d(calc(var(--sway) * -1 - 20px), 82cqh, 0) rotate(calc(var(--rot) + 360deg)); }
+  92% { opacity: var(--o); }
+  100% { transform: translate3d(0, 110cqh, 0) rotate(calc(var(--rot) + 420deg)); opacity: 0; }
 }
 @keyframes fx-drift {
   to { transform: translate(var(--pattern-size), var(--pattern-size)); }

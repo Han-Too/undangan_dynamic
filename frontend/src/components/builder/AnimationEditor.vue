@@ -35,7 +35,7 @@ const themeName = (list, key) => list.find((o) => o.id === theme.value.motion[ke
 const particleIcon = (p) => (p.shapes ? shapes[p.shapes[0]] : '');
 const customized = computed(() => ['reveal', 'opening', 'coverText', 'photo', 'particles', 'motion'].some((k) => a[k]) || a.density !== 'normal');
 function resetAll() {
-  Object.assign(a, { enabled: true, reveal: '', opening: '', coverText: '', photo: '', particles: '', motion: '', density: 'normal', burst: true, ornaments: true, scene: true, luxury: true });
+  Object.assign(a, { enabled: true, reveal: '', opening: '', coverText: '', photo: '', particles: '', motion: '', density: 'normal', burst: true, ornaments: true, scene: true, luxury: true, trail: true, tilt: true, shimmer: true, rays: false });
 }
 </script>
 
@@ -116,6 +116,10 @@ function resetAll() {
         <ToggleSwitch v-model="a.ornaments" label="Ornamen bergoyang" hint="Ornamen bingkai cover & pembatas bergerak pelan." />
         <ToggleSwitch v-model="a.scene" label="Ilustrasi latar bergerak" hint="Ranting, lampion, bukit, atau atap adat khas tema yang berayun dan bergeser saat digulir." />
         <ToggleSwitch v-model="a.luxury" label="Animasi mewah" hint="Scroll super halus, judul terkuak per huruf, dan parallax berlapis." />
+        <ToggleSwitch v-model="a.trail" label="Jejak kilau sentuhan" hint="Butiran kilau emas mengikuti jari atau kursor tamu." />
+        <ToggleSwitch v-model="a.tilt" label="Kedalaman 3D cover" hint="Ornamen & ilustrasi cover bergeser mengikuti kursor atau kemiringan HP." />
+        <ToggleSwitch v-model="a.shimmer" label="Kilau emas" hint="Kilatan cahaya melintas di tombol dan pembatas secara berkala." />
+        <ToggleSwitch v-model="a.rays" label="Sinar cahaya di cover" hint="Berkas cahaya lembut berputar di belakang nama." />
       </AccordionGroup>
     </fieldset>
   </div>
@@ -198,7 +202,7 @@ function resetAll() {
 .part:hover svg { animation: demo-zoom 1s ease-in-out infinite alternate; }
 
 .seg { display: grid; grid-template-columns: repeat(3, 1fr); padding: 3px; gap: 3px; background: var(--ui-sunken); border-radius: 10px; }
-.seg--5 { grid-template-columns: repeat(5, 1fr); }
+.seg--5 { grid-template-columns: repeat(4, 1fr); }
 .seg button { padding: 8px 2px; font-size: 11.5px; font-weight: 600; color: var(--ui-muted); background: none; border: 0; border-radius: 8px; }
 .seg button.is-on { color: var(--ui-ink); background: var(--ui-surface); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12); }
 </style>

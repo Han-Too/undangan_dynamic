@@ -96,6 +96,28 @@ export const coverBackgrounds = [
     css: (c) =>
       `${noise(0.55, 0.06)}, radial-gradient(45% 35% at 12% 10%, ${mix(c.primary, 'transparent', 30)} 0%, transparent 70%), radial-gradient(40% 30% at 92% 92%, ${mix(c.secondary, 'transparent', 26)} 0%, transparent 70%), radial-gradient(30% 25% at 88% 12%, ${mix(c.secondary, 'transparent', 16)} 0%, transparent 70%), ${c.bg}`,
   },
+  {
+    id: 'goldFoil',
+    name: 'Foil emas',
+    css: (c) =>
+      `linear-gradient(125deg, transparent 0 18%, ${mix('#fff', 'transparent', 18)} 26%, transparent 34%, transparent 58%, ${mix('#fff', 'transparent', 12)} 66%, transparent 74%), linear-gradient(160deg, ${mix(c.primary, c.bg, 34)}, ${mix(c.primary, c.bg, 12)} 45%, ${mix(c.primary, c.bg, 30)})`,
+  },
+  { id: 'linen', name: 'Linen', css: (c) => `repeating-linear-gradient(0deg, ${mix(c.text, 'transparent', 4)} 0 1px, transparent 1px 4px), repeating-linear-gradient(90deg, ${mix(c.text, 'transparent', 4)} 0 1px, transparent 1px 4px), ${c.bg}` },
+  { id: 'sunburst', name: 'Sinar mentari', css: (c) => `repeating-conic-gradient(from 0deg at 50% 38%, ${mix(c.primary, 'transparent', 12)} 0 6deg, transparent 6deg 12deg), radial-gradient(circle at 50% 38%, ${mix(c.primary, c.bg, 26)} 0%, ${c.bg} 70%)` },
+  {
+    id: 'mesh',
+    name: 'Gradasi mesh',
+    css: (c) =>
+      `radial-gradient(at 0% 0%, ${mix(c.primary, c.bg, 40)} 0, transparent 55%), radial-gradient(at 100% 20%, ${mix(c.secondary, c.bg, 35)} 0, transparent 55%), radial-gradient(at 20% 100%, ${mix(c.secondary, c.bg, 28)} 0, transparent 55%), radial-gradient(at 90% 90%, ${mix(c.primary, c.bg, 30)} 0, transparent 50%), ${c.bg}`,
+  },
+  { id: 'ombre', name: 'Ombre', css: (c) => `linear-gradient(180deg, ${mix(c.secondary, c.bg, 55)} 0%, ${mix(c.secondary, c.bg, 20)} 35%, ${c.bg} 70%)` },
+  { id: 'velvet', name: 'Beludru', css: (c) => `radial-gradient(ellipse at 50% 32%, ${c.bg} 0%, ${mix(c.secondary, c.bg, 22)} 55%, ${mix(c.secondary, c.bg, 42)} 100%)` },
+  {
+    id: 'sky',
+    name: 'Langit awan',
+    css: (c) =>
+      `radial-gradient(60px 26px at 18% 22%, ${mix('#fff', 'transparent', 70)} 0 100%, transparent 100%), radial-gradient(90px 34px at 30% 24%, ${mix('#fff', 'transparent', 60)} 0 100%, transparent 100%), radial-gradient(80px 30px at 78% 14%, ${mix('#fff', 'transparent', 60)} 0 100%, transparent 100%), linear-gradient(180deg, ${mix(c.secondary, '#d6ecff', 18)} 0%, ${mix('#e8f4ff', c.bg, 50)} 35%, ${c.bg} 60%)`,
+  },
 ];
 
 export const getBackground = (id) => coverBackgrounds.find((b) => b.id === id) ?? coverBackgrounds[0];
@@ -108,4 +130,10 @@ export const coverLayouts = [
   { id: 'arch', name: 'Lengkung', desc: 'Teks dalam jendela lengkung' },
   { id: 'editorial', name: 'Editorial', desc: 'Rata kiri, nama besar' },
   { id: 'split', name: 'Foto atas', desc: 'Foto di atas, teks di bawah' },
+  { id: 'monogram', name: 'Monogram', desc: 'Inisial besar di atas nama' },
+  { id: 'circle', name: 'Foto bulat', desc: 'Foto dalam lingkaran berbingkai' },
+  { id: 'polaroid', name: 'Polaroid', desc: 'Foto miring ala polaroid' },
+  { id: 'glass', name: 'Kaca', desc: 'Teks di panel kaca buram' },
+  { id: 'stacked', name: 'Bertumpuk', desc: 'Nama besar bertumpuk per baris' },
+  { id: 'top', name: 'Atas', desc: 'Teks di atas, foto lega di bawah' },
 ];
