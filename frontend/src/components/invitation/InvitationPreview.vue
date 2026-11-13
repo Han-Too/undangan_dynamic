@@ -1,10 +1,12 @@
 <script setup>
 import { computed, onBeforeUnmount, provide, ref, toRef } from 'vue';
 import { useInvitation } from '../../composables/useInvitation';
+import { useLuxuryMotion } from '../../composables/useLuxuryMotion';
 import { useMusic } from '../../composables/useMusic';
 import { sectionsForTheme } from '../../data/sections';
 import { closePhotoViewer, openPhotoViewer } from '../../utils/photoViewer';
 import BackgroundFx from './fx/BackgroundFx.vue';
+import SceneFx from './fx/SceneFx.vue';
 import { shapes } from './fx/shapes';
 import InvitationCover from './InvitationCover.vue';
 import MusicButton from './MusicButton.vue';
@@ -30,8 +32,21 @@ provide('invEditor', {
 provide('invLightbox', { open: openPhotoViewer });
 onBeforeUnmount(closePhotoViewer);
 
+const root = ref(null);
 const scroller = ref(null);
+const content = ref(null);
 const sections = computed(() => sectionsForTheme(theme.value).filter((s) => state.sections[s.id] !== false));
+
+/** GSAP + Lenis: aktif setelah cover dibuka. SplitText hanya di halaman tamu (lihat useLuxuryMotion). */
+const luxury = useLuxuryMotion({
+  root,
+  scroller,
+  content,
+  enabled: () => motion.value.luxury,
+  opened: () => opened.value,
+  splitText: () => !props.editable,
+  deps: () => [theme.value.id, fx.value.scene, motion.value.reveal, sections.value.map((s) => s.id).join()],
+});
 
 /** Ledakan partikel saat cover dibuka; bentuk partikel mengikuti tema. */
 const burst = ref(null);
@@ -64,18 +79,18 @@ function open(origin) {
   if (origin && motion.value.burst) fireBurst(origin);
   opened.value = true;
   play(); // dipanggil dari klik user, jadi lolos kebijakan autoplay browser
-  scroller.value?.scrollTo({ top: 0 });
+  luxury.scrollTo(0, { immediate: true });
 }
 
 function scrollToSection(id) {
   const el = scroller.value?.querySelector(`[data-section="${id}"]`);
-  if (el) scroller.value.scrollTo({ top: el.offsetTop, behavior: 'smooth' });
+  if (el) luxury.scrollTo(el);
 }
 
 function showCover() {
   opened.value = false;
   pause();
-  scroller.value?.scrollTo({ top: 0 });
+  luxury.scrollTo(0, { immediate: true });
 }
 
 defineExpose({ scrollToSection, showCover });
@@ -83,6 +98,7 @@ defineExpose({ scrollToSection, showCover });
 
 <template>
   <div
+    ref="root"
     class="inv-root"
     :style="cssVars"
     :data-theme="theme.id"
@@ -93,11 +109,14 @@ defineExpose({ scrollToSection, showCover });
     :data-orn-motion="motion.ornaments ? 'on' : 'off'"
   >
     <BackgroundFx :fx="fx" />
+    <SceneFx :scene="fx.scene" :still="fx.still" />
 
     <div ref="scroller" class="inv-scroll" :class="{ 'is-locked': !opened }">
-      <SectionShell v-for="s in sections" :id="s.id" :key="`${s.id}-${motion.reveal}`" :label="s.label" :panel="s.panel" :focus="s.focus">
-        <component :is="s.component" />
-      </SectionShell>
+      <div ref="content" class="inv-scroll__content">
+        <SectionShell v-for="s in sections" :id="s.id" :key="`${s.id}-${motion.reveal}`" :label="s.label" :panel="s.panel" :focus="s.focus">
+          <component :is="s.component" />
+        </SectionShell>
+      </div>
     </div>
 
     <InvitationCover :opened="opened" @open="open" />

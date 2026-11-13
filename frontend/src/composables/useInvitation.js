@@ -53,7 +53,7 @@ const motion = computed(() => {
   const a = state.animation;
   const t = theme.value.motion;
   if (!a.enabled) {
-    return { enabled: false, reveal: 'none', opening: 'none', coverText: 'none', photo: 'none', burst: false, ornaments: false };
+    return { enabled: false, reveal: 'none', opening: 'none', coverText: 'none', photo: 'none', burst: false, ornaments: false, luxury: false };
   }
   return {
     enabled: true,
@@ -63,6 +63,7 @@ const motion = computed(() => {
     photo: a.photo || t.photo,
     burst: a.burst,
     ornaments: a.ornaments,
+    luxury: a.luxury,
   };
 });
 
@@ -74,7 +75,7 @@ const fx = computed(() => {
   const particles = { ...base.particles, ...(preset ? { shapes: preset.shapes, motion: preset.motion, size: preset.size ?? base.particles.size } : {}) };
   if (a.motion) particles.motion = a.motion;
   particles.count = a.particles === 'none' ? 0 : Math.round(base.particles.count * getDensity(a.density).factor);
-  return { ...base, particles, still: !a.enabled, patternMotion: a.enabled ? base.patternMotion : 'none' };
+  return { ...base, particles, still: !a.enabled, patternMotion: a.enabled ? base.patternMotion : 'none', scene: a.scene ? theme.value.scene ?? 'none' : 'none' };
 });
 
 /** `blob` = file lokal yang belum diunggah; null = pakai audio dari server (bila ada). */

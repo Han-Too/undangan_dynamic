@@ -22,11 +22,13 @@
  *  cover       desain cover bawaan { layout, frame, background } (lihat coverBackgrounds.js & coverFrames.js)
  *  photo       bingkai foto profil bawaan { shape, border, decor } (data/photoFrames.js) — opsional
  *  motion      animasi bawaan { reveal, opening, coverText, photo } (data/animations.js) — opsional
+ *  scene       ilustrasi latar berlapis yang bergerak (data/scenes.js) — opsional
  *  copy        teks bawaan tema. Dipakai saat ganti tema bila user belum mengubah teksnya.
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
 import { DEFAULT_MOTION } from './animations.js';
+import { catalogThemes } from './themesCatalog.js';
 import { moreThemes } from './themesMore.js';
 
 const people2 = (a, b) => [a, b];
@@ -960,6 +962,8 @@ export const themes = {
 };
 
 Object.assign(themes, moreThemes);
+for (const id of Object.keys(catalogThemes)) if (themes[id]) console.warn(`[tema] id ganda: ${id}`);
+Object.assign(themes, catalogThemes);
 
 // Turunkan sifat dari kategori: tema Ucapan memakai mode "greeting".
 for (const t of Object.values(themes)) {

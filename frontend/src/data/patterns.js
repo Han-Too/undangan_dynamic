@@ -252,4 +252,122 @@ export const patterns = {
         `<path d='M0 0h28' stroke-width='2'/><path d='M3 2l11 11 11-11z' fill='${c}' fill-opacity='.85' stroke='none'/>`,
       ),
     ),
+
+  /** Kisi jendela Tionghoa (pola siku berulang) */
+  lattice: (c) =>
+    toUrl(svg(48, 48, c, `<path d='M0 8h16v16H8v16h32V24h-8V8h16M24 0v8M24 40v8M0 40h8M40 40h8'/><rect x='16' y='16' width='16' height='16'/>`, "stroke-width='1.4'")),
+
+  /** Awan ruyi bergulung */
+  ruyi: (c) =>
+    toUrl(
+      svg(
+        90,
+        60,
+        c,
+        `<path d='M14 40c-6 0-8-8-2-10 0-7 9-9 12-3 4-5 12-2 11 4 6 0 7 9 1 9z'/><path d='M20 36c0-3 4-3 4 0M30 36c0-3 4-3 4 0'/>
+         <path d='M59 20c-6 0-8-8-2-10 0-7 9-9 12-3 4-5 12-2 11 4 6 0 7 9 1 9z'/>`,
+      ),
+    ),
+
+  /** Porselen biru-putih: bunga dalam medali */
+  porcelain: (c) =>
+    toUrl(
+      svg(
+        70,
+        70,
+        c,
+        `<circle cx='35' cy='35' r='22'/><circle cx='35' cy='35' r='18' stroke-dasharray='2 3'/>
+         <g transform='translate(35 35)'>${[0, 60, 120, 180, 240, 300].map((a) => `<path transform='rotate(${a})' d='M0 0c-4-5-4-10 0-13 4 3 4 8 0 13z'/>`).join('')}<circle r='2.5' fill='${c}'/></g>
+         <path d='M0 0q8 4 0 8M70 0q-8 4 0 8M0 70q8-4 0-8M70 70q-8-4 0-8'/>`,
+      ),
+    ),
+
+  /** Parang (batik Jawa diagonal) */
+  parang: (c) =>
+    toUrl(
+      svg(
+        40,
+        40,
+        c,
+        `<path d='M-10 30L30-10M10 50L50 10'/><path d='M4 16c4-4 10-4 12 0s-2 8-6 6M24 36c4-4 10-4 12 0s-2 8-6 6' fill='${c}' fill-opacity='.25'/>`,
+        "stroke-width='1.6'",
+      ),
+    ),
+
+  /** Kerawang Gayo: sulur bertingkat */
+  kerawang: (c) =>
+    toUrl(
+      svg(
+        60,
+        40,
+        c,
+        `<path d='M0 20h60M0 6h60M0 34h60' stroke-opacity='.5'/>
+         <path d='M10 20c0-8 10-8 10 0s10 8 10 0 10-8 10 0 10 8 10 0' stroke-width='1.6'/>
+         <path d='M5 6l5-4 5 4 5-4 5 4 5-4 5 4 5-4 5 4 5-4 5 4 5-4 5 4M5 34l5 4 5-4 5 4 5-4 5 4 5-4 5 4 5-4 5 4 5-4 5 4 5-4'/>`,
+      ),
+    ),
+
+  /** Ukiran Toraja (pa'barre allo): matahari berjari */
+  toraja: (c) =>
+    toUrl(
+      svg(
+        56,
+        56,
+        c,
+        `<circle cx='28' cy='28' r='10' fill='${c}' fill-opacity='.3'/><circle cx='28' cy='28' r='4'/>
+         <g transform='translate(28 28)'>${Array.from({ length: 12 }, (_, i) => `<path transform='rotate(${i * 30})' d='M0-13l3-7-3-3-3 3z'/>`).join('')}</g>
+         <path d='M0 0l8 8M56 0l-8 8M0 56l8-8M56 56l-8-8'/>`,
+      ),
+    ),
+
+  /** Kain poleng Bali (kotak catur) */
+  poleng: (c) => toUrl(svg(28, 28, c, `<rect width='14' height='14' fill='${c}' fill-opacity='.55' stroke='none'/><rect x='14' y='14' width='14' height='14' fill='${c}' fill-opacity='.55' stroke='none'/>`)),
+
+  /** Damask klasik */
+  damask: (c) =>
+    toUrl(
+      svg(
+        60,
+        80,
+        c,
+        `<path d='M30 8c-10 8-12 20-4 30-8-2-14 4-10 10 4 5 10 2 10-2 0 10 2 18 4 26 2-8 4-16 4-26 0 4 6 7 10 2 4-6-2-12-10-10 8-10 6-22-4-30z' fill='${c}' fill-opacity='.18'/>
+         <circle cx='0' cy='0' r='4'/><circle cx='60' cy='0' r='4'/><circle cx='0' cy='80' r='4'/><circle cx='60' cy='80' r='4'/>`,
+      ),
+    ),
+
+  /** Buku catatan bergaris + margin merah */
+  notebook: (c) => toUrl(svg(40, 24, c, `<path d='M0 23.5h40' stroke-opacity='.7'/>`)),
+
+  /** Seigaiha (ombak Jepang) */
+  seigaiha: (c) =>
+    toUrl(svg(40, 20, c, `${[16, 11, 6].map((r) => `<path d='M${20 - r} 20a${r} ${r} 0 0 1 ${r * 2} 0M${-r} 10a${r} ${r} 0 0 1 ${r * 2} 0M${40 - r} 10a${r} ${r} 0 0 1 ${r * 2} 0'/>`).join('')}`)),
+
+  /** Ubin Maroko */
+  moroccan: (c) =>
+    toUrl(svg(40, 40, c, `<path d='M20 0c4 6 10 8 20 10-10 2-16 4-20 10-4-6-10-8-20-10 10-2 16-4 20-10zM20 20c4 6 10 8 20 10-10 2-16 4-20 10-4-6-10-8-20-10 10-2 16-4 20-10z'/>`)),
+
+  /** Kipas art deco bertumpuk */
+  fan: (c) =>
+    toUrl(
+      svg(
+        48,
+        32,
+        c,
+        `<path d='M0 32a24 24 0 0 1 48 0'/><path d='M24 32V8M24 32L8 14M24 32l16-18M24 32L2 24M24 32l22-8'/><path d='M12 32a12 12 0 0 1 24 0' fill='${c}' fill-opacity='.18'/>`,
+      ),
+    ),
+
+  /** Garis tipis horizontal (minimalis) */
+  lines: (c) => toUrl(svg(10, 22, c, `<path d='M0 21.5h10'/>`)),
+
+  /** Songket bertabur bunga emas (Melayu) */
+  tenun: (c) =>
+    toUrl(
+      svg(
+        44,
+        44,
+        c,
+        `<path d='M22 6l6 16-6 16-6-16z' fill='${c}' fill-opacity='.22'/><path d='M22 14l3 8-3 8-3-8z'/><path d='M0 22h10M34 22h10M0 0l6 6M44 0l-6 6M0 44l6-6M44 44l-6-6'/>`,
+      ),
+    ),
 };

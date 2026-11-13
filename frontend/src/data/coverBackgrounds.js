@@ -69,6 +69,33 @@ export const coverBackgrounds = [
   { id: 'islamic', name: 'Bintang islami', css: pattern('islamicStar', 76, 0.2) },
   { id: 'songket', name: 'Songket', css: pattern('songket', 40, 0.22) },
   { id: 'chevron', name: 'Chevron', css: pattern('chevron', 40, 0.22) },
+  { id: 'lattice', name: 'Kisi Tionghoa', css: pattern('lattice', 56, 0.2) },
+  { id: 'ruyi', name: 'Awan ruyi', css: pattern('ruyi', 120, 0.22) },
+  { id: 'porcelain', name: 'Porselen', css: pattern('porcelain', 80, 0.22) },
+  { id: 'parang', name: 'Batik parang', css: pattern('parang', 44, 0.2) },
+  { id: 'seigaiha', name: 'Ombak Jepang', css: pattern('seigaiha', 44, 0.22) },
+  { id: 'damask', name: 'Damask', css: pattern('damask', 70, 0.2) },
+  { id: 'notebook', name: 'Buku catatan', css: (c) => `linear-gradient(90deg, transparent 34px, ${mix('#e0645a', 'transparent', 45)} 34px 35.5px, transparent 35.5px), ${patterns.notebook(alpha(c.primary, 0.35))} 0 0 / 40px 24px, ${c.bg}` },
+  {
+    id: 'night',
+    name: 'Malam berbintang',
+    css: (c) =>
+      [[12, 14], [78, 8], [55, 26], [88, 40], [24, 48], [66, 62], [8, 76], [40, 86], [92, 80]]
+        .map(([x, y], i) => `radial-gradient(${1.2 + (i % 3) * 0.6}px ${1.2 + (i % 3) * 0.6}px at ${x}% ${y}%, ${mix(c.primary, '#fff', 60)} 0 100%, transparent 100%)`)
+        .join(', ') + `, radial-gradient(ellipse at 50% 0%, ${mix(c.secondary, c.bg, 40)} 0%, ${c.bg} 70%)`,
+  },
+  {
+    id: 'satin',
+    name: 'Sutra',
+    css: (c) =>
+      `linear-gradient(115deg, transparent 20%, ${mix(c.primary, 'transparent', 14)} 32%, transparent 44%, ${mix('#fff', 'transparent', 6)} 60%, transparent 72%), linear-gradient(160deg, ${mix(c.text, c.bg, 10)}, ${c.bg} 50%, ${mix(c.secondary, c.bg, 24)})`,
+  },
+  {
+    id: 'watercolor',
+    name: 'Cat air',
+    css: (c) =>
+      `${noise(0.55, 0.06)}, radial-gradient(45% 35% at 12% 10%, ${mix(c.primary, 'transparent', 30)} 0%, transparent 70%), radial-gradient(40% 30% at 92% 92%, ${mix(c.secondary, 'transparent', 26)} 0%, transparent 70%), radial-gradient(30% 25% at 88% 12%, ${mix(c.secondary, 'transparent', 16)} 0%, transparent 70%), ${c.bg}`,
+  },
 ];
 
 export const getBackground = (id) => coverBackgrounds.find((b) => b.id === id) ?? coverBackgrounds[0];

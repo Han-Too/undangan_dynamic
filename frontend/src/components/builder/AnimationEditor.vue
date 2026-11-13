@@ -16,7 +16,7 @@ import ToggleSwitch from './ui/ToggleSwitch.vue';
 const { state, theme } = useInvitation();
 const { replayCover } = useBuilderUi();
 const a = state.animation;
-const open = reactive({ opening: true, reveal: true, text: false, particles: true, extra: false });
+const open = reactive({ opening: true, reveal: true, text: false, particles: true, extra: true });
 
 /** Grup pilihan bertema: key di state.animation ↔ key di theme.motion. */
 const choiceGroups = computed(() => [
@@ -35,7 +35,7 @@ const themeName = (list, key) => list.find((o) => o.id === theme.value.motion[ke
 const particleIcon = (p) => (p.shapes ? shapes[p.shapes[0]] : '');
 const customized = computed(() => ['reveal', 'opening', 'coverText', 'photo', 'particles', 'motion'].some((k) => a[k]) || a.density !== 'normal');
 function resetAll() {
-  Object.assign(a, { enabled: true, reveal: '', opening: '', coverText: '', photo: '', particles: '', motion: '', density: 'normal', burst: true, ornaments: true });
+  Object.assign(a, { enabled: true, reveal: '', opening: '', coverText: '', photo: '', particles: '', motion: '', density: 'normal', burst: true, ornaments: true, scene: true, luxury: true });
 }
 </script>
 
@@ -104,7 +104,7 @@ function resetAll() {
         </div>
       </AccordionGroup>
 
-      <AccordionGroup v-model="open.extra" title="Gerak Foto & Ornamen">
+      <AccordionGroup v-model="open.extra" title="Ilustrasi, Ornamen &amp; Efek Mewah">
         <div class="field">
           <span class="field__label">Gerak foto profil</span>
           <div class="chips">
@@ -114,6 +114,8 @@ function resetAll() {
         </div>
         <ToggleSwitch v-model="a.burst" label="Ledakan partikel saat dibuka" hint="Partikel memercik dari tombol Buka Undangan." />
         <ToggleSwitch v-model="a.ornaments" label="Ornamen bergoyang" hint="Ornamen bingkai cover & pembatas bergerak pelan." />
+        <ToggleSwitch v-model="a.scene" label="Ilustrasi latar bergerak" hint="Ranting, lampion, bukit, atau atap adat khas tema yang berayun dan bergeser saat digulir." />
+        <ToggleSwitch v-model="a.luxury" label="Animasi mewah" hint="Scroll super halus, judul terkuak per huruf, dan parallax berlapis." />
       </AccordionGroup>
     </fieldset>
   </div>
@@ -158,12 +160,15 @@ function resetAll() {
 .chipbtn:hover .demo[data-demo$='-fade'] { animation-name: demo-fade; }
 .chipbtn:hover .demo[data-demo*='zoom'] { animation-name: demo-zoom; }
 .chipbtn:hover .demo[data-demo$='-slideLeft'],
-.chipbtn:hover .demo[data-demo$='-alternate'] { animation-name: demo-left; }
+.chipbtn:hover .demo[data-demo$='-alternate'],
+.chipbtn:hover .demo[data-demo$='-shoji'] { animation-name: demo-left; }
 .chipbtn:hover .demo[data-demo$='-slideRight'] { animation-name: demo-right; }
 .chipbtn:hover .demo[data-demo$='-drop'],
-.chipbtn:hover .demo[data-demo$='-slideDown'] { animation-name: demo-drop; }
+.chipbtn:hover .demo[data-demo$='-slideDown'],
+.chipbtn:hover .demo[data-demo$='-envelope'] { animation-name: demo-drop; }
 .chipbtn:hover .demo[data-demo$='-flip'],
-.chipbtn:hover .demo[data-demo$='-book'] { animation-name: demo-flip; }
+.chipbtn:hover .demo[data-demo$='-book'],
+.chipbtn:hover .demo[data-demo$='-doors'] { animation-name: demo-flip; }
 .chipbtn:hover .demo[data-demo$='-rotate'] { animation-name: demo-rotate; }
 .chipbtn:hover .demo[data-demo$='-none'] { animation: none; }
 @keyframes demo-generic { 0% { opacity: 0; transform: translateY(6px); } 60%, 100% { opacity: 1; transform: none; } }

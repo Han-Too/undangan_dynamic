@@ -17,11 +17,19 @@ const activeCat = ref(getTheme(state.theme).category);
 const category = computed(() => themeCategories.find((c) => c.id === activeCat.value));
 const countOf = (id) => themeList.filter((t) => t.category === id).length;
 
-/** Tema kategori aktif, dikelompokkan per `group` (urutan kemunculan pertama). */
+/** Pencarian lintas kategori: nama, tagline, grup, atau nama kategori. */
+const query = ref('');
+const norm = (v) => String(v ?? '').toLowerCase();
+const catName = (id) => themeCategories.find((x) => x.id === id)?.name ?? '';
+const matches = (t, q) => [t.name, t.tagline, t.group, catName(t.category)].some((v) => norm(v).includes(q));
+
+/** Tema kategori aktif (atau hasil cari), dikelompokkan per `group` (urutan kemunculan pertama). */
 const groups = computed(() => {
+  const q = norm(query.value.trim());
+  const source = q ? themeList.filter((t) => matches(t, q)) : themeList.filter((x) => x.category === activeCat.value);
   const map = new Map();
-  for (const t of themeList.filter((x) => x.category === activeCat.value)) {
-    const key = t.group ?? '';
+  for (const t of source) {
+    const key = q ? [catName(t.category), t.group].filter(Boolean).join(' · ') : t.group ?? '';
     if (!map.has(key)) map.set(key, []);
     map.get(key).push(t);
   }
@@ -47,7 +55,13 @@ const previewVars = (t) => ({
   <div class="panel">
     <PanelHeader title="Tema" desc="Pilih kategori acara, lalu gayanya. Teks bawaan yang belum Anda ubah ikut menyesuaikan tema." />
 
-    <div class="cats" role="tablist" aria-label="Kategori tema">
+    <label class="tsearch">
+      <Icon name="search" :size="15" />
+      <input v-model="query" type="search" placeholder="Cari tema: sakura, adat jawa, islami, gelap…" aria-label="Cari tema" />
+      <button v-if="query" type="button" aria-label="Hapus pencarian" @click="query = ''"><Icon name="x" :size="13" /></button>
+    </label>
+
+    <div v-show="!query" class="cats" role="tablist" aria-label="Kategori tema">
       <button
         v-for="c in themeCategories"
         :key="c.id"
@@ -61,9 +75,10 @@ const previewVars = (t) => ({
         {{ c.name }} <small>{{ countOf(c.id) }}</small>
       </button>
     </div>
-    <p class="cat-desc">{{ category?.desc }}</p>
+    <p v-if="!query" class="cat-desc">{{ category?.desc }}</p>
+    <p v-else-if="!groups.length" class="cat-desc">Tidak ada tema yang cocok dengan “{{ query }}”.</p>
 
-    <section v-for="g in groups" :key="`${activeCat}-${g.name}`" class="tgroup">
+    <section v-for="g in groups" :key="`${query ? 'q' : activeCat}-${g.name}`" class="tgroup">
       <h3 v-if="g.name" class="tgroup__title">{{ g.name }}</h3>
       <div class="themes" role="radiogroup" :aria-label="g.name || category?.name">
         <button
@@ -79,6 +94,7 @@ const previewVars = (t) => ({
           <span class="tcard__preview" :style="previewVars(t)">
             <span class="tcard__pattern" />
             <span v-if="t.audience" class="tcard__aud" :data-aud="t.audience">{{ audienceLabel[t.audience] }}</span>
+            <span v-if="t.scene && t.scene !== 'none' && t.scene !== 'minimal'" class="tcard__anim" title="Ilustrasi bergerak"><Icon name="sparkles" :size="11" /></span>
             <span class="tcard__eyebrow">{{ t.copy.cover.label }}</span>
             <span class="tcard__names">{{ t.copy.cover.names }}</span>
             <OrnamentDivider :type="t.ornaments.divider" class="tcard__divider" />
@@ -131,6 +147,34 @@ const previewVars = (t) => ({
     border-radius: 50%;
   }
   .cat-desc { margin: 10px 0 4px; font-size: 12.5px; color: var(--ui-muted); }
+  .tsearch {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding: 0 10px;
+    color: var(--ui-muted);
+    background: var(--ui-surface);
+    border: 1px solid var(--ui-border-strong);
+    border-radius: var(--ui-radius-sm);
+  }
+  .tsearch:focus-within { border-color: var(--ui-ink); color: var(--ui-ink); }
+  .tsearch input { flex: 1; min-width: 0; min-height: 36px; padding: 0; font-size: 13px; background: none; border: 0; outline: none; }
+  .tsearch button { display: grid; place-items: center; width: 22px; height: 22px; padding: 0; color: inherit; background: var(--ui-sunken); border: 0; border-radius: 50%; }
+  .tcard__anim {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    z-index: 2;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    color: #fff;
+    background: rgba(20, 16, 12, 0.55);
+    border-radius: 50%;
+    backdrop-filter: blur(4px);
+  }
   
   .tgroup { display: grid; gap: 10px; margin-top: 14px; }
   .tgroup__title { margin: 0; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ui-faint); }

@@ -37,6 +37,7 @@ export function createDefaultInvitation() {
     /**
      * Animasi (lihat data/animations.js). `enabled` = saklar utama; string kosong = ikuti tema (`theme.motion`).
      * particles: id preset | '' · motion: arah partikel | '' · density: low | normal | high
+     * scene: ilustrasi latar berlapis (data/scenes.js) · luxury: smooth scroll + teks terkuak + parallax (GSAP & Lenis)
      */
     animation: {
       enabled: true,
@@ -48,6 +49,8 @@ export function createDefaultInvitation() {
       motion: '',
       density: 'normal',
       burst: true,
+      scene: true,
+      luxury: true,
       ornaments: true,
     },
     /** Tampilan galeri: jumlah foto, 'grid' | 'carousel', geser otomatis. */

@@ -6,6 +6,7 @@ import { formatDateDots } from '../../utils/format';
 import Icon from '../Icon.vue';
 import CoverFrame from './CoverFrame.vue';
 import BackgroundFx from './fx/BackgroundFx.vue';
+import SceneFx from './fx/SceneFx.vue';
 import InvPhoto from './InvPhoto.vue';
 import OrnamentDivider from './ornaments/OrnamentDivider.vue';
 
@@ -17,6 +18,10 @@ const editor = inject('invEditor', null);
 const cover = computed(() => state.content.cover);
 const hasPhoto = computed(() => !!state.photos.cover.src);
 const layout = computed(() => coverDesign.value.layout);
+
+/** Pembuka berdaun (pintu, pintu geser, amplop): latar & foto cover digambar di kedua daun lalu dibuka. */
+const LEAF_OPENINGS = ['doors', 'shoji', 'envelope'];
+const leafMode = computed(() => LEAF_OPENINGS.includes(motion.value.opening));
 
 /** Background pilihan (null = latar bawaan tema dari BackgroundFx). */
 const bgStyle = computed(() => {
@@ -43,7 +48,7 @@ function open(e) {
   <section
     ref="root"
     class="inv-cover"
-    :class="{ 'is-open': opened, 'has-photo': hasPhoto, 'has-bg': !!bgStyle }"
+    :class="{ 'is-open': opened, 'has-photo': hasPhoto, 'has-bg': !!bgStyle, 'is-leaf': leafMode }"
     :data-layout="layout"
     :data-open="motion.opening"
     :data-text="motion.coverText"
@@ -51,11 +56,23 @@ function open(e) {
     data-section="cover"
     :inert="opened"
   >
-    <div v-if="hasPhoto && layout !== 'split'" class="inv-cover__photo">
+    <div v-if="leafMode" class="inv-cover__leaves" aria-hidden="true">
+      <div v-for="side in ['a', 'b']" :key="side" class="inv-cover__leaf" :class="`inv-cover__leaf--${side}`">
+        <div class="inv-cover__face" :style="bgStyle">
+          <template v-if="hasPhoto && layout !== 'split'">
+            <div class="inv-cover__photo"><InvPhoto :photo="state.photos.cover" label="" :placeholder="false" /></div>
+            <div class="inv-cover__veil" />
+          </template>
+        </div>
+        <span class="inv-cover__seam" />
+      </div>
+    </div>
+    <div v-if="hasPhoto && layout !== 'split' && !leafMode" class="inv-cover__photo">
       <InvPhoto :photo="state.photos.cover" label="Foto Cover" :placeholder="false" />
     </div>
-    <div v-if="hasPhoto && layout !== 'split'" class="inv-cover__veil" />
+    <div v-if="hasPhoto && layout !== 'split' && !leafMode" class="inv-cover__veil" />
     <BackgroundFx :fx="fx" />
+    <SceneFx :scene="fx.scene" :still="fx.still" />
 
     <CoverFrame :frame="coverDesign.frame" :theme-corner="theme.ornaments.corner" />
 
